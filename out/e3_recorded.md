@@ -1,0 +1,5 @@
+Implemented E3 in [sim.py](</C:/Users/wesre/Documents/Claude/DL - Observation Shift Project/sim.py>) and [run_grid.py](</C:/Users/wesre/Documents/Claude/DL - Observation Shift Project/run_grid.py>); added [analyze_e3.py](</C:/Users/wesre/Documents/Claude/DL - Observation Shift Project/analyze_e3.py>) and [test_e3.py](</C:/Users/wesre/Documents/Claude/DL - Observation Shift Project/test_e3.py>).
+
+`test_e3.py` passed: calibrated α = **0.24304199**, independent cohort rate = **0.293938**; logistic redundancy regression gave x_last = **2.005395**, z_t = **0.003694**. Sequential probabilities reconstructed within **1e-14**. All three fixed-seed E1/E2 output hash pairs matched their pre-edit baselines. Python compilation also passed.
+
+I did not run grid fits. Since `results/E3` has no shards yet, `analyze_e3.py` and `analysis/e3_summary.csv` could not be exercised or generated; the analyzer will write the CSV after Claude runs the fits.

@@ -14,6 +14,21 @@ Nothing.
 
 ## Results so far
 
+### E3: exact redundancy (17 Oct 2026; 4 fits, seed 0, 8,000 test patients; `analysis/e3_summary.csv`)
+
+Testing depends only on the last recorded value (sigma 1, gamma 2, rate 0.3), so the pattern adds nothing beyond the recorded history. The Bayes rule ignores it, and the justified transfer cost is exactly zero: every loss on B is unjustified. The V_rule's Brier is 0.117 on A, 0.115 on B_match and 0.107 on B_dense.
+
+| arch | S on A | X on B_match [95% CI] | X on B_dense |
+|---|---|---|---|
+| GRU-D | 0.0014 | 0.012 [0.010, 0.014] | 0.005 |
+| GRU | 0.0017 | 0.030 [0.026, 0.033] | 0.011 |
+| Transformer | 0.0027 | 0.007 [0.005, 0.008] | 0.004 |
+| CDE | 0.0035 | 0.006 [0.004, 0.007] | 0.010 |
+
+- Under exact redundancy all four models still lose on B, by 0.006-0.030. That is 2-5x more than any excess in E1, where the pattern was informative and models tracked the transferred Bayes rule within about 0.002. So shortcut use appears precisely when A does not pin the rule down.
+- The architectures differ five-fold, and the order is not the order of fit on A: GRU-D fits A best but loses twice as much as the Transformer and CDE on B_match, and GRU loses most. Under B_dense the CDE drops from best to worst. A ranking by B performance therefore ranks architectural priors for extrapolating off A's support, and that ranking depends on which shift B is.
+- Caveats: one seed; the intervals cover patients, not training seeds. The linear shortcut probe (residual logit on count and gap) explains only 2-9% of the residual and is not informative here. The run took 18 min, not 10 (the CDE fit took 1,060 s).
+
 ### Full grid (17 Oct 2026; 108 fits, 3 seeds, 8,000 test patients; Brier; tables in `analysis/`, figures `analysis/*.png`)
 
 Symbols (SPEC.md): G = Bayes mask gain on A; S = model's excess over the A-optimal rule on A; J = justified cost (A-optimal rule applied to B, minus B's optimum); X = model's B loss minus the transferred A-optimal rule's B loss (X > 0: loses more than perfect A learning would; X < 0: loses less); b_values, b_mask = probe weights (exact Bayes has 1, 1).
@@ -44,6 +59,7 @@ Reading: the observation pattern adds little beyond the values when values are p
 
 ## Done
 
+- E3 (exact redundancy) implemented by Luna (`tasks/e3_recorded.md`, `out/e3_recorded.md`), reviewed, run and analysed (17 Oct).
 - 17 Oct 2026: full grid finished (108 fits, 215 min). Bug fixed in `run_grid.py` `_bayes_arrays`: it unpacked the seed tuple in the wrong order, so Bayes predictions were computed on the training cohort's latent paths, not the test patients. All 27 `bayes.npz` files recomputed on the right cohort (y arrays now match the model shards); analysis rerun. Local folder renamed to `DL - Observation Shift Project`.
 - 17 Oct 2026: repository pushed to https://github.com/wjremy/DL-Observation-Shift-Project (private).
 - 17 Oct 2026: smoke run and all tests passed with real PyTorch (feature builders, forward passes, empty histories, one-step loss reduction, end-to-end smoke). Bayes filter matches Kalman to 1e-6; grid resolution 241 vs 481 changes Brier by 2e-13.

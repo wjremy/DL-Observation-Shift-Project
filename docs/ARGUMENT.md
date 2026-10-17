@@ -42,6 +42,10 @@ The problem is not that a model uses the pattern's extra information (justified)
 
 This turns objection 1 into the baseline every model is held to, and it needs no redundancy assumption. On real data (e.g. MIMIC-IV), where Bayes rules are unknown, the comparable report is the gain from adding masks on A against the cost on B.
 
+## 7. Does redundancy save the robustness ranking? (E3)
+
+Redundancy changes what a B-ranking measures; it does not make it a measure of robustness learned from A. If the pattern is exactly redundant, A does not decide how much a model uses it: many rules fit A equally well, and they differ only on histories that never occur under A. B shows how each architecture extrapolates there, i.e. its prior. E3 builds this case exactly (testing driven by recorded values only, missing at random): the justified cost is zero, yet models lose 0.006-0.030 on B, with a five-fold spread whose order differs from fit on A and between B_match and B_dense. So under redundancy, Sarah's design detects real shortcut use, larger than in the informative case. However, it ranks priors for a specific shift, not robustness. Two further limits remain. The redundancy needed fails in her motivating case (clinicians test because the patient looks sick, which is not in the record: E1, not E3). And on real data the same B drop means opposite things in the two worlds (justified cost in E1, shortcut in E3), and the B data cannot tell them apart. Only the Bayes benchmark, available in simulation, separates them.
+
 ## Earlier Codex runs (17 Oct 2026)
 
 Two studies were run earlier the same day in the Codex app; their reports are in `docs/prior_codex_runs/`. The policy-learning study fixed the physiology predictor for every model and learned only the observation correction. It showed that even the exact source rule loses under B (Brier 0.082 on A to 0.246 on B, against 0.163 without the cue) and that GRU, GRU-D and CDE recovered 97-98% of the source cue benefit. Because physiology was fixed, it could not test step 6 (using the pattern instead of the values); this study does.

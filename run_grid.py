@@ -33,6 +33,13 @@ def _policy_setup(exp: str, sigma: float, gamma: float) -> Tuple[sim.Policy, Dic
             "B_match": sim.uniform(rate=0.3),
             "B_dense": sim.uniform(rate=0.6),
         }
+    elif exp == "E3":
+        train_policy = sim.recorded(gamma=gamma, rate=0.3, sigma=sigma)
+        test_policies = {
+            "A": train_policy,
+            "B_match": sim.uniform(rate=0.3),
+            "B_dense": sim.uniform(rate=0.6),
+        }
     else:
         train_policy = sim.uniform(rate=0.5)
         test_policies = {
@@ -47,6 +54,8 @@ def _config_list(exp: str, smoke: bool) -> List[Tuple[str, float, float]]:
     if exp == "E1":
         configs = [(f"sigma{sigma:g}_gamma{gamma:g}", sigma, gamma)
                    for sigma in (0.25, 0.5, 1.0, 2.0) for gamma in (1.0, 2.0)]
+    elif exp == "E3":
+        configs = [("sigma1_gamma2", 1.0, 2.0)]
     else:
         configs = [("sigma0.5", 0.5, 0.0)]
     if smoke:
@@ -281,7 +290,7 @@ def _fit_task(task: Dict) -> str:
         "arch": task["arch"],
         "seed": task["seed"],
         "sigma": task["sigma"],
-        "gamma": task["gamma"] if task["exp"] == "E1" else None,
+        "gamma": task["gamma"] if task["exp"] in {"E1", "E3"} else None,
         "best_epoch": fit_meta["best_epoch"],
         "epochs_run": fit_meta["epochs_run"],
         "train_bce": fit_meta["train_bce"],
@@ -319,8 +328,8 @@ def _validate_out_root(path: Path) -> Path:
 
 
 def run(exp: str, workers: int = 4, out: str = "results", smoke: bool = False) -> None:
-    if exp not in ("E1", "E2", "all"):
-        raise ValueError("exp must be E1, E2, or all")
+    if exp not in ("E1", "E2", "E3", "all"):
+        raise ValueError("exp must be E1, E2, E3, or all")
     if workers < 1:
         raise ValueError("workers must be at least 1")
     if smoke and out == "results":
@@ -330,7 +339,7 @@ def run(exp: str, workers: int = 4, out: str = "results", smoke: bool = False) -
     sizes = {"n_train": 800, "n_val": 200, "n_test": 1000, "max_epochs": 5} if smoke else {
         "n_train": 8000, "n_val": 2000, "n_test": 8000, "max_epochs": 120
     }
-    seeds = (0,) if smoke else (0, 1, 2)
+    seeds = (0,) if smoke or exp == "E3" else (0, 1, 2)
 
     tasks = []
     for experiment in experiments:
@@ -370,7 +379,7 @@ def run(exp: str, workers: int = 4, out: str = "results", smoke: bool = False) -
 
 def main(argv: Iterable[str] = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--exp", choices=("E1", "E2", "all"), default="all")
+    parser.add_argument("--exp", choices=("E1", "E2", "E3", "all"), default="all")
     parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--out", default="results")
     parser.add_argument("--smoke", action="store_true")

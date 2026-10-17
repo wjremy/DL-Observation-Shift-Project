@@ -1,6 +1,7 @@
 """Simulation utilities for the observation-shift study (NumPy only)."""
 
 from dataclasses import dataclass
+from functools import lru_cache
 import math
 
 import numpy as np
@@ -70,6 +71,78 @@ def informative(gamma, rate):
                   gamma=gamma, alpha=alpha)
 
 
+def _recorded_mask(z, noisy, uniforms, alpha, gamma):
+    """Draw recorded-value-driven masks from fixed noise and uniforms."""
+    n = z.shape[0]
+    mask = np.empty((n, T), dtype=bool)
+    x_last = np.zeros(n, dtype=np.float64)
+    for t in range(T):
+        p = _sigmoid(alpha + gamma * x_last)
+        mask[:, t] = uniforms[:, t] < p
+        x_last = np.where(mask[:, t], noisy[:, t], x_last)
+    return mask
+
+
+@lru_cache(maxsize=32)
+def _alpha_for_recorded_rate(gamma, rate, sigma):
+    """Calibrate recorded-policy alpha on the fixed E3 cohort and draws."""
+    latent = simulate_latent(4000, seed=990001)
+    z = np.asarray(latent["z"], dtype=np.float64)
+    rng = np.random.default_rng(990002)
+    # Common random numbers make the calibration deterministic across trials.
+    noisy = z + sigma * rng.standard_normal((z.shape[0], T), dtype=np.float64)
+    uniforms = rng.random((z.shape[0], T))
+
+    lo, hi = -30.0 - gamma, 30.0 + gamma
+    best_alpha = 0.5 * (lo + hi)
+    best_error = float("inf")
+    for _ in range(80):
+        mid = 0.5 * (lo + hi)
+        mask = _recorded_mask(z, noisy, uniforms, mid, gamma)
+        empirical_rate = float(mask.mean())
+        error = abs(empirical_rate - rate)
+        if error < best_error:
+            best_error = error
+            best_alpha = mid
+        if empirical_rate < rate:
+            lo = mid
+        else:
+            hi = mid
+    return float(best_alpha)
+
+
+def recorded(gamma, rate, sigma):
+    """Return a policy whose mask depends on the last recorded noisy value."""
+    gamma = float(gamma)
+    rate = float(rate)
+    sigma = float(sigma)
+    if gamma < 0.0:
+        raise ValueError("gamma must be nonnegative")
+    if not 0.0 < rate < 1.0:
+        raise ValueError("rate must lie strictly between 0 and 1")
+    if sigma < 0.0:
+        raise ValueError("sigma must be nonnegative")
+    alpha = _alpha_for_recorded_rate(gamma, rate, sigma)
+    return Policy(name=f"recorded_g{gamma:g}_r{rate:g}_s{sigma:g}",
+                  rate=rate, gamma=gamma, alpha=alpha)
+
+
+def recorded_probs(x, m, policy):
+    """Return sequential recorded-policy probabilities for observed histories."""
+    x = np.asarray(x, dtype=np.float64)
+    m = np.asarray(m, dtype=bool)
+    if x.ndim != 2 or x.shape != m.shape or x.shape[1] != T:
+        raise ValueError(f"x and m must have matching shape (n, {T})")
+    if not getattr(policy, "name", "").startswith("recorded"):
+        raise ValueError("policy must be a recorded policy")
+    probabilities = np.empty(x.shape, dtype=np.float64)
+    x_last = np.zeros(x.shape[0], dtype=np.float64)
+    for t in range(T):
+        probabilities[:, t] = _sigmoid(policy.alpha + policy.gamma * x_last)
+        x_last = np.where(m[:, t], x[:, t], x_last)
+    return probabilities
+
+
 def uniform(rate):
     """Return a Z-independent Bernoulli observation policy."""
     rate = float(rate)
@@ -129,7 +202,12 @@ def observe(latent, policy, sigma, seed):
     rng = np.random.default_rng(seed)
     n = z.shape[0]
 
-    if policy.name.startswith("informative"):
+    if policy.name.startswith("recorded"):
+        # E3 draws the complete noise matrix before generating any masks.
+        noisy = z + sigma * rng.standard_normal((n, T), dtype=np.float64)
+        uniforms = rng.random((n, T))
+        mask = _recorded_mask(z, noisy, uniforms, policy.alpha, policy.gamma)
+    elif policy.name.startswith("informative"):
         p = _sigmoid(policy.alpha + policy.gamma * z)
         mask = (rng.random((n, T)) < p)
     elif policy.name.startswith("bursty"):
@@ -145,7 +223,8 @@ def observe(latent, policy, sigma, seed):
     else:
         mask = rng.random((n, T)) < policy.rate
 
-    noisy = z + sigma * rng.standard_normal((n, T), dtype=np.float64)
+    if not policy.name.startswith("recorded"):
+        noisy = z + sigma * rng.standard_normal((n, T), dtype=np.float64)
     x = np.where(mask, noisy, np.nan).astype(np.float32)
     return {"x": x, "m": mask.astype(np.int8)}
 
