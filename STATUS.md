@@ -4,15 +4,28 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-- Full grid (E1 informative, 96 fits; E2 coverage, 12 fits), started 17 Oct 2026 17:20 on Wesley's laptop: `python run_grid.py --exp all --workers 4 --out results`, log `run_full.log`. Exact Bayes files were written by 17:34; fits follow. Next step: `python analyze.py`, `python plot.py`, review, write results below.
+Nothing.
 
 ## Open
 
-- Rename the local folder from `obs-shift-sim` to `DL - Observation Shift Project` once no job runs inside it (Windows names cannot contain ':').
-- After the grid: decide whether effects are large enough to separate architectures. The Bayes mask gain is small in this simulator (see below); if model estimation noise swamps it, add configurations with stronger informativeness (gamma 3-4) or rarer testing.
+- Review `analysis/contrasts.csv` (bootstrap intervals for architecture differences) and the figures.
+- Possible quick follow-ups (minutes, not a grid): stronger informativeness (gamma 3-4) to enlarge the effects; a CDE with longer training to test whether its under-learning of the pattern is a prior or slow convergence.
 - Optional: real-data arm (MIMIC-IV). Needs credentialed PhysioNet access, which a team member must apply for; on real data report mask gain on A against cost on B (no Bayes rules available).
 
 ## Results so far
+
+### Full grid (17 Oct 2026; 108 fits, 3 seeds, 8,000 test patients; Brier; tables in `analysis/`, figures `analysis/*.png`)
+
+Symbols (SPEC.md): G = Bayes mask gain on A; S = model's excess over the A-optimal rule on A; J = justified cost (A-optimal rule applied to B, minus B's optimum); X = model's B loss minus the transferred A-optimal rule's B loss (X > 0: loses more than perfect A learning would; X < 0: loses less); b_values, b_mask = probe weights (exact Bayes has 1, 1).
+
+1. No substitution under a matched-rate policy change (B_match). GRU, GRU-D and Transformer have b_mask 0.9-1.13 and b_values 0.83-1.01, and X_match within about ±0.002 in every setting: they learn the pattern about as much as the data warrant and lose almost exactly the justified cost J (0.004-0.014). Their B loss is what perfect A learning would also suffer.
+2. The CDE looks "robust" because it under-learns the pattern, which is the original objection to a naive robustness ranking, here measured. b_mask 0.44-0.67 in every setting, X_match negative (down to -0.0025), but the largest source excess S (0.003-0.010, three to ten times the others; it grows with sigma, where the pattern matters more).
+3. Dense uniform testing (B_dense) is where models differ beyond the justified cost. GRU, GRU-D and CDE lose 0.002-0.010 more than the transferred A rule; they extrapolate badly to observation counts outside the training range. The Transformer loses less than the A rule at sigma ≥ 1 (X_dense -0.002 to -0.012) with a small S (0.002-0.003): attention pooling is roughly insensitive to the number of tokens, so "tested more often" does not push its prediction up as much. That is an architectural prior that happens to match this shift, not robustness learned from A.
+4. Sampling coverage (E2, uninformative testing): every model's excess over Bayes grows from 0.001-0.003 on A to 0.004-0.006 on sparse or bursty sampling. GRU-D is best (0.0037-0.0042), the CDE gets no advantage from its continuous-time design (0.0049-0.0057).
+
+Caveats: effects are small in absolute terms (base Brier about 0.10), because the pattern adds little beyond the values in this simulator; contrasts between architectures with bootstrap intervals are in `analysis/contrasts.csv` and have not yet been reviewed. Some Transformer fits stopped early (best epoch about 8); their S stays small, so finding 3 is not an under-fitting artefact.
+
+### Exact Bayes reference (before the grid)
 
 Exact Bayes reference (`bayes_reference.csv`, 20,000 patients, Brier; base Brier about 0.10):
 
@@ -31,6 +44,7 @@ Reading: the observation pattern adds little beyond the values when values are p
 
 ## Done
 
+- 17 Oct 2026: full grid finished (108 fits, 215 min). Bug fixed in `run_grid.py` `_bayes_arrays`: it unpacked the seed tuple in the wrong order, so Bayes predictions were computed on the training cohort's latent paths, not the test patients. All 27 `bayes.npz` files recomputed on the right cohort (y arrays now match the model shards); analysis rerun. Local folder renamed to `DL - Observation Shift Project`.
 - 17 Oct 2026: repository pushed to https://github.com/wjremy/DL-Observation-Shift-Project (private).
 - 17 Oct 2026: smoke run and all tests passed with real PyTorch (feature builders, forward passes, empty histories, one-step loss reduction, end-to-end smoke). Bayes filter matches Kalman to 1e-6; grid resolution 241 vs 481 changes Brier by 2e-13.
 - 17 Oct 2026: code written by two GPT-6 Luna agents from SPEC.md (briefs in `tasks/`, reports in `out/`), reviewed by Claude.

@@ -206,7 +206,7 @@ def _atomic_npz(path: Path, arrays: Dict[str, np.ndarray]) -> None:
 def _bayes_arrays(exp: str, sigma: float, gamma: float, seed: int, n_test: int):
     """Compute Bayes predictions without writing, for the caller's output root."""
     _, test_policies = _policy_setup(exp, sigma, gamma)
-    test_latent_seed, _, _, _, _, test_obs_seed = _seeds_for(seed)
+    _, _, test_latent_seed, _, _, test_obs_seed = _seeds_for(seed)
     test_latent = sim.simulate_latent(n_test, seed=test_latent_seed)
     arrays: Dict[str, np.ndarray] = {"y": np.asarray(test_latent["y"], dtype=np.int8)}
     a_policy = test_policies["A"]
