@@ -8,7 +8,6 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Open
 
-- Push to GitHub: the repo `wjremy/DL-Observation-Shift-Project` must first be created on GitHub (no `gh` CLI on the laptop).
 - Rename the local folder from `obs-shift-sim` to `DL - Observation Shift Project` once no job runs inside it (Windows names cannot contain ':').
 - After the grid: decide whether effects are large enough to separate architectures. The Bayes mask gain is small in this simulator (see below); if model estimation noise swamps it, add configurations with stronger informativeness (gamma 3-4) or rarer testing.
 - Optional: real-data arm (MIMIC-IV). Needs credentialed PhysioNet access, which a team member must apply for; on real data report mask gain on A against cost on B (no Bayes rules available).
@@ -32,6 +31,7 @@ Reading: the observation pattern adds little beyond the values when values are p
 
 ## Done
 
+- 17 Oct 2026: repository pushed to https://github.com/wjremy/DL-Observation-Shift-Project (private).
 - 17 Oct 2026: smoke run and all tests passed with real PyTorch (feature builders, forward passes, empty histories, one-step loss reduction, end-to-end smoke). Bayes filter matches Kalman to 1e-6; grid resolution 241 vs 481 changes Brier by 2e-13.
 - 17 Oct 2026: code written by two GPT-6 Luna agents from SPEC.md (briefs in `tasks/`, reports in `out/`), reviewed by Claude.
 - 17 Oct 2026: design fixed in SPEC.md, following docs/ARGUMENT.md.
