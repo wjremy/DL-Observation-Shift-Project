@@ -72,3 +72,12 @@ Risk R = Brier score (also report BCE). For each config, arch, seed, test policy
 Aggregate: mean over seeds with seed-level min/max; paired differences between architectures with a patient-level bootstrap (1000 resamples, paired across arch and policy) for X_B and S.
 E2: excess over Bayes (= V_rule there) on A and on each B, per arch.
 Outputs: `analysis/e1_summary.csv`, `analysis/e2_summary.csv`, `analysis/contrasts.csv`, `analysis/summary.json` with the headline numbers. `plot.py`: (1) per sigma, X_B vs S per arch with the A_rule point at (0, 0) and J_B annotated; (2) b_mask and b_values vs sigma per arch; (3) E2 excess bars.
+
+## E3: exact redundancy, testing driven by recorded values only (Claude, 17 Oct 2026)
+
+Question: when the observation pattern is exactly redundant given the recorded values, so that the Bayes rule on A ignores it and the justified transfer cost is zero, do architectures still lose on B? Any loss on B is then pure shortcut use, decided by the architecture's prior off A's support.
+
+Policy `recorded(gamma, rate, sigma)` in `sim.py` (name `recorded_g{gamma}_r{rate}_s{sigma}`, fields gamma, alpha, rate). Sequential over t: x_last = most recent recorded noisy value at s < t (0 if none yet); m_t ~ Bernoulli(sigmoid(alpha + gamma * x_last)); x_t = z_t + sigma * eps_t if m_t. Noise is drawn as a full (n, T) matrix before the masks. alpha is calibrated by bisection so that the mean of m over (patients, t) is `rate` on a fixed calibration cohort (n 4000, latent seed 990001, observation seed 990002, common random numbers so the bisection is monotone).
+Why it is exactly redundant: P(m_t | z, past values) = P(m_t | past recorded values), so the policy factor cancels from the likelihood (missing at random). The exact Bayes rule on any such policy is the values-only rule. `bayes._is_informative` already treats non-`informative` policies as values-only, so A_rule = V_rule identically and G = J_B = 0.
+Setting: sigma 1.0, gamma 2.0, train A = recorded(2.0, 0.3, 1.0); test A, B_match = uniform(0.3), B_dense = uniform(0.6). Seed 0 only, standard cohort sizes and training. 4 fits; about 10 minutes on 4 workers.
+Metrics: S = R_A(model) - R_A(V_rule); X_B = R_B(model) - R_B(V_rule) (Brier, also BCE). Shortcut probe on each test policy: regress logit(p_model) - logit(p_V) on [1, n_obs / T, gap since last observation / T] (least squares, report coefficients and R^2); Bayes gives all zeros. Patient-level paired bootstrap (1000) for X_B per arch.
