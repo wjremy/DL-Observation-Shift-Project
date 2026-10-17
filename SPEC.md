@@ -1,0 +1,74 @@
+# Observation-shift simulation study: specification (Claude, 17 Oct 2026)
+
+## Questions
+
+Q1 (justified cost). How much does the exact A-optimal predictor lose when applied unchanged under policy B? This is the loss no model trained only on A can avoid without giving up A accuracy.
+Q2 (excess reliance). Do end-to-end architectures, trained on raw values + masks under A, lose MORE than that justified cost on B (they rely on the observation pattern instead of the values, beyond what the information warrants), or less (they under-learn the mask)? Measured against the exact Bayes rules.
+Q3 (redundancy). How do Q1 and Q2 change as the values become more or less informative (noise sigma), i.e. as the mask's extra information over the values (Bayes mask gain) shrinks or grows?
+Q4 (sampling coverage). With UNINFORMATIVE observation in both hospitals, how much does each architecture lose beyond Bayes when only the density/regularity of sampling changes?
+
+## Data-generating process (module `sim.py`)
+
+- Time grid t = 0..T-1, T = 48. Latent state: stationary Gaussian AR(1), Z_0 ~ N(0,1), Z_t = rho Z_{t-1} + sqrt(1-rho^2) eps_t, rho = 0.95.
+- Outcome: Y = 1{Z_{T-1+h} > c}, horizon h = 6, threshold c = 1.0 (prevalence about 0.16). Z beyond T-1 continues the same AR(1).
+- Observation indicator O_t ~ Bernoulli(p_t). Value X_t = Z_t + sigma * eta_t (eta standard normal), available only when O_t = 1.
+- Policies (dataclass `Policy`, each with a name):
+  - `informative(gamma, rate)`: p_t = sigmoid(alpha + gamma Z_t), with alpha solved numerically so that E[p_t] = rate under Z ~ N(0,1).
+  - `uniform(rate)`: p_t = rate, independent of Z.
+  - `bursty(rate, stay)`: O_t a two-state Markov chain independent of Z, P(O_t = O_{t-1}) = stay, stationary marginal = rate (derive the switching probabilities; for rate 0.5 both stay-probabilities equal `stay`). O_0 drawn from the stationary marginal.
+- `simulate_latent(n, seed) -> dict(z: float32[n, T], z_future: float32[n], y: int8[n])`
+- `observe(latent, policy, sigma, seed) -> dict(x: float32[n, T] with NaN where unobserved, m: int8[n, T])`
+  The same latent cohort can be observed under several policies (paired test sets). Different seeds for latent and observation draws; all seeds explicit.
+
+## Exact Bayes predictors (module `bayes.py`, numpy only)
+
+Grid forward filter on z in [-5.5, 5.5] with G = 241 points (check that G = 481 changes Brier by < 1e-4). Transition kernel from the AR(1), rows renormalised. Per step likelihood given the ASSUMED observation model:
+- O_t = 1: p_assumed(O=1 | z) * Normal(x_t; z, sigma^2)
+- O_t = 0: 1 - p_assumed(O=1 | z)
+Uniform/bursty policies are uninformative about z, so their likelihood factor reduces to Normal(x; z, sigma^2) when observed and 1 when not ("values-only rule"; it is exact Bayes for any Z-independent policy, including bursty).
+Final prediction: P(Y=1 | history) = sum_z post_T(z) * [1 - Phi((c - rho^h z) / sqrt(1 - rho^(2h)))].
+Function: `bayes_predict(x, m, sigma, assumed_policy) -> float64[n]`, vectorised over patients, work in log space or renormalise each step.
+Rules used in analysis:
+- `A_rule`: assumed = training policy A. Applied to A test data = Bayes optimum under A. Applied to B data = transferred source rule.
+- `V_rule`: assumed uninformative (values-only). Exact Bayes under any Z-independent B; on A data it is the best rule that ignores what the pattern says about z.
+Tests (pytest-free plain asserts in `test_sim_bayes.py`, runnable with numpy only):
+1. With an uninformative policy and every step observed, the grid filter matches an exact Kalman filter (posterior mean and variance at T-1, and P(Y=1)) to < 1e-3.
+2. With an uninformative policy and random missingness, same Kalman check (Kalman skips the update when unobserved).
+3. Calibration: on 20000 simulated patients under an informative policy, A_rule predictions binned in deciles match observed Y frequencies within Monte Carlo error; and A_rule Brier < V_rule Brier on A data.
+4. alpha solver gives the requested marginal rate (Monte Carlo check).
+5. Bursty chain has the requested marginal rate and stay probability.
+
+## Models (module `models.py`, PyTorch CPU)
+
+All end-to-end on raw observed data. Output: one logit for Y at the end of the window. Hidden size 64 unless stated.
+Per-step features for recurrent models: x_locf (last observed value carried forward; 0 before the first observation), m_t, delta_t (steps since last observation, divided by T; GRU-D definition from Che et al. 2018).
+- `gru`: nn.GRU on [x_locf, m, delta], linear head on final hidden state.
+- `grud`: GRU-D (Che et al. 2018): input decay of x toward the training-set empirical mean of observed values, hidden-state decay from delta, mask as input. Implemented as an explicit loop over T with a GRUCell.
+- `cde`: Neural CDE (Kidger et al. 2020), own implementation, no torchcde. Control path channels: [t / T, x linearly interpolated between observations (forward-filled after the last and back-filled before the first observation; 0 if never observed), cumulative observation count / T]. Initial hidden h_0 = linear map of the path at t = 0. Vector field: MLP hidden -> 128 -> 128 -> hidden * channels with tanh output. Integrate with RK4-free Euler over the 47 path increments plus 2 substeps per increment (h += f(h) dX/substeps). Head on final hidden.
+- `transformer`: tokens only at observed steps: input projection of [x_t] plus sinusoidal embedding of t (d = 64), learned CLS token, 2 encoder layers, 4 heads, padding mask for absent steps. Patients with zero observations: CLS only. Head on CLS output.
+Training: Adam lr 1e-3, weight decay 0, batch 256, BCE loss, max 120 epochs, early stopping on validation BCE (validation drawn under the TRAINING policy), patience 12, keep best checkpoint. Inputs computed once as tensors.
+
+## Experiments (runner `run_grid.py`)
+
+Cohort sizes: train 8000, validation 2000, test 8000 latent patients; one test latent cohort per seed, observed under every test policy below with a common observation seed (paired across policies).
+Seeds: 0, 1, 2 (each seed redraws train, val, test and model init).
+
+E1 informative (Q1-Q3). Training policy A = informative(gamma, rate 0.3). Grid: sigma in {0.25, 0.5, 1.0, 2.0} x gamma in {1.0, 2.0}. Test policies for every fitted model: A itself, B_match = uniform(0.3), B_dense = uniform(0.6).
+E2 coverage (Q4). sigma = 0.5. Training policy A = uniform(0.5). Test policies: A, B_sparse = uniform(0.15), B_bursty = bursty(0.5, stay 0.9).
+Fits: E1 8 configs x 4 archs x 3 seeds = 96; E2 1 x 4 x 3 = 12. Total 108.
+Execution: multiprocessing pool with `--workers` (default 4, the physical core count), torch.set_num_threads(1) in each worker, one fit per task, each fit writes its own shard directory `results/<exp>/<config>/<arch>/seed<k>/` with `preds.npz` (keys: one float32[n_test] array of predicted probabilities per test policy name, plus `y`), `meta.json` (config, arch, seed, best epoch, epochs run, train/val BCE history, wall time). Skip shards that already exist (resume). Also write `bayes.npz` once per config and seed with A_rule and V_rule predictions on every test policy (and `y`), computed in the main process before or after the fits.
+CLI: `python run_grid.py --exp E1|E2|all --workers 4 --out results [--smoke]`. `--smoke`: n_train 800, n_val 200, n_test 1000, 5 epochs, one config per experiment, all 4 archs, seed 0, into `results_smoke/`.
+
+## Analysis (`analyze.py`, numpy + pandas; `plot.py`, matplotlib)
+
+Risk R = Brier score (also report BCE). For each config, arch, seed, test policy B, with A the training policy:
+- Bayes mask gain on A: G = R_A(V_rule) - R_A(A_rule)  (redundancy measure; small G = near-redundant).
+- Justified transfer cost: J_B = R_B(A_rule) - R_B(V_rule)  (perfect A learning, applied to B, versus B's Bayes optimum).
+- Model source excess: S = R_A(model) - R_A(A_rule).
+- Model target excess over the transferred rule: X_B = R_B(model) - R_B(A_rule).
+- Model excess over B's optimum: R_B(model) - R_B(V_rule).
+- Reliance probe on A test data: regress logit(p_model) on [1, logit(p_V), logit(p_A) - logit(p_V)] by least squares, giving b_values and b_mask. Exact Bayes has b_values = 1, b_mask = 1 by construction. b_mask > 1 with b_values < 1 = substitution (pattern used instead of values). Also the same probe with R^2.
+- Mask gain captured: (R_A(V_rule) - R_A(model)) / G.
+Aggregate: mean over seeds with seed-level min/max; paired differences between architectures with a patient-level bootstrap (1000 resamples, paired across arch and policy) for X_B and S.
+E2: excess over Bayes (= V_rule there) on A and on each B, per arch.
+Outputs: `analysis/e1_summary.csv`, `analysis/e2_summary.csv`, `analysis/contrasts.csv`, `analysis/summary.json` with the headline numbers. `plot.py`: (1) per sigma, X_B vs S per arch with the A_rule point at (0, 0) and J_B annotated; (2) b_mask and b_values vs sigma per arch; (3) E2 excess bars.

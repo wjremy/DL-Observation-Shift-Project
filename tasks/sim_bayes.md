@@ -1,0 +1,10 @@
+You work in the folder that is your current working directory. Read SPEC.md there first; it is the binding specification (names, signatures, file formats, numbers). Follow it exactly; if something in it is wrong or impossible, implement the closest correct version and report the deviation.
+Python: the only interpreter you can run is C:\Users\wesre\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe (Python 3.12 with numpy and pandas only; no scipy, no torch, no matplotlib). Use it for every test you run. Do not install packages. Write clean, commented, vectorised code. Do not create files outside this folder. No web search.
+Final answer (compact, under 300 words): files written, tests run and their results (numbers), deviations from SPEC.md, open concerns.
+YOUR TASK: write sim.py, bayes.py, test_sim_bayes.py, analyze.py and plot.py as specified.
+- sim.py and bayes.py: numpy only. Normal CDF via math.erf / numpy (no scipy). bayes_predict must handle 8000 patients x 48 steps x G=241 within about a minute (matrix products per step).
+- Run test_sim_bayes.py with the interpreter above until all five tests pass; report the Kalman agreement error, calibration table summary, Brier of A_rule and V_rule on A data for sigma=0.5, gamma=1.0, and the G=241 vs 481 Brier difference.
+- Also report, for every E1 config (sigma x gamma) on 20000 patients: G (Bayes mask gain) and J_B for B_match and B_dense. Write these to bayes_reference.csv.
+- analyze.py: numpy + pandas, reads results/ shards and bayes.npz as SPEC.md defines (another agent writes the runner; rely only on the formats in SPEC.md). Test it on a fake results tree that you generate in a temporary folder fake_results/ (delete it afterwards).
+- plot.py: matplotlib; you cannot import it, so only check syntax with python -m py_compile plot.py.
+Do not write models.py or run_grid.py.
