@@ -14,6 +14,22 @@ Nothing.
 
 ## Results so far
 
+### E4: product-of-experts discounting fails (18 Oct 2026; GRU, sigma 1, gamma 2, seed 0; `analysis/e4_summary.csv`, `figures/poe_sigma1_gamma2.png`)
+
+The question was whether a standard shortcut-debiasing method can move a network onto the exact trade-off curve. Brier scores, for the exact rule, the plain GRU and the best debiased model:
+
+| | A | B_match | B_dense |
+|---|---|---|---|
+| perfect A model | 0.1020 | 0.1282 | 0.1179 |
+| exact blend, w = 0.5 | 0.1039 | 0.1192 | 0.1093 |
+| plain GRU | 0.1031 | 0.1287 | 0.1277 |
+| debiased GRU, best w (0.7) | 0.1077 | 0.1270 | 0.1382 |
+| pattern-only bias model | 0.1063 | 0.1446 | 0.1821 |
+
+- The method does not work. At B_match, its best point gives up 0.005 at A to save 0.002 at B. The exact curve saves 0.009 at B for 0.002 at A. At B_dense, every w is worse at B than the plain GRU.
+- Why: the model that sees only who was tested already scores 0.106 at A, almost as good as the full model. When testing tracks sickness this strongly, the pattern and the values are two views of the same hidden state, not two separate signals. Product of experts assumes the shortcut is separate from the real signal, so subtracting the pattern removes most of what the main model would use (f alone: Brier 0.25). This is the redundancy problem again, from the other side.
+- The exact curve is reachable only by discounting the pattern where it enters, as evidence about the hidden state. A model with an explicit observation process (state-space or neural filter with a testing likelihood that can be tempered) would do that by construction. Not tested.
+
 ### Explainer figure and a new observation (18 Oct 2026)
 
 `figures/tradeoff_sigma1_gamma2.png` (script `figures/tradeoff_figure.py`) plots error at A against error at B for sigma 1, gamma 2 (3-seed means). The perfect model of A and its error at B form a dashed reference line; the gap to the model that ignores who is tested is the price of learning A. Made for the email to Sarah.
@@ -64,6 +80,7 @@ Reading: the observation pattern adds little beyond the values when values are p
 
 ## Done
 
+- E4 (product-of-experts discounting) implemented by Luna (`tasks/e4_poe.md`, `out/e4_poe.md`), reviewed, run and analysed (18 Oct).
 - E3 (exact redundancy) implemented by Luna (`tasks/e3_recorded.md`, `out/e3_recorded.md`), reviewed, run and analysed (17 Oct).
 - 17 Oct 2026: full grid finished (108 fits, 215 min). Bug fixed in `run_grid.py` `_bayes_arrays`: it unpacked the seed tuple in the wrong order, so Bayes predictions were computed on the training cohort's latent paths, not the test patients. All 27 `bayes.npz` files recomputed on the right cohort (y arrays now match the model shards); analysis rerun. Local folder renamed to `DL - Observation Shift Project`.
 - 17 Oct 2026: repository pushed to https://github.com/wjremy/DL-Observation-Shift-Project (private).

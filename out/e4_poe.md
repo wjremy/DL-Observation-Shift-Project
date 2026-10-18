@@ -1,0 +1,5 @@
+Added [run_poe.py](<C:/Users/wesre/Documents/Claude/DL - Observation Shift Project/run_poe.py>), [analyze_e4.py](<C:/Users/wesre/Documents/Claude/DL - Observation Shift Project/analyze_e4.py>), and [figures/poe_figure.py](<C:/Users/wesre/Documents/Claude/DL - Observation Shift Project/figures/poe_figure.py>). Existing source files were not changed.
+
+The specified Python interpreter passed `py_compile` for all three scripts. I did not run training or render the analysis: Torch and matplotlib are unavailable, and E4 logits are not present yet. Consequently, `analysis/e4_summary.csv` and `figures/poe_sigma1_gamma2.png` have not been generated; the scripts will produce them once the required results exist.
+
+The worktree also reports unrelated missing `results/...` shards and untracked `out/*.err` files; I left them untouched.
