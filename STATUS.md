@@ -4,13 +4,15 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-Nothing.
+E5 (learned latent filter, SPEC.md last section): `python latent_filter.py`, log `out/run_e5.log`, one fit (started 18 Oct). Next: `python analyze_e5.py`, `python figures/filter_figure.py`.
 
 ## Open
 
 - Review `analysis/contrasts.csv` (bootstrap intervals for architecture differences) and the figures.
 - Possible quick follow-ups (minutes, not a grid): stronger informativeness (gamma 3-4) to enlarge the effects; a CDE with longer training to test whether its under-learning of the pattern is a prior or slow convergence.
-- Optional: real-data arm (MIMIC-IV). Needs credentialed PhysioNet access, which a team member must apply for; on real data report mask gain on A against cost on B (no Bayes rules available).
+- Real-data arm: PhysioNet Challenge 2019 sepsis data (open access, CC BY 4.0, 42 MB, two hospital systems A and B). Proposed: train the structured model at A, re-learn the testing head on B's unlabelled records, evaluate on B's labels. Download awaits Wesley's go-ahead (18 Oct).
+- Verify the references in docs/LITERATURE.md (written from memory) before citing them.
+- Earlier optional item: real-data arm (MIMIC-IV). Needs credentialed PhysioNet access, which a team member must apply for; on real data report mask gain on A against cost on B (no Bayes rules available).
 
 ## Results so far
 
