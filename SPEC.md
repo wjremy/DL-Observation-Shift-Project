@@ -88,3 +88,18 @@ Motivation: blending the exact rules, logit p_w = logit p_V + w (logit p_A - log
 Method: product of experts (Clark et al. 2019; He et al. 2019). (1) Bias model b: GRU (hidden 64) on [0, m, delta] (the value channel zeroed), i.e. sees only who was tested and when, trained on A as usual. (2) Main model f: GRU with the standard features [x_locf, m, delta], trained on A with logit = f(x, m) + b(m), b frozen (its logits precomputed), same loss, optimiser, early stopping (validation loss also on f + b). (3) Deployment family: logit = f + w * b, w in {0, 0.1, ..., 1.0}. w = 1 is the model fitted to A; w = 0 removes the testing-pattern signal as far as the method can.
 Setting: E1 config sigma 1, gamma 2, seed 0 (same cohorts and seeds as E1 via run_grid helpers), test policies A, B_match, B_dense. Compare: the family's (Brier A, Brier B) points against the exact-rule blend curve and the plain E1 GRU (results/E1/sigma1_gamma2/gru/seed0).
 Output: results/E4/sigma1_gamma2/seed0/{bias,poe_gru}/ with logits.npz (one float32[n_test] logit array per test policy, plus y) and meta.json.
+
+## E5: a learned model with a separate testing head, tempered at deployment (Claude, 18 Oct 2026)
+
+Motivation: E4 showed that a black-box network has no lever that turns down only the evidence carried by being tested. The exact rule has one, because the testing pattern enters the filter only through the factor P(m_t | Z_t). E5 asks whether a model that learns this structure from A's data, rather than being given it, gives a tempering curve that follows the exact blend curve.
+Model (`latent_filter.py`, PyTorch): a discrete latent-state filter with K = 32 states, all parameters learned by gradient descent on A's training data:
+- transition matrix: row-softmax of a learned K x K logit matrix (initialised near-diagonal: +4 on the diagonal, +2 on the neighbours);
+- initial distribution: softmax of learned logits;
+- value head: Gaussian emission, learned mean per state (initialised evenly from -2.5 to 2.5) and one shared learned log-sd;
+- testing head: P(m_t = 1 | state k) = sigmoid(c_k), learned;
+- outcome head: P(Y = 1 | state at T-1 = k) = sigmoid(u_k), learned; prediction = filtered belief at T-1 times sigmoid(u).
+Forward filter in log space over t = 0..T-1: predict with the transition matrix; update with log N(x_t; mu_k, s) when m_t = 1 and with w * [m_t log sigmoid(c_k) + (1 - m_t) log(1 - sigmoid(c_k))] for every t. Training uses w = 1. Loss = BCE(y) + (1/T) * mean negative log marginal likelihood of (x, m), the latter from the same forward pass (log-sum-exp normalisers), so that the heads are proper likelihoods and not free features. Adam lr 1e-2, batch 512, up to 200 epochs, early stopping on validation loss (patience 15), torch.set_num_threads(4).
+Deployment family: the same trained model with w in {0, 0.05, ..., 1}.
+Setting: E1 config sigma 1, gamma 2, seed 0 (same cohorts as E1 via run_grid helpers); test policies A, B_match, B_dense.
+Compare: (Brier A, Brier B) of the tempered family against the exact blend curve and the plain E1 GRU. Also report the learned testing-head curve sigmoid(c_k) against the true policy sigmoid(alpha + gamma * mu_k) as a sanity check.
+Expectation, stated in advance: the simulator is itself a latent-state model of this kind, so success here is a proof of principle, not evidence for real data.
