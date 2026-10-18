@@ -54,7 +54,7 @@ Why, in general: Brier error = unavoidable error + mean squared distance to the 
 
 The same holds for clinical decisions, not only for Brier. With threshold decisions (cost-weighted: a missed case costs 1 - t, a false alarm t), the middle of the curve again beats both ends at t = 0.1, 0.2 and 0.3. At t = 0.2, in missed-case equivalents per 1,000 patients, the total extra harm over A and B is about 10 at w = 0.4, against 27 at w = 1 and 23 at w = 0. The reason: discounting the pattern a little flips decisions only for patients near the threshold. At A those patients are near indifference, so little is lost; at B the same histories mean a clearly different risk, so clearly wrong decisions are fixed.
 
-Requirement: the dial must scale only the evidence carried by being tested. A black-box network has no such lever, and product of experts (E4) supplies the wrong one: it scales everything the pattern-only model knows, which overlaps with what the values say. A model with an explicit testing head (E5) has the right lever by construction.
+Requirement: the dial must scale only the evidence carried by being tested. A black-box network has no such lever, and product of experts (E4) supplies the wrong one: it scales everything the pattern-only model knows, which overlaps with what the values say. A model with an explicit testing head has the right lever by construction. E5 confirms this when the model is learned from A's data: tempering its testing evidence follows the exact curve to within about 0.001 Brier at B.
 
 ## 9. Practical consequence: separate patient physiology from hospital practice (18 Oct 2026)
 

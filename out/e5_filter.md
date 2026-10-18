@@ -1,0 +1,5 @@
+Added the four requested files: [latent_filter.py](</C:/Users/wesre/Documents/Claude/DL - Observation Shift Project/latent_filter.py>), [test_latent_filter.py](</C:/Users/wesre/Documents/Claude/DL - Observation Shift Project/test_latent_filter.py>), [analyze_e5.py](</C:/Users/wesre/Documents/Claude/DL - Observation Shift Project/analyze_e5.py>), and [filter_figure.py](</C:/Users/wesre/Documents/Claude/DL - Observation Shift Project/figures/filter_figure.py>). No existing source files were edited.
+
+The NumPy checks passed. On the 101-state reference grid, max absolute differences from Bayes were **3.52e-9** at w=1 and **4.15e-9** at w=0. All four files passed syntax parsing. The Torch-versus-NumPy check was skipped because Torch is unavailable here; the figure was syntax-checked only.
+
+Training and analysis outputs weren’t generated. The interpreter lacks Torch, and the E1 GRU prediction shard required by `analyze_e5.py` is absent in the current worktree.

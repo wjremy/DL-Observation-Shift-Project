@@ -4,7 +4,7 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-E5 (learned latent filter, SPEC.md last section): `python latent_filter.py`, log `out/run_e5.log`, one fit (started 18 Oct). Next: `python analyze_e5.py`, `python figures/filter_figure.py`.
+Nothing.
 
 ## Open
 
@@ -15,6 +15,24 @@ E5 (learned latent filter, SPEC.md last section): `python latent_filter.py`, log
 - Earlier optional item: real-data arm (MIMIC-IV). Needs credentialed PhysioNet access, which a team member must apply for; on real data report mask gain on A against cost on B (no Bayes rules available).
 
 ## Results so far
+
+### E5: a learned model with a separate testing head reaches the exact trade-off (18 Oct 2026; sigma 1, gamma 2, seed 0; `analysis/e5_summary.csv`, `figures/filter_sigma1_gamma2.png`)
+
+A 32-state latent filter (learned dynamics, value head, testing head and outcome head; trained on A only, 908 s), tempered at deployment by scaling the testing-head evidence with w. Brier scores:
+
+| | A | B_match | B_dense |
+|---|---|---|---|
+| perfect A model (exact, w = 1) | 0.1020 | 0.1282 | 0.1179 |
+| exact blend, w = 0.5 | 0.1039 | 0.1192 | 0.1093 |
+| plain GRU | 0.1031 | 0.1287 | 0.1277 |
+| filter, w = 1 | 0.1024 | 0.1286 | 0.1204 |
+| filter, w = 0.3 | 0.1041 | 0.1200 | 0.1092 |
+| filter, w = 0 | 0.1144 | 0.1149 | 0.1076 |
+
+- The tempered filter follows the exact curve closely on both B policies (figure). At the same error at A, it is within about 0.001 of the exact curve at B. Its w scale differs (w = 0.3 for the filter is about w = 0.5 for the exact blend), so w has to be chosen on the model's own curve, not copied from theory.
+- Even untempered (w = 1), the filter beats the plain GRU at A and is much better under dense testing (0.120 against 0.128): it counts tests through a likelihood, so it does not extrapolate wildly beyond A's range of counts.
+- The learned testing head does not match the true testing curve state by state (its states are arranged differently from the simulator's), yet the predictions are near-exact. This matters for re-learning the testing head at B, which assumes the rest of the model is identified well enough; to be tested.
+- Expected in advance: the simulator is itself a latent-state model, so this is a proof of principle that the right lever works when learned, not evidence for real data.
 
 ### E4: product-of-experts discounting fails (18 Oct 2026; GRU, sigma 1, gamma 2, seed 0; `analysis/e4_summary.csv`, `figures/poe_sigma1_gamma2.png`)
 
@@ -82,6 +100,7 @@ Reading: the observation pattern adds little beyond the values when values are p
 
 ## Done
 
+- E5 (learned latent filter with tempered testing head) implemented by Luna (`tasks/e5_filter.md`, `out/e5_filter.md`), reviewed (numpy filter reproduces Bayes to 4e-9; torch matches numpy), run and analysed (18 Oct).
 - E4 (product-of-experts discounting) implemented by Luna (`tasks/e4_poe.md`, `out/e4_poe.md`), reviewed, run and analysed (18 Oct).
 - E3 (exact redundancy) implemented by Luna (`tasks/e3_recorded.md`, `out/e3_recorded.md`), reviewed, run and analysed (17 Oct).
 - 17 Oct 2026: full grid finished (108 fits, 215 min). Bug fixed in `run_grid.py` `_bayes_arrays`: it unpacked the seed tuple in the wrong order, so Bayes predictions were computed on the training cohort's latent paths, not the test patients. All 27 `bayes.npz` files recomputed on the right cohort (y arrays now match the model shards); analysis rerun. Local folder renamed to `DL - Observation Shift Project`.
