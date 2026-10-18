@@ -14,6 +14,11 @@ Nothing.
 
 ## Results so far
 
+### Explainer figure and a new observation (18 Oct 2026)
+
+`figures/tradeoff_sigma1_gamma2.png` (script `figures/tradeoff_figure.py`) plots error at A against error at B for sigma 1, gamma 2 (3-seed means). The perfect model of A and its error at B form a dashed reference line; the gap to the model that ignores who is tested is the price of learning A. Made for the email to Sarah.
+With `--curve`, the plot also shows the blend of the two exact rules (discounting the testing pattern by a factor w). This trade-off is very lopsided: near the perfect A model, discounting the pattern a little costs almost nothing at A and saves much of the price at B. The reason: A's error is flat at its optimum (second order), while B's error changes linearly (first order). This is general, not specific to this simulation. All four networks lie far above that curve. A possible project question: can mask-reliance regularisation reach the curve? Not tested yet.
+
 ### E3: exact redundancy (17 Oct 2026; 4 fits, seed 0, 8,000 test patients; `analysis/e3_summary.csv`)
 
 Testing depends only on the last recorded value (sigma 1, gamma 2, rate 0.3), so the pattern adds nothing beyond the recorded history. The Bayes rule ignores it, and the justified transfer cost is exactly zero: every loss on B is unjustified. The V_rule's Brier is 0.117 on A, 0.115 on B_match and 0.107 on B_dense.
