@@ -4,7 +4,7 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-E7 Luna agent (19 Oct): the dial across many open site pairs (PhysioNet 2019 hospital x unit, sepsis; PhysioNet 2012 ICU types, mortality; SPEC.md E7). Brief tasks/e7/; answer out/e7/e7_many_pairs.md; writes e7_sites.py, e7_dial.py, figures/e7_figure.py, analysis/e7_*. Next: Claude reviews code and numbers, renders the figure, records results.
+Nothing.
 
 ## Open
 
@@ -17,6 +17,15 @@ E7 Luna agent (19 Oct): the dial across many open site pairs (PhysioNet 2019 hos
 - Earlier optional item: real-data arm (MIMIC-IV). Needs credentialed PhysioNet access, which a team member must apply for; on real data report mask gain on A against cost on B (no Bayes rules available).
 
 ## Results so far
+
+### E7: the dial across 24 open site pairs (19 Oct 2026; SPEC.md E7; `analysis/e7_*.csv`, `figures/e7_pairs.png`)
+
+Code by Luna (`e7_sites.py`, `e7_dial.py`), reviewed by Claude: P19 features hours 1-24, outcome 25-72; P12 features hours 0-48; imputation and scaling from the source's 80% training split; no source-training patient in any target (checked). Runtime about 5 min. Sites: P19 A-MICU 3,065 (105 sepsis cases), A-SICU 1,470 (25), B-MICU 5,018 (88), B-SICU 4,844 (130); P12 CCU 1,769 (224 deaths), CSRU 2,530 (123), MICU 4,293 (852), SICU 3,408 (508).
+
+- Where the best w sits (whole target, grid 0-1.5): at 0 in 5 pairs, strictly inside (0.05-0.95) in 10, at 1 in 3, above 1 in 6. The optimum is spread over the whole scale; no single end and no fixed value is right.
+- Fair test (100 splits; w and the better end both chosen on one half of the target, judged on the other): the dial has lower log loss than the better end in 13 of 24 pairs, mean difference -0.0011 per patient. Pairs with an interior optimum gain little (mean -0.0005; largest SICU to CCU -0.0027, A-MICU to B-SICU -0.0013); most of the average comes from pairs wanting w above 1 (mean -0.0037, all with CSRU as source). Where the best end is right, the dial loses a little from tuning noise (up to +0.0007, worst with 25 cases at A-SICU).
+- Caveat 1: scaling the pattern term also changes how spread out the predictions are, so part of the gain is calibration. In the CSRU-source pairs log loss improves while AUROC falls (by 0.01-0.02), which points to calibration, not better ranking. Next check: add intercept-and-slope recalibration to both the dial and the end choice and compare again.
+- Caveat 2: the P12 sites are units of one hospital (2001-08) and P19 sites mix hospitals and units, so differences include case mix, not only testing policy.
 
 ### E6: the dial on two real hospitals (19 Oct 2026; PhysioNet 2019, A = Beth Israel, B = Emory; `analysis/e6_*.csv`, `analysis/e6_summary.json`, `figures/e6_two_hospitals.png`)
 

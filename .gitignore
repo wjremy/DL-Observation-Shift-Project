@@ -6,3 +6,4 @@ run_full.log
 # Raw downloaded data (re-downloadable; see docs/DATA.md)
 data/raw_*/
 data/e6_cache.npz
+data/e7_cache.npz
