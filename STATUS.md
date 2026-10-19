@@ -4,7 +4,7 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-E7b Luna agent (19 Oct): dial above 1 versus recalibration (SPEC.md E7b; brief tasks/e7b/; answer out/e7b/e7b_recal.md; writes e7b_recal.py, analysis/e7b_*). Next: Claude reviews and records.
+Nothing.
 
 ## Open
 
@@ -18,6 +18,15 @@ E7b Luna agent (19 Oct): dial above 1 versus recalibration (SPEC.md E7b; brief t
 
 ## Results so far
 
+### E7b: dial above 1 versus recalibration (19 Oct 2026; `analysis/e7b_*`)
+
+Implemented in `e7b_recal.py`, reusing E7's source splits, preprocessing and CV fits. On the extended 0-3 grid, the best weight is above 1 in 6/24 pairs (maximum 1.90), with no optimum at the upper grid edge. The w=0..1.5 target log-loss curve reproduces E7 to maximum absolute difference 9.7e-17 over 744 points; all eight selected source penalties also match E7.
+
+- On 100 paired target tune/evaluation splits (new seed base 71219), the uncalibrated 0-3 dial minus end has mean pair log-loss difference -0.000996. After per-candidate, unpenalised intercept/slope calibration on the tune half, dial03_recal beats end_recal by a negative mean and negative 90th percentile in 5/24 pairs; the mean pair difference is -0.000732. The recalibrated 0-3 option chooses mean w > 1 in 14/24 pairs and does so in 52.6% of split choices overall.
+- The recalibrated 0-1 dial meets the same paired criterion in 3/24 pairs, with mean difference -0.000375. Calibration attenuates the average dial advantage but does not remove it; the remaining gains are concentrated in a minority of pairs. Runtime was 4.9 min using the Codex NumPy/pandas runtime.
+- Claude's review (19 Oct): code reproduces E7 exactly (max difference 1e-16). Reading: (1) the large above-1 gains of the cardiac-surgery (CSRU) source pairs were mostly calibration: after recalibration CSRU to MICU and CSRU to SICU gain nothing (-0.0001, +0.0003); CSRU to CCU keeps -0.0032. (2) With recalibration the slope can shrink, so w then acts as the weight of the pattern relative to physiology; the recalibrated dial picks w near 2.7-2.9 in most P19 pairs (close to the new grid edge), i.e. it shifts weight from physiology to the pattern. (3) Its AUROC gains over end_recal are positive on average (mean +0.009; above +0.005 in 11 of 24 pairs; three of the four same-unit cross-hospital sepsis pairs +0.02 to +0.036), but the 10-90% ranges mostly include zero, so this is weak evidence. Net: allowing w above 1 is fine, but its apparent large gains were calibration; the dial's real advantage over the binary choice in these open data is small and limited to a minority of pairs.
+- Artifacts: `e7b_recal.py`, `analysis/e7b_pairs.csv` (144 pair-option rows), `analysis/e7b_curves.csv` (1,464 rows), and `analysis/e7b_summary.json`.
+
 ### E7: the dial across 24 open site pairs (19 Oct 2026; SPEC.md E7; `analysis/e7_*.csv`, `figures/e7_pairs.png`)
 
 Code by Luna (`e7_sites.py`, `e7_dial.py`), reviewed by Claude: P19 features hours 1-24, outcome 25-72; P12 features hours 0-48; imputation and scaling from the source's 80% training split; no source-training patient in any target (checked). Runtime about 5 min. Sites: P19 A-MICU 3,065 (105 sepsis cases), A-SICU 1,470 (25), B-MICU 5,018 (88), B-SICU 4,844 (130); P12 CCU 1,769 (224 deaths), CSRU 2,530 (123), MICU 4,293 (852), SICU 3,408 (508).
@@ -25,7 +34,7 @@ Code by Luna (`e7_sites.py`, `e7_dial.py`), reviewed by Claude: P19 features hou
 - Where the best w sits (whole target, grid 0-1.5): at 0 in 5 pairs, strictly inside (0.05-0.95) in 10, at 1 in 3, above 1 in 6. The optimum is spread over the whole scale; no single end and no fixed value is right.
 - Fair test (100 splits; w and the better end both chosen on one half of the target, judged on the other): the dial has lower log loss than the better end in 13 of 24 pairs, mean difference -0.0011 per patient. Pairs with an interior optimum gain little (mean -0.0005; largest SICU to CCU -0.0027, A-MICU to B-SICU -0.0013); most of the average comes from pairs wanting w above 1 (mean -0.0037, all with CSRU as source). Where the best end is right, the dial loses a little from tuning noise (up to +0.0007, worst with 25 cases at A-SICU).
 - Shift size (19 Oct; `figures/e7_shift_size.py` by Claude, `analysis/e7_shift_size.csv`, `figures/e7_shift_size.png`): per pair, the curvature c of target log loss in w measures how much the trust weight matters at all. The best dial beats the better end by about c * d^2, where d is the distance of the optimum from the nearest of 0 and 1 (the quadratic prediction matches the observed gain in most pairs). So a gain needs both a large shift and an optimum away from the ends. The realistic sepsis pairs (same ICU type, other hospital) have small curvature (0.001-0.004) and gains near zero; the largest gains (0.005-0.010, 1.3-2.6% of log loss) are the P12 pairs from the cardiac surgery ICU, whose optimum lies above 1. Rank correlation of curvature with gain: 0.45 (best possible dial), 0.14 (tuned).
-- Caveat 1: scaling the pattern term also changes how spread out the predictions are, so part of the gain is calibration. In the CSRU-source pairs log loss improves while AUROC falls (by 0.01-0.02), which points to calibration, not better ranking. Next check: add intercept-and-slope recalibration to both the dial and the end choice and compare again.
+- Caveat 1 (tested in E7b): scaling the pattern term also changes prediction spread, so part of the above-1 gain is calibration. Tune-half intercept/slope recalibration reduces the average 0-3 gain from -0.000996 to -0.000732 log-loss per patient, but dial03_recal still beats end_recal under the strict paired criterion in 5/24 pairs; the largest uncalibrated CSRU-to-SICU gain disappears after recalibration.
 - Caveat 2: the P12 sites are units of one hospital (2001-08) and P19 sites mix hospitals and units, so differences include case mix, not only testing policy.
 
 ### E6: the dial on two real hospitals (19 Oct 2026; PhysioNet 2019, A = Beth Israel, B = Emory; `analysis/e6_*.csv`, `analysis/e6_summary.json`, `figures/e6_two_hospitals.png`)
