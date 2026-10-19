@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Observation Shift: Rethinking the Project</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+  html, body { margin:0; height:100%; background:#0E0F12; overflow:hidden; font-family:'DM Sans', Arial, sans-serif; }
+  * { margin:0; box-sizing:border-box; }
+  #stage { position:absolute; left:0; top:0; width:1920px; height:1080px; transform-origin:0 0; }
+  .slide { position:absolute; inset:0; width:1920px; height:1080px; overflow:hidden; display:none; }
+  .slide.active { display:flex; }
+  .slide[style*="display:grid"].active { display:grid; }
+  .slide h1 { line-height:1.1; } .slide h2 { line-height:1.15; } .slide h3 { line-height:1.2; } .slide p { line-height:1.4; }
+  #counter { position:fixed; right:16px; bottom:12px; color:#6B717A; font:14px 'DM Sans', Arial, sans-serif; }
+  #notes { position:fixed; left:0; right:0; bottom:0; max-height:40%; overflow:auto; background:rgba(22,24,29,0.96); color:#F2F1EC;
+           font:18px/1.5 'DM Sans', Arial, sans-serif; padding:16px 24px; display:none; }
+</style></head>
+<body>
+<div id="stage">
+<section class="slide" data-notes="Three minutes: what the problem with the current setup is, and a direction that is more useful for clinical practice." id="cover" data-transition="fade" style="background:#0E0F12;color:#F2F1EC;font-family:'DM Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:center;gap:40px">
+<div style="position:absolute;left:1180px;top:300px;width:220px;height:300px;background:#5B9BFF;border-radius:24px;"></div>
+<div style="position:absolute;left:1500px;top:300px;width:220px;height:300px;background:#F5A142;border-radius:24px;"></div>
+<div style="position:absolute;left:1270px;top:390px;width:40px;height:120px;background:#F2F1EC;border-radius:6px"></div>
+<div style="position:absolute;left:1230px;top:430px;width:120px;height:40px;background:#F2F1EC;border-radius:6px"></div>
+<div style="position:absolute;left:1590px;top:390px;width:40px;height:120px;background:#F2F1EC;border-radius:6px"></div>
+<div style="position:absolute;left:1550px;top:430px;width:120px;height:40px;background:#F2F1EC;border-radius:6px"></div>
+<p style="position:absolute;left:1180px;top:630px;width:220px;font-size:44px;font-weight:700;text-align:center;color:#5B9BFF">A</p>
+<p style="position:absolute;left:1500px;top:630px;width:220px;font-size:44px;font-weight:700;text-align:center;color:#F5A142">B</p>
+<div style="position:absolute;left:1410px;top:420px;width:80px;height:56px;background:#F2F1EC;background:none"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;display:block"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#F2F1EC"/></svg></div>
+<p style="font-size:32px;color:#9AA0A6;font-weight:500;letter-spacing:2px">DEEP LEARNING PROJECT</p>
+<h1 style="font-size:120px;font-weight:700;line-height:1.05;width:960px">Observation shift</h1>
+<p style="font-size:44px;color:#BFC4CA;width:960px">What does the current setup measure, and what could we do instead?</p>
+
+</section>
+
+<section class="slide" data-notes="Sarah’s setup: at hospital A, doctors test sick patients more, so being tested itself predicts sickness. At hospital B, everyone is tested equally. Train on A, test on B, and call the architecture with the smallest drop the most robust." id="setup" data-transition="fade" style="background:#0E0F12;color:#F2F1EC;font-family:'DM Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:48px">
+<h2 style="font-size:72px;font-weight:700">The current setup</h2>
+<div style="display:flex;gap:64px">
+<div style="flex:1;display:flex;flex-direction:column;gap:24px;background:#16181D;border-radius:24px;padding:40px;border-top:8px solid #5B9BFF">
+<h3 style="font-size:44px;font-weight:700;color:#5B9BFF">Hospital A</h3>
+<svg aria-label="Six patients; the three sick ones have five tests each, the three healthy ones one test each" width="700" height="260" viewBox="0 0 700 260" style="width:700px;height:260px">
+<rect x="34" y="40" width="10" height="28" fill="#5B9BFF"/><rect x="50" y="40" width="10" height="28" fill="#5B9BFF"/><rect x="66" y="40" width="10" height="28" fill="#5B9BFF"/><rect x="82" y="40" width="10" height="28" fill="#5B9BFF"/><rect x="18" y="40" width="10" height="28" fill="#5B9BFF"/>
+<circle cx="55" cy="170" r="44" fill="#F2F1EC"/>
+<rect x="160" y="40" width="10" height="28" fill="#5B9BFF"/>
+<circle cx="165" cy="170" r="44" fill="none" stroke="#9AA0A6" stroke-width="5"/>
+<rect x="258" y="40" width="10" height="28" fill="#5B9BFF"/><rect x="242" y="40" width="10" height="28" fill="#5B9BFF"/><rect x="274" y="40" width="10" height="28" fill="#5B9BFF"/><rect x="290" y="40" width="10" height="28" fill="#5B9BFF"/><rect x="226" y="40" width="10" height="28" fill="#5B9BFF"/>
+<circle cx="263" cy="170" r="44" fill="#F2F1EC"/>
+<rect x="368" y="40" width="10" height="28" fill="#5B9BFF"/>
+<circle cx="373" cy="170" r="44" fill="none" stroke="#9AA0A6" stroke-width="5"/>
+<rect x="478" y="40" width="10" height="28" fill="#5B9BFF"/>
+<circle cx="483" cy="170" r="44" fill="none" stroke="#9AA0A6" stroke-width="5"/>
+<rect x="588" y="40" width="10" height="28" fill="#5B9BFF"/><rect x="572" y="40" width="10" height="28" fill="#5B9BFF"/><rect x="604" y="40" width="10" height="28" fill="#5B9BFF"/><rect x="620" y="40" width="10" height="28" fill="#5B9BFF"/><rect x="556" y="40" width="10" height="28" fill="#5B9BFF"/>
+<circle cx="593" cy="170" r="44" fill="#F2F1EC"/>
+</svg>
+<p style="font-size:36px;color:#BFC4CA">Sick patients get tested more</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:24px;background:#16181D;border-radius:24px;padding:40px;border-top:8px solid #F5A142">
+<h3 style="font-size:44px;font-weight:700;color:#F5A142">Hospital B</h3>
+<svg aria-label="Six patients, sick and healthy, all with three tests each" width="700" height="260" viewBox="0 0 700 260" style="width:700px;height:260px">
+<rect x="34" y="40" width="10" height="28" fill="#F5A142"/><rect x="50" y="40" width="10" height="28" fill="#F5A142"/><rect x="66" y="40" width="10" height="28" fill="#F5A142"/>
+<circle cx="55" cy="170" r="44" fill="#F2F1EC"/>
+<rect x="144" y="40" width="10" height="28" fill="#F5A142"/><rect x="160" y="40" width="10" height="28" fill="#F5A142"/><rect x="176" y="40" width="10" height="28" fill="#F5A142"/>
+<circle cx="165" cy="170" r="44" fill="none" stroke="#9AA0A6" stroke-width="5"/>
+<rect x="242" y="40" width="10" height="28" fill="#F5A142"/><rect x="258" y="40" width="10" height="28" fill="#F5A142"/><rect x="274" y="40" width="10" height="28" fill="#F5A142"/>
+<circle cx="263" cy="170" r="44" fill="#F2F1EC"/>
+<rect x="352" y="40" width="10" height="28" fill="#F5A142"/><rect x="368" y="40" width="10" height="28" fill="#F5A142"/><rect x="384" y="40" width="10" height="28" fill="#F5A142"/>
+<circle cx="373" cy="170" r="44" fill="none" stroke="#9AA0A6" stroke-width="5"/>
+<rect x="462" y="40" width="10" height="28" fill="#F5A142"/><rect x="478" y="40" width="10" height="28" fill="#F5A142"/><rect x="494" y="40" width="10" height="28" fill="#F5A142"/>
+<circle cx="483" cy="170" r="44" fill="none" stroke="#9AA0A6" stroke-width="5"/>
+<rect x="572" y="40" width="10" height="28" fill="#F5A142"/><rect x="588" y="40" width="10" height="28" fill="#F5A142"/><rect x="604" y="40" width="10" height="28" fill="#F5A142"/>
+<circle cx="593" cy="170" r="44" fill="#F2F1EC"/>
+</svg>
+<p style="font-size:36px;color:#BFC4CA">Everyone gets tested equally</p>
+</div>
+</div>
+<div style="display:flex;gap:32px;align-items:center;justify-content:center">
+<p style="font-size:36px;font-weight:700;background:#5B9BFF;color:#0E0F12;padding:16px 32px;border-radius:999px">Train on A</p>
+<div style="width:72px;height:40px;background:#F2F1EC;background:none"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;display:block"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#F2F1EC"/></svg></div>
+<p style="font-size:36px;font-weight:700;background:#F5A142;color:#0E0F12;padding:16px 32px;border-radius:999px">Test on B</p>
+<div style="width:72px;height:40px;background:#F2F1EC;background:none"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;display:block"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#F2F1EC"/></svg></div>
+<p style="font-size:36px;font-weight:700;border:3px solid #F2F1EC;padding:13px 32px;border-radius:999px">Smallest drop = most robust?</p>
+</div>
+<p style="position:absolute;left:128px;bottom:56px;width:1000px;font-size:24px;color:#9AA0A6">Filled circle = sick patient · bar = one test</p>
+
+</section>
+
+<section class="slide" data-notes="Bars are performance, higher is better. Model 1 learned the testing pattern at A, which is correct there, so it’s best at A and drops a lot at B. Model 2 missed the pattern: it’s worse at A, so its drop is smaller and it looks robust. But it isn’t better at B; it just started lower. In our simulation the Neural CDE did exactly this. The drop mostly measures how well a model learned A." id="problem" data-transition="fade" style="background:#0E0F12;color:#F2F1EC;font-family:'DM Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<h2 style="font-size:72px;font-weight:700">A small drop can mean a weak model</h2>
+<div style="display:flex;gap:64px">
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#16181D;border-radius:24px;padding:40px">
+<h3 style="font-size:40px;font-weight:700">Model 1: learned the pattern</h3>
+<div style="position:relative;width:700px;height:430px">
+<svg aria-label="Performance bars: A high, B much lower; a large gap marked as the drop" width="700" height="430" viewBox="0 0 700 430" style="width:700px;height:430px">
+<line x1="40" y1="410" x2="560" y2="410" stroke="#4A4F57" stroke-width="3"/>
+<rect x="80" y="40" width="170" height="370" rx="10" fill="#5B9BFF"/>
+<rect x="330" y="230" width="170" height="180" rx="10" fill="#F5A142"/>
+<line x1="250" y1="40" x2="560" y2="40" stroke="#F2F1EC" stroke-width="4" stroke-dasharray="14 10"/>
+<line x1="530" y1="52" x2="530" y2="218" stroke="#F2F1EC" stroke-width="6"/>
+<polygon points="530,40 516,62 544,62" fill="#F2F1EC"/>
+<polygon points="530,230 516,208 544,208" fill="#F2F1EC"/>
+</svg>
+<p style="position:absolute;left:560px;top:110px;width:140px;font-size:36px;font-weight:700">big drop</p></div>
+<div style="display:flex;gap:80px;padding:0 0 0 80px">
+<p style="width:170px;font-size:36px;font-weight:700;color:#5B9BFF;text-align:center">A</p>
+<p style="width:170px;font-size:36px;font-weight:700;color:#F5A142;text-align:center">B</p>
+<p style="width:120px;font-size:24px;color:#9AA0A6;line-height:1.2">bar = performance</p>
+</div>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#16181D;border-radius:24px;padding:40px">
+<h3 style="font-size:40px;font-weight:700">Model 2: missed the pattern</h3>
+<div style="position:relative;width:700px;height:430px">
+<svg aria-label="Performance bars: A lower than model 1, B about the same as model 1; a small gap marked as the drop" width="700" height="430" viewBox="0 0 700 430" style="width:700px;height:430px">
+<line x1="40" y1="410" x2="560" y2="410" stroke="#4A4F57" stroke-width="3"/>
+<line x1="80" y1="40" x2="250" y2="40" stroke="#5B9BFF" stroke-width="4" stroke-dasharray="6 8"/>
+<rect x="80" y="170" width="170" height="240" rx="10" fill="#5B9BFF"/>
+<rect x="330" y="240" width="170" height="170" rx="10" fill="#F5A142"/>
+<line x1="250" y1="170" x2="560" y2="170" stroke="#F2F1EC" stroke-width="4" stroke-dasharray="14 10"/>
+<line x1="530" y1="180" x2="530" y2="230" stroke="#F2F1EC" stroke-width="6"/>
+<polygon points="530,170 518,188 542,188" fill="#F2F1EC"/>
+<polygon points="530,240 518,222 542,222" fill="#F2F1EC"/>
+</svg>
+<p style="position:absolute;left:560px;top:180px;width:140px;font-size:36px;font-weight:700">small drop</p>
+<p style="position:absolute;left:80px;top:60px;width:420px;font-size:28px;color:#5B9BFF">Model 1 at A: this one is worse</p>
+</div>
+<div style="display:flex;gap:80px;padding:0 0 0 80px">
+<p style="width:170px;font-size:36px;font-weight:700;color:#5B9BFF;text-align:center">A</p>
+<p style="width:170px;font-size:36px;font-weight:700;color:#F5A142;text-align:center">B</p>
+</div>
+</div>
+</div>
+<p style="font-size:44px;font-weight:700;text-align:center">“Robust” here just means <span style="color:#5B9BFF">it learned A worse</span>.</p>
+
+</section>
+
+<section class="slide" data-notes="This is the key insight. The trade-off is lopsided. Near the best model for A, its error is flat, so a small change costs almost nothing there, while at B it helps right away. Half trust costs 0.002 at A and gains 0.009 at B. If both hospitals count, the middle beats both ends. This holds in general, because errors grow with the square of the distance to each hospital’s ideal." id="tradeoff" data-transition="fade" style="background:#16181D;color:#F2F1EC;font-family:'DM Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:40px">
+<h2 style="font-size:72px;font-weight:700">Trusting the pattern a bit less is almost free</h2>
+<svg aria-label="Trade-off curve from full trust in the testing pattern (top left) to ignoring it (bottom right); it first drops steeply, so half trust lands near the bottom left" width="900" height="560" viewBox="0 0 900 560" style="position:absolute;left:160px;top:300px;width:900px;height:560px">
+<line x1="40" y1="0" x2="40" y2="540" stroke="#4A4F57" stroke-width="3"/>
+<line x1="40" y1="540" x2="900" y2="540" stroke="#4A4F57" stroke-width="3"/>
+<path d="M825.3,507.6 L719.2,505.6 L626.7,499.9 L546.3,490.9 L476.6,478.7 L416.3,463.7 L364.3,446.2 L319.6,426.3 L281.2,404.4 L248.4,380.8 L220.5,355.7 L196.8,329.2 L176.9,301.7 L160.2,273.3 L146.5,244.0 L135.3,214.2 L126.5,183.8 L119.7,152.9 L114.7,121.6 L111.4,90.0 L109.7,57.9" fill="none" stroke="#F2F1EC" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="110,30 116.9,48.9 136.8,49.6 120.9,62.1 126.5,81.4 110,70 93.5,81.4 99.1,62.1 83.2,49.6 103.1,48.9" fill="#5B9BFF"/>
+<rect x="805" y="487" width="40" height="40" fill="#F5A142"/>
+<circle cx="220.5" cy="355.7" r="20" fill="#0E0F12" stroke="#F2F1EC" stroke-width="6"/>
+</svg>
+<p style="position:absolute;left:310px;top:330px;width:420px;font-size:32px;color:#5B9BFF;font-weight:700">Full trust: best at A, worst at B</p>
+<p style="position:absolute;left:640px;top:700px;width:400px;font-size:32px;color:#F5A142;font-weight:700">Ignore it: best at B</p>
+<p style="position:absolute;left:420px;top:620px;width:300px;font-size:32px;font-weight:700">Half trust</p>
+<p style="position:absolute;left:200px;top:870px;width:860px;font-size:28px;color:#9AA0A6">error at hospital A →</p>
+<p style="position:absolute;left:200px;top:250px;width:500px;font-size:28px;color:#9AA0A6">↑ error at hospital B</p>
+<div style="position:absolute;left:1180px;top:340px;width:580px;display:flex;flex-direction:column;gap:32px">
+<p style="font-size:44px;font-weight:700">Half trust:</p>
+<div style="display:flex;flex-direction:column;gap:8px;background:#0E0F12;border-radius:20px;padding:32px;border-left:8px solid #5B9BFF">
+<p style="font-size:32px;color:#BFC4CA">at hospital A</p>
+<p style="font-size:64px;font-weight:700;color:#5B9BFF">+0.002</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;background:#0E0F12;border-radius:20px;padding:32px;border-left:8px solid #F5A142">
+<p style="font-size:32px;color:#BFC4CA">at hospital B</p>
+<p style="font-size:64px;font-weight:700;color:#F5A142">−0.009</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:56px;width:1300px;font-size:24px;color:#9AA0A6">Our simulation, exact Bayes models, error = Brier score. Same pattern for treatment decisions at 10–30% thresholds.</p>
+
+</section>
+
+<section class="slide" data-notes="Standard networks have no such setting: the testing pattern leaks into everything they learn. We tried the usual debiasing trick (product of experts) and it made things worse. A state-space model tracks the patient’s hidden state from the values, and treats who got tested as a separate piece of evidence with its own weight. Turning that weight down followed the best possible curve almost exactly." id="dial" data-transition="fade" style="background:#0E0F12;color:#F2F1EC;font-family:'DM Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:48px">
+<h2 style="font-size:72px;font-weight:700">For that, a model needs a dial</h2>
+<div style="display:flex;gap:64px">
+<div style="flex:1;display:flex;flex-direction:column;gap:40px;background:#16181D;border-radius:24px;padding:48px">
+<h3 style="font-size:44px;font-weight:700;color:#9AA0A6">Standard network</h3>
+<div style="display:flex;gap:24px;align-items:center;height:360px">
+<div style="display:flex;flex-direction:column;gap:96px">
+<p style="font-size:32px;border:3px solid #9AA0A6;border-radius:12px;padding:12px 20px;width:200px;text-align:center">values</p>
+<p style="font-size:32px;border:3px solid #9AA0A6;border-radius:12px;padding:12px 20px;width:200px;text-align:center">tested?</p>
+</div>
+<div style="width:64px;height:36px;background:#9AA0A6;background:none"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;display:block"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#9AA0A6"/></svg></div>
+<div style="width:240px;height:300px;background:#2A2D33;border-radius:16px;display:flex;align-items:center;justify-content:center">
+<p style="font-size:96px;font-weight:700;color:#6B717A">?</p>
+</div>
+<div style="width:64px;height:36px;background:#9AA0A6;background:none"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;display:block"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#9AA0A6"/></svg></div>
+<div style="width:72px;height:72px;background:#F2F1EC;border-radius:50%;"></div>
+</div>
+<p style="font-size:32px;color:#9AA0A6">all mixed: nothing to turn down</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:40px;background:#16181D;border-radius:24px;padding:48px;border-top:8px solid #5B9BFF">
+<h3 style="font-size:44px;font-weight:700;color:#5B9BFF">State-space model</h3>
+<div style="display:flex;gap:24px;align-items:center;height:360px">
+<div style="display:flex;flex-direction:column;gap:96px">
+<div style="display:flex;gap:20px;align-items:center">
+<p style="font-size:32px;border:3px solid #5B9BFF;border-radius:12px;padding:12px 20px;width:200px;text-align:center">values</p>
+<div style="width:56px;height:32px;background:#5B9BFF;background:none"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;display:block"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#5B9BFF"/></svg></div>
+<div style="width:96px;height:96px;background:#5B9BFF;border-radius:50%;"></div>
+</div>
+<div style="display:flex;gap:20px;align-items:center">
+<p style="font-size:32px;border:3px solid #F5A142;border-radius:12px;padding:12px 20px;width:200px;text-align:center">tested?</p>
+<div style="width:56px;height:32px;background:#F5A142;background:none"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;display:block"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#F5A142"/></svg></div>
+<svg aria-label="A dial, the adjustable weight on the testing evidence, turned to about half" width="96" height="96" viewBox="0 0 96 96" style="width:96px;height:96px">
+<circle cx="48" cy="48" r="42" fill="#0E0F12" stroke="#F5A142" stroke-width="7"/>
+<line x1="48" y1="48" x2="48" y2="14" stroke="#F5A142" stroke-width="8" stroke-linecap="round"/>
+</svg>
+</div>
+</div>
+<div style="width:64px;height:36px;background:#F2F1EC;background:none"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;display:block"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#F2F1EC"/></svg></div>
+<div style="width:72px;height:72px;background:#F2F1EC;border-radius:50%;"></div>
+</div>
+<p style="font-size:32px;color:#BFC4CA">testing is its own part, with a dial</p>
+</div>
+</div>
+<p style="font-size:40px;font-weight:700;text-align:center">Simulation: turning the dial hit the <span style="color:#5B9BFF">best possible trade-off</span>.</p>
+
+</section>
+
+<section class="slide" data-notes="This makes it practical. Hospitals increasingly run a new model silently for a few weeks before switching it on. During that time we compute predictions at several dial settings. Once the outcomes are in, we pick the setting that predicted best, and go live with it. Even before outcomes arrive, B’s records show whether sicker-looking patients get tested more there." id="runin" data-transition="fade" style="background:#0E0F12;color:#F2F1EC;font-family:'DM Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:64px">
+<h2 style="font-size:72px;font-weight:700">Set the dial during a silent run-in</h2>
+<div style="display:flex;gap:24px;align-items:center">
+<div style="flex:1;display:flex;flex-direction:column;gap:32px;align-items:center;justify-content:center;background:#16181D;border-radius:24px;padding:32px;border-top:8px solid #5B9BFF;height:480px">
+<div style="width:150px;height:150px;background:#5B9BFF;border-radius:20px;display:flex;align-items:center;justify-content:center"><p style="font-size:88px;font-weight:700;color:#0E0F12">A</p></div>
+<h3 style="font-size:40px;font-weight:700;text-align:center">Train</h3>
+</div>
+<div style="width:64px;height:36px;background:#F2F1EC;background:none"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;display:block"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#F2F1EC"/></svg></div>
+<div style="flex:1.5;display:flex;flex-direction:column;gap:32px;align-items:center;justify-content:center;background:#16181D;border-radius:24px;padding:32px;border:3px dashed #F5A142;height:480px">
+<svg aria-label="Five dials at different settings" width="460" height="150" viewBox="0 0 460 150" style="width:460px;height:150px">
+<circle cx="46" cy="75" r="38" fill="none" stroke="#F5A142" stroke-width="6"/><line x1="46" y1="75" x2="16" y2="75" stroke="#F5A142" stroke-width="7" stroke-linecap="round"/>
+<circle cx="138" cy="75" r="38" fill="none" stroke="#F5A142" stroke-width="6"/><line x1="138" y1="75" x2="117" y2="54" stroke="#F5A142" stroke-width="7" stroke-linecap="round"/>
+<circle cx="230" cy="75" r="38" fill="none" stroke="#F5A142" stroke-width="6"/><line x1="230" y1="75" x2="230" y2="45" stroke="#F5A142" stroke-width="7" stroke-linecap="round"/>
+<circle cx="322" cy="75" r="38" fill="none" stroke="#F5A142" stroke-width="6"/><line x1="322" y1="75" x2="343" y2="54" stroke="#F5A142" stroke-width="7" stroke-linecap="round"/>
+<circle cx="414" cy="75" r="38" fill="none" stroke="#F5A142" stroke-width="6"/><line x1="414" y1="75" x2="444" y2="75" stroke="#F5A142" stroke-width="7" stroke-linecap="round"/>
+</svg>
+<h3 style="font-size:40px;font-weight:700;text-align:center">Run silently at <span style="color:#F5A142">B</span></h3>
+<p style="font-size:28px;color:#9AA0A6;text-align:center">doctors see nothing</p>
+</div>
+<div style="width:64px;height:36px;background:#F2F1EC;background:none"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;display:block"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#F2F1EC"/></svg></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:32px;align-items:center;justify-content:center;background:#16181D;border-radius:24px;padding:32px;height:480px">
+<svg aria-label="Bars for five settings with the middle one highlighted as best" width="200" height="150" viewBox="0 0 200 150" style="width:200px;height:150px">
+<rect x="5" y="90" width="28" height="60" fill="#4A4F57"/><rect x="45" y="50" width="28" height="100" fill="#4A4F57"/><rect x="85" y="10" width="28" height="140" fill="#F2F1EC"/><rect x="125" y="40" width="28" height="110" fill="#4A4F57"/><rect x="165" y="70" width="28" height="80" fill="#4A4F57"/>
+</svg>
+<h3 style="font-size:40px;font-weight:700;text-align:center">Pick the best</h3>
+</div>
+<div style="width:64px;height:36px;background:#F2F1EC;background:none"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;display:block"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#F2F1EC"/></svg></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:32px;align-items:center;justify-content:center;background:#F2F1EC;border-radius:24px;padding:32px;height:480px">
+<div style="width:150px;height:150px;color:#0E0F12"><svg viewBox="0 0 24 24" fill="none" stroke="#0E0F12" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%;display:block"><circle cx="12" cy="12" r="10"/><polyline points="7,12.5 10.5,16 17,9"/></svg></div>
+<h3 style="font-size:40px;font-weight:700;text-align:center;color:#0E0F12">Go live</h3>
+</div>
+</div>
+<p style="font-size:36px;color:#BFC4CA;text-align:center">Sepsis models are already tested silently. We use that period to set one number.</p>
+
+</section>
+
+<section class="slide" data-notes="MIMIC itself is one hospital. This open sepsis dataset has two hospital systems; set A comes from Beth Israel, the same hospital as MIMIC. It’s exactly our scenario: train at A, use part of B as the run-in to set the dial, then test on the rest of B. No credentialing needed, and it’s already downloaded." id="data" data-transition="fade" style="background:#16181D;color:#F2F1EC;font-family:'DM Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:48px">
+<h2 style="font-size:72px;font-weight:700">Real data: two hospitals, already downloaded</h2>
+<div style="display:flex;gap:48px">
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#0E0F12;border-radius:24px;padding:40px;border-top:8px solid #5B9BFF">
+<h3 style="font-size:44px;font-weight:700;color:#5B9BFF">Hospital A</h3>
+<p style="font-size:32px">Beth Israel, Boston</p>
+<p style="font-size:28px;color:#BFC4CA">the hospital behind MIMIC</p>
+<p style="font-size:72px;font-weight:700">20,336</p>
+<p style="font-size:28px;color:#BFC4CA">ICU patients</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#0E0F12;border-radius:24px;padding:40px;border-top:8px solid #F5A142">
+<h3 style="font-size:44px;font-weight:700;color:#F5A142">Hospital B</h3>
+<p style="font-size:32px">Emory, Atlanta</p>
+<p style="font-size:28px;color:#BFC4CA">different hospital, different testing</p>
+<p style="font-size:72px;font-weight:700">20,000</p>
+<p style="font-size:28px;color:#BFC4CA">ICU patients</p>
+</div>
+<div style="flex:1.2;display:flex;flex-direction:column;gap:24px;justify-content:center">
+<div style="display:flex;gap:20px;align-items:center"><div style="width:56px;height:56px;color:#F2F1EC"><svg viewBox="0 0 24 24" fill="none" stroke="#F2F1EC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%;display:block"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg></div><p style="font-size:32px">Hourly vitals and labs</p></div>
+<div style="display:flex;gap:20px;align-items:center"><div style="width:56px;height:56px;color:#F2F1EC"><svg viewBox="0 0 24 24" fill="none" stroke="#F2F1EC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%;display:block"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg></div><p style="font-size:32px">Empty when not measured</p></div>
+<div style="display:flex;gap:20px;align-items:center"><div style="width:56px;height:56px;color:#F2F1EC"><svg viewBox="0 0 24 24" fill="none" stroke="#F2F1EC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%;display:block"><polyline points="2,12 6,12 9,4 15,20 18,12 22,12"/></svg></div><p style="font-size:32px">Sepsis labels</p></div>
+<div style="display:flex;gap:20px;align-items:center"><div style="width:56px;height:56px;color:#F2F1EC"><svg viewBox="0 0 24 24" fill="none" stroke="#F2F1EC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%;display:block"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div><p style="font-size:32px">Open access</p></div>
+</div>
+</div>
+<div style="display:flex;gap:24px;align-items:center;justify-content:center">
+<p style="font-size:32px;font-weight:700;background:#5B9BFF;color:#0E0F12;padding:14px 28px;border-radius:999px">Train on A</p>
+<div style="width:64px;height:36px;background:#F2F1EC;background:none"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;display:block"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#F2F1EC"/></svg></div>
+<p style="font-size:32px;font-weight:700;border:3px dashed #F5A142;color:#F5A142;padding:11px 28px;border-radius:999px">Part of B: run-in, set dial</p>
+<div style="width:64px;height:36px;background:#F2F1EC;background:none"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;display:block"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#F2F1EC"/></svg></div>
+<p style="font-size:32px;font-weight:700;background:#F5A142;color:#0E0F12;padding:14px 28px;border-radius:999px">Rest of B: evaluate</p>
+</div>
+<p style="position:absolute;left:128px;bottom:56px;width:1400px;font-size:24px;color:#9AA0A6">PhysioNet/CinC Challenge 2019, early prediction of sepsis (Reyna et al., Critical Care Medicine 2020)</p>
+
+</section>
+
+<section class="slide" data-notes="This keeps Sarah’s topic and her own trade-off, but asks a question with a clear clinical use. The simulation part is done; next is the real two-hospital data." id="question" data-transition="fade" style="background:#5B9BFF;color:#0E0F12;font-family:'DM Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:center;gap:64px">
+<p style="font-size:32px;font-weight:700;letter-spacing:2px;color:#0E0F12">OUR QUESTION</p>
+<h1 style="font-size:88px;font-weight:700;line-height:1.1;width:1500px;color:#0E0F12">How much should a model trust the testing pattern at a new hospital, and can a silent run-in set it?</h1>
+<div style="display:flex;gap:32px">
+<div style="display:flex;gap:16px;align-items:center;background:#0E0F12;border-radius:999px;padding:16px 32px"><div style="width:44px;height:44px;color:#5B9BFF"><svg viewBox="0 0 24 24" fill="none" stroke="#5B9BFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%;display:block"><polyline points="4,12.5 9.5,18 20,7"/></svg></div><p style="font-size:32px;color:#F2F1EC">Simulation: works</p></div>
+<div style="display:flex;gap:16px;align-items:center;background:#0E0F12;border-radius:999px;padding:16px 32px"><div style="width:44px;height:44px;color:#F5A142"><svg viewBox="0 0 24 24" fill="none" stroke="#F5A142" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%;display:block"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div><p style="font-size:32px;color:#F2F1EC">Real data: next</p></div>
+</div>
+
+</section>
+
+</div>
+<div id="counter"></div>
+<div id="notes"></div>
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const stage = document.getElementById('stage');
+  const counter = document.getElementById('counter');
+  const notes = document.getElementById('notes');
+  let i = 0;
+  function fit() {
+    const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    stage.style.transform = 'translate(' + (window.innerWidth - 1920 * s) / 2 + 'px,' + (window.innerHeight - 1080 * s) / 2 + 'px) scale(' + s + ')';
+  }
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((el, k) => el.classList.toggle('active', k === i));
+    counter.textContent = (i + 1) + ' / ' + slides.length;
+    notes.textContent = slides[i].dataset.notes || '';
+  }
+  document.addEventListener('click', e => { if (e.target.closest('#notes')) return; show(e.clientX < window.innerWidth * 0.2 ? i - 1 : i + 1); });
+  document.addEventListener('keydown', e => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown', 'Enter'].includes(e.key)) show(i + 1);
+    else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(e.key)) show(i - 1);
+    else if (e.key === 'Home') show(0);
+    else if (e.key === 'End') show(slides.length - 1);
+    else if (e.key === 'n' || e.key === 'N') notes.style.display = notes.style.display === 'block' ? 'none' : 'block';
+    else if (e.key === 'f' || e.key === 'F') { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+  });
+  window.addEventListener('resize', fit);
+  fit(); show(0);
+</script>
+</body></html>
