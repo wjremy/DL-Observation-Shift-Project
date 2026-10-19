@@ -16,6 +16,19 @@ Nothing.
 
 ## Results so far
 
+### Dial versus recalibration (19 Oct 2026; E5 filter, sigma 1, gamma 2, seed 0)
+
+Recalibration and per-site thresholds only rescale the output, so they cannot change the ranking of patients (AUC). Observation shift damages the ranking: patients who happen to be tested often at B are pushed up. Even an optimistic logistic recalibration (intercept and slope fitted on B's evaluation data itself) leaves AUC unchanged and barely helps Brier. The dial changes the ranking:
+
+| | B_match AUC | B_match Brier | B_dense AUC | B_dense Brier |
+|---|---|---|---|---|
+| no adaptation (w = 1) | 0.643 | 0.1286 | 0.734 | 0.1204 |
+| w = 1 + best recalibration | 0.643 | 0.1275 | 0.734 | 0.1166 |
+| dial w = 0.5 | 0.721 | 0.1233 | 0.795 | 0.1117 |
+| dial w = 0.3 | 0.750 | 0.1200 | 0.807 | 0.1092 |
+
+(AUC at A, w = 1: 0.824.) This is the answer to 'per-site thresholds and recalibration already exist': they act on the output and cannot fix a shift that reorders patients.
+
 ### E5: a learned model with a separate testing head reaches the exact trade-off (18 Oct 2026; sigma 1, gamma 2, seed 0; `analysis/e5_summary.csv`, `figures/filter_sigma1_gamma2.png`)
 
 A 32-state latent filter (learned dynamics, value head, testing head and outcome head; trained on A only, 908 s), tempered at deployment by scaling the testing-head evidence with w. Brier scores:
