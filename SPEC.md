@@ -103,3 +103,15 @@ Deployment family: the same trained model with w in {0, 0.05, ..., 1}.
 Setting: E1 config sigma 1, gamma 2, seed 0 (same cohorts as E1 via run_grid helpers); test policies A, B_match, B_dense.
 Compare: (Brier A, Brier B) of the tempered family against the exact blend curve and the plain E1 GRU. Also report the learned testing-head curve sigmoid(c_k) against the true policy sigmoid(alpha + gamma * mu_k) as a sanity check.
 Expectation, stated in advance: the simulator is itself a latent-state model of this kind, so success here is a proof of principle, not evidence for real data.
+
+## E6: the dial on real data from two hospitals (Claude, 19 Oct 2026)
+
+Question: on real data, does partial trust in the testing pattern (0 < w < 1) transfer better from hospital A to hospital B than full trust (w = 1) or ignoring it (w = 0, Futoma et al. 2021's "fit with indicators, deploy without")? And how many patients from B (a silent run-in) are needed to choose w, compared with recalibration and refitting?
+Data: PhysioNet/CinC 2019 (docs/DATA.md). Hospital A = training_setA (Beth Israel, the hospital of MIMIC and of Futoma et al.); hospital B = training_setB (Emory).
+Cohort: patients with at least 24 hourly rows (ICULOS 1..24 present); exclude patients with SepsisLabel = 1 in any of hours 1-24. Prediction time: end of hour 24. Outcome: SepsisLabel = 1 in any of hours 25-72 (patients leaving earlier count as 0).
+Features from hours 1-24, following Futoma: physiology = last observed value of each vital and lab (HR ... Platelets; not Unit1, Unit2) plus its square, Age, Gender, HospAdmTime; never-measured values filled with hospital A's median; all standardised with A's training statistics. Testing pattern = for each vital and lab: measured in hours 17-24 (0/1), measured at all in 1-24 (0/1), log(1 + number of measurements in 1-24).
+Model: L2-penalised logistic regression on all features, fit on 80% of A (rest = A test); penalty chosen by 5-fold cross-validation on A's training part. Also physiology-only and pattern-only models for reference.
+Dial: logit_w = b0 + physiology terms + w * (pattern terms), w in 0, 0.1, ..., 1.5, applied to the A-fitted coefficients without refitting.
+Evaluation: AUROC, Brier and log loss on A test and on B (B test set below), with patient-level bootstrap intervals (1000) for the w curve on B.
+Run-in experiment: split B once into a run-in pool and a fixed B test set of 8,000 patients. For n_run in 100, 250, 500, 1000, 2500, 5000 (and the full pool), draw 50 random run-in samples; on each, choose: (a) w by log loss on the run-in, (b) intercept and slope recalibration of the w = 1 model, (c) w plus intercept, (d) a full refit on the run-in only (same penalty grid, CV on the run-in), (e) Futoma's w = 0 and the unadapted w = 1 as fixed references. Report mean and 10-90% range of B-test AUROC and log loss per method and n_run, plus the number of sepsis cases per run-in.
+Descriptive: per variable, the measurement rate in A and in B, and the AUROC of the pattern-only model within each hospital (how informative testing is in each).
