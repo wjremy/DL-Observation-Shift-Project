@@ -4,7 +4,7 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-Two Luna agents started 19 Oct: (1) E6, the real two-hospital dial (SPEC.md last section; brief tasks/e6/; answer out/e6/e6_two_hospitals.md; it writes and runs e6_cohort.py, e6_dial.py, figures/e6_figure.py; outputs analysis/e6_*). (2) silent-trial literature (brief tasks/lit2/; answer out/lit/lit7_silent_trials.md). Next: Claude reviews the E6 code and numbers, runs figures/e6_figure.py, adds results here and the run-in anchors to docs/GAP.md.
+Nothing.
 
 ## Open
 
@@ -15,6 +15,24 @@ Two Luna agents started 19 Oct: (1) E6, the real two-hospital dial (SPEC.md last
 - Earlier optional item: real-data arm (MIMIC-IV). Needs credentialed PhysioNet access, which a team member must apply for; on real data report mask gain on A against cost on B (no Bayes rules available).
 
 ## Results so far
+
+### E6: the dial on two real hospitals (19 Oct 2026; PhysioNet 2019, A = Beth Israel, B = Emory; `analysis/e6_*.csv`, `analysis/e6_summary.json`, `figures/e6_two_hospitals.png`)
+
+Code by Luna (`e6_cohort.py`, `e6_dial.py`), reviewed by Claude: features use ICU hours 1-24 only (agent also checked by perturbing later hours), outcome hours 25-72, A's medians and scaling, the dial scales only the pattern coefficients of one fitted model. Cohort: A 10,038 patients (3.0% outcome), B 13,843 (2.1%); A train/test 8,030/2,008; B test 8,000, run-in pool 5,843. Runtime about 11 min.
+
+| | A-test AUROC | B AUROC [95% CI] | B log loss |
+|---|---|---|---|
+| w = 0 (Futoma's "fit with, deploy without") | 0.615 | 0.632 [0.584, 0.678] | 0.1001 |
+| w = 0.5 | 0.734 | 0.673 | 0.0985 |
+| w = 1 (keep the pattern) | 0.744 | 0.683 [0.639, 0.723] | 0.0982 |
+| physiology-only model | 0.630 | 0.664 | 0.0992 |
+| pattern-only model | 0.729 | 0.649 | 0.0989 |
+
+- For this pair the best dial is near 1 (log loss minimum at w = 0.8-1.0, flat; AUROC flat from 0.9 to 1.3). The intermediate value does not win here; dropping the pattern does clearly worse, and even worse than a model fitted on physiology alone. Futoma found the opposite for Beth Israel models moved to Memphis (dropping was best). Same source hospital, opposite best end: the best weight depends on the target, which is the case for setting it per hospital rather than choosing 0 or 1 once.
+- The testing pattern stays informative at B (pattern-only AUROC fitted within each hospital: 0.729 at A, 0.687 at B).
+- Caveat: much of the shift is coverage of the data export, not clinical policy: HCO3 and chloride are recorded for 96% of A patients but 2% and 8% at B; DBP 56% versus 100%; troponin 3% versus 32%. Imputed medians also carry some missingness signal into the physiology terms, so w = 0 does not remove the pattern completely.
+- Run-in (50 draws per size, B-test AUROC mean): choosing w is stable from about 1,000 patients (about 22 cases; chosen w 10-90% range 0.69-1.41) and reaches 0.681 against 0.6835 for fixed w = 1. Because the optimum is near 1 here, choosing w adds nothing over keeping w = 1 for this pair. A full refit loses below 1,000 patients (0.596 at 250, 0.665 at 1,000) but wins from about 2,500 (53 cases): 0.698 at 2,500, 0.714 on the whole pool of 5,843 (log loss 0.0955 and 0.0945 against 0.097-0.098). So one-parameter adaptation is the small-run-in tool; with a few thousand labelled patients a full refit is better for a linear model.
+- Anchor (docs/GAP.md): documented sepsis silent run-ins last about 6 weeks to 3 months; Epic's model at Tufts collected about 1,000 sepsis cases in 77 days. The crossover (somewhere between 22 and 53 cases) lies well within a typical run-in for a large hospital, so for this linear model a refit is feasible there; the dial matters for smaller hospitals, short run-ins, or models too large to refit on a few thousand patients.
 
 ### Dial versus recalibration (19 Oct 2026; E5 filter, sigma 1, gamma 2, seed 0)
 

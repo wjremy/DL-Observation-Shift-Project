@@ -1,0 +1,349 @@
+{
+  "cohort": {
+    "hospital_sizes": {
+      "A": 10038,
+      "B": 13843
+    },
+    "hospital_outcome_rates": {
+      "A": 0.03038453875273959,
+      "B": 0.020804738857184136
+    },
+    "split_sizes": {
+      "A_train": 8030,
+      "A_test": 2008,
+      "B_test": 8000,
+      "B_runin_pool": 5843
+    },
+    "split_outcome_rates": {
+      "A_train": 0.031133250311332503,
+      "A_test": 0.027390438247011952,
+      "B_test": 0.020375,
+      "B_runin_pool": 0.021393119972616805
+    },
+    "exclusions": {
+      "A": {
+        "missing_hours_1_24": 10162,
+        "early_sepsis": 136
+      },
+      "B": {
+        "missing_hours_1_24": 6079,
+        "early_sepsis": 78
+      }
+    }
+  },
+  "seeds": {
+    "split": 20261019,
+    "bootstrap": 66019,
+    "runin": 66100
+  },
+  "penalty_grid_average_bce": [
+    0.001,
+    0.003,
+    0.01,
+    0.03,
+    0.1,
+    0.3
+  ],
+  "selected_penalties": {
+    "combined": 0.03,
+    "physiology": 0.1,
+    "pattern": 0.01
+  },
+  "pattern_only_within_B_penalty": 0.03,
+  "cv_log_loss": {
+    "combined": {
+      "0.001": 0.13614638770047022,
+      "0.003": 0.133928433797807,
+      "0.01": 0.13204528235730045,
+      "0.03": 0.13116808858680945,
+      "0.1": 0.13192537604690452,
+      "0.3": 0.13409961106552384
+    },
+    "physiology": {
+      "0.001": 0.14129812172362932,
+      "0.003": 0.13938548334331682,
+      "0.01": 0.13809528030470541,
+      "0.03": 0.13741390443375648,
+      "0.1": 0.13731991740914085,
+      "0.3": 0.13776954896333
+    },
+    "pattern": {
+      "0.001": 0.13224641483563626,
+      "0.003": 0.1311526479688013,
+      "0.01": 0.13048655359382885,
+      "0.03": 0.1306622664232634,
+      "0.1": 0.132153576145354,
+      "0.3": 0.1344792693245307
+    }
+  },
+  "w_curve_w0_0.5_1": {
+    "0.0": {
+      "auroc_A_test": 0.6148768793930084,
+      "brier_A_test": 0.02651315586156307,
+      "log_loss_A_test": 0.12321636613177918,
+      "auroc_B": 0.631621590520349,
+      "auroc_B_low": 0.583954832293364,
+      "auroc_B_high": 0.6779965313612526,
+      "brier_B": 0.01989750918538389,
+      "brier_B_low": 0.017101389224277497,
+      "brier_B_high": 0.02287691752674639,
+      "log_loss_B": 0.10008487551948504,
+      "log_loss_B_low": 0.0893851551302413,
+      "log_loss_B_high": 0.1121270397456053
+    },
+    "0.5": {
+      "auroc_A_test": 0.7339663920309082,
+      "brier_A_test": 0.02610034650914301,
+      "log_loss_A_test": 0.11742148143379356,
+      "auroc_B": 0.6730383089184465,
+      "auroc_B_low": 0.6263336259446743,
+      "auroc_B_high": 0.7159928003883161,
+      "brier_B": 0.019829095436776988,
+      "brier_B_low": 0.01706269887879827,
+      "brier_B_high": 0.02279758321333425,
+      "log_loss_B": 0.09853688168921972,
+      "log_loss_B_low": 0.08806075083763806,
+      "log_loss_B_high": 0.11044720686964883
+    },
+    "1.0": {
+      "auroc_A_test": 0.7443280733603315,
+      "brier_A_test": 0.025716330043660366,
+      "log_loss_A_test": 0.11450311851612699,
+      "auroc_B": 0.6834756632647869,
+      "auroc_B_low": 0.6394966043636688,
+      "auroc_B_high": 0.7234437344676162,
+      "brier_B": 0.019890362185484296,
+      "brier_B_low": 0.017212910383279833,
+      "brier_B_high": 0.02276431814381561,
+      "log_loss_B": 0.09821888419637874,
+      "log_loss_B_low": 0.08798751462406058,
+      "log_loss_B_high": 0.10962656612306118
+    }
+  },
+  "best_w_on_B_by_log_loss": {
+    "w": 0.9,
+    "log_loss": 0.09816518407941374,
+    "auroc": 0.68275390216771,
+    "brier": 0.01985890920775951
+  },
+  "runin_n250_1000": {
+    "250": {
+      "full_refit": {
+        "n_run": 250,
+        "n_cases_mean": 5.58,
+        "n_cases_p10": 2.9000000000000004,
+        "n_cases_p90": 8.0,
+        "selected_w_mean": NaN,
+        "selected_w_p10": NaN,
+        "selected_w_p90": NaN,
+        "auroc_mean": 0.5964300928973855,
+        "auroc_p10": 0.4207269903423355,
+        "auroc_p90": 0.6803948706427196,
+        "log_loss_mean": 0.1206017911719956,
+        "log_loss_p10": 0.10024284751276151,
+        "log_loss_p90": 0.17989919004439162
+      },
+      "intercept_slope": {
+        "n_run": 250,
+        "n_cases_mean": 5.58,
+        "n_cases_p10": 2.9000000000000004,
+        "n_cases_p90": 8.0,
+        "selected_w_mean": NaN,
+        "selected_w_p10": NaN,
+        "selected_w_p90": NaN,
+        "auroc_mean": 0.6467805149554066,
+        "auroc_p10": 0.6467798260727977,
+        "auroc_p90": 0.6834756632647869,
+        "log_loss_mean": 0.10305136521549967,
+        "log_loss_p10": 0.097845548202821,
+        "log_loss_p90": 0.11171572642467795
+      },
+      "w0_fixed": {
+        "n_run": 250,
+        "n_cases_mean": 5.58,
+        "n_cases_p10": 2.9000000000000004,
+        "n_cases_p90": 8.0,
+        "selected_w_mean": NaN,
+        "selected_w_p10": NaN,
+        "selected_w_p90": NaN,
+        "auroc_mean": 0.631621590520349,
+        "auroc_p10": 0.631621590520349,
+        "auroc_p90": 0.631621590520349,
+        "log_loss_mean": 0.10008487551948506,
+        "log_loss_p10": 0.10008487551948504,
+        "log_loss_p90": 0.10008487551948504
+      },
+      "w1_fixed": {
+        "n_run": 250,
+        "n_cases_mean": 5.58,
+        "n_cases_p10": 2.9000000000000004,
+        "n_cases_p90": 8.0,
+        "selected_w_mean": NaN,
+        "selected_w_p10": NaN,
+        "selected_w_p90": NaN,
+        "auroc_mean": 0.6834756632647868,
+        "auroc_p10": 0.6834756632647869,
+        "auroc_p90": 0.6834756632647869,
+        "log_loss_mean": 0.09821888419637873,
+        "log_loss_p10": 0.09821888419637874,
+        "log_loss_p90": 0.09821888419637874
+      },
+      "w_plus_intercept": {
+        "n_run": 250,
+        "n_cases_mean": 5.58,
+        "n_cases_p10": 2.9000000000000004,
+        "n_cases_p90": 8.0,
+        "selected_w_mean": NaN,
+        "selected_w_p10": NaN,
+        "selected_w_p90": NaN,
+        "auroc_mean": 0.671985946794778,
+        "auroc_p10": 0.631621590520349,
+        "auroc_p90": 0.6834975822568891,
+        "log_loss_mean": 0.10000381989929841,
+        "log_loss_p10": 0.0974364912617895,
+        "log_loss_p90": 0.10230777371839479
+      },
+      "w_tuned": {
+        "n_run": 250,
+        "n_cases_mean": 5.58,
+        "n_cases_p10": 2.9000000000000004,
+        "n_cases_p90": 8.0,
+        "selected_w_mean": 0.8419999999999999,
+        "selected_w_p10": 0.0,
+        "selected_w_p90": 1.5,
+        "auroc_mean": 0.6697540297675569,
+        "auroc_p10": 0.631621590520349,
+        "auroc_p90": 0.683694853185808,
+        "log_loss_mean": 0.0991565846705604,
+        "log_loss_p10": 0.09821888419637874,
+        "log_loss_p90": 0.10008487551948504
+      }
+    },
+    "1000": {
+      "full_refit": {
+        "n_run": 1000,
+        "n_cases_mean": 22.46,
+        "n_cases_p10": 16.8,
+        "n_cases_p90": 28.1,
+        "selected_w_mean": NaN,
+        "selected_w_p10": NaN,
+        "selected_w_p90": NaN,
+        "auroc_mean": 0.6647389956874383,
+        "auroc_p10": 0.6272698094848176,
+        "auroc_p90": 0.6934646959405244,
+        "log_loss_mean": 0.09910712322743359,
+        "log_loss_p10": 0.09537532090450399,
+        "log_loss_p90": 0.10640907441239933
+      },
+      "intercept_slope": {
+        "n_run": 1000,
+        "n_cases_mean": 22.46,
+        "n_cases_p10": 16.8,
+        "n_cases_p90": 28.1,
+        "selected_w_mean": NaN,
+        "selected_w_p10": NaN,
+        "selected_w_p90": NaN,
+        "auroc_mean": 0.6834756632647868,
+        "auroc_p10": 0.6834756632647869,
+        "auroc_p90": 0.6834756632647869,
+        "log_loss_mean": 0.09799305016863434,
+        "log_loss_p10": 0.09696878727635244,
+        "log_loss_p90": 0.09929189940552414
+      },
+      "w0_fixed": {
+        "n_run": 1000,
+        "n_cases_mean": 22.46,
+        "n_cases_p10": 16.8,
+        "n_cases_p90": 28.1,
+        "selected_w_mean": NaN,
+        "selected_w_p10": NaN,
+        "selected_w_p90": NaN,
+        "auroc_mean": 0.631621590520349,
+        "auroc_p10": 0.631621590520349,
+        "auroc_p90": 0.631621590520349,
+        "log_loss_mean": 0.10008487551948506,
+        "log_loss_p10": 0.10008487551948504,
+        "log_loss_p90": 0.10008487551948504
+      },
+      "w1_fixed": {
+        "n_run": 1000,
+        "n_cases_mean": 22.46,
+        "n_cases_p10": 16.8,
+        "n_cases_p90": 28.1,
+        "selected_w_mean": NaN,
+        "selected_w_p10": NaN,
+        "selected_w_p90": NaN,
+        "auroc_mean": 0.6834756632647868,
+        "auroc_p10": 0.6834756632647869,
+        "auroc_p90": 0.6834756632647869,
+        "log_loss_mean": 0.09821888419637873,
+        "log_loss_p10": 0.09821888419637874,
+        "log_loss_p90": 0.09821888419637874
+      },
+      "w_plus_intercept": {
+        "n_run": 1000,
+        "n_cases_mean": 22.46,
+        "n_cases_p10": 16.8,
+        "n_cases_p90": 28.1,
+        "selected_w_mean": NaN,
+        "selected_w_p10": NaN,
+        "selected_w_p90": NaN,
+        "auroc_mean": 0.6824168350384483,
+        "auroc_p10": 0.6813886620882067,
+        "auroc_p90": 0.6837739964037196,
+        "log_loss_mean": 0.0978496877681203,
+        "log_loss_p10": 0.0970527946892085,
+        "log_loss_p90": 0.09876747517455377
+      },
+      "w_tuned": {
+        "n_run": 1000,
+        "n_cases_mean": 22.46,
+        "n_cases_p10": 16.8,
+        "n_cases_p90": 28.1,
+        "selected_w_mean": 1.0399999999999998,
+        "selected_w_p10": 0.69,
+        "selected_w_p90": 1.4100000000000001,
+        "auroc_mean": 0.6813533255416534,
+        "auroc_p10": 0.6792331640613074,
+        "auroc_p90": 0.6837668727312864,
+        "log_loss_mean": 0.09859168464912155,
+        "log_loss_p10": 0.09817385745253267,
+        "log_loss_p90": 0.09956651964366911
+      }
+    }
+  },
+  "pattern_only_auroc": {
+    "A_test": 0.7293906810035843,
+    "B_test": 0.6865310141995927
+  },
+  "A_auroc_apparent_train_w1": 0.7830606683804627,
+  "A_auroc_heldout_test_w1": 0.7443280733603315,
+  "features_use_iculos_1_24_only": true,
+  "outcomes_use_iculos_25_72_only": true,
+  "elapsed_analysis_seconds": 436.8933518999838,
+  "cohort_build_seconds": 237.0,
+  "requested_runin_sizes": [
+    100,
+    250,
+    500,
+    1000,
+    2500,
+    5000,
+    "full_pool"
+  ],
+  "available_runin_sizes": [
+    100,
+    250,
+    500,
+    1000,
+    2500,
+    5000,
+    5843
+  ],
+  "total_pipeline_seconds": 673.8933518999838,
+  "preprocessing_limitation": "EtCO2 had no measured values in A train; its undefined A median was set to 0.",
+  "all_missing_in_A_train": [
+    "EtCO2"
+  ],
+  "runtime_measurement": "Cohort build wall time from process start/cache write timestamps; analysis time from the script timer."
+}

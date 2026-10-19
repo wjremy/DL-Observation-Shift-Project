@@ -45,6 +45,12 @@ Choosing w on B's data can include w > 1. Brier at B:
 
 Turning the dial up barely helps when B is more selective: scaling the testing log-likelihood is not the same as a steeper testing curve, and the A model loses little there (0.0007 above B's optimum, against 0.0021 when B is less selective). Over-trusting the pattern costs more than under-trusting it, so with uncertainty about B a dial at or below 1 is the safer default; re-learning the testing part at B handles both directions.
 
+## Silent run-ins and the data the dial needs (19 Oct 2026; `out/lit/lit7_silent_trials.md`, E6)
+
+Documented silent (shadow) runs of sepsis models: Duke Sepsis Watch about 3 months; UCSD COMPOSER about 46 days (754 ED encounters); Penn early-warning about 3 months (10,448 discharges); a paediatric ward 1 year (68 cases); Epic ESMv2 at Tufts (preprint) about 77 days, about 32,000 hospitalisations and 1,049 Sepsis-3 cases (about 95 cases a week). TREWS, Michigan and Kaiser report none. Guidance (Kwong et al. 2022, TRIPOD+AI, FDA change-control plans) fixes no duration. Local fine-tuning studies used about 1,500 target patients (Holder et al.) or 10% of a site's data (Moor et al.). No study measures the data needed to set a single trust parameter (C5 stays open).
+
+E6 (STATUS.md): on Beth Israel to Emory, choosing w is stable from about 1,000 patients (about 22 cases); a full refit of the linear model overtakes from about 2,500 patients (53 cases). For E6's ICU cohort that is far less than a large hospital's typical run-in, so the dial's case rests on small sites, short run-ins and large models, and on the fact that the best end differs per target (Futoma: drop for Memphis; E6: keep for Emory).
+
 ## Before claiming novelty, check
 
 - Done 19 Oct: CLIO, Rockenschaub and Futoma read in full (above).
