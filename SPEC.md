@@ -136,3 +136,20 @@ Outputs: `analysis/e7_pairs.csv` (one row per dataset, source, target), `analysi
 ## E7b: dial above 1 versus recalibration (Claude, 19 Oct 2026)
 
 E7 found optima above 1 (up to the grid edge 1.5) with the largest log-loss gains, while AUROC fell, which suggests part of the gain is calibration (scaling the pattern term also stretches the predictions). E7b: same pairs and source fits as E7; extended grid w = 0 to 3; tuned comparison on 100 tune/evaluation splits between choosing the end (0 or 1), the dial on 0-1 and the dial on 0-3, each with and without intercept-and-slope recalibration fitted on the tune half (w chosen jointly with its recalibration). The dial counts as a real improvement over the binary choice only if `dial_recal` beats `end_recal`. Brief: tasks/e7b/e7b_recal.md.
+
+## E8: the dial with a realistic unit-level run-in (Claude and Wesley, 19 Oct 2026; pre-specified before running)
+
+Design decision (Wesley, 19 Oct): the most realistic transfer is the same ICU type in another hospital (medical ICU at A to medical ICU at B), so these are the primary pairs. E7/E7b were exploratory and tuned on half of the target unit (about 12-65 cases), far more than a real run-in.
+
+Primary pairs (PhysioNet 2019, E7 sites and source fits): A-MICU to B-MICU, B-MICU to A-MICU, A-SICU to B-SICU, B-SICU to A-SICU. Secondary: the other 8 P19 pairs.
+
+Run-in sizes, from a typical ICU (US median about 1,300 admissions a year, Checkley et al. 2014) and E6's eligibility (about half of stays): about 54 eligible patients per month. Sizes n_run = 54, 108, 162, 325, 650 (1, 2, 3, 6, 12 months), plus 1,300 (2 years) as a large reference. For each size, 200 random draws of a run-in from the target unit; evaluate on all other patients of the target unit.
+
+Methods, each chosen on the run-in only:
+- `keep`: fixed w = 1, no tuning (doing nothing);
+- `end`: w in {0, 1} by run-in log loss;
+- `dial`: w on 0 to 3, step 0.05, by run-in log loss;
+- `end_recal`, `dial_recal`: as above, each candidate followed by intercept-and-slope recalibration; because run-ins hold few cases, recalibration is penalised towards the identity (L2 penalty 1.0 on the intercept shift and on slope minus 1, added to the summed log loss); w chosen by the penalised run-in loss.
+Ties in run-in loss (e.g. a run-in without cases) are broken towards w = 1.
+
+Primary outcome: AUROC on the evaluation patients, `dial_recal` minus `end_recal` and `dial_recal` minus `keep`, at the 3-month run-in (n_run = 162), per primary pair: mean, 10-90% range, share of draws with a gain. Secondary: log loss; all sizes; the other methods; secondary pairs; run-in case counts.

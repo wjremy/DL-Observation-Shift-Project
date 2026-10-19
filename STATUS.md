@@ -4,7 +4,7 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-Nothing.
+E8 Luna agent (19 Oct): the dial with realistic unit-level run-ins (1-12 months of a typical ICU), primary pairs same ICU type across hospitals, AUROC (SPEC.md E8, pre-specified). Brief tasks/e8/; answer out/e8/e8_realistic_runin.md. Next: Claude reviews, renders figures/e8_figure.py, records.
 
 ## Open
 
@@ -162,6 +162,8 @@ Reading: the observation pattern adds little beyond the values when values are p
 - 17 Oct 2026: design fixed in SPEC.md, following docs/ARGUMENT.md.
 
 ## Decisions
+
+- 19 Oct 2026 (Wesley): primary transfer = same ICU type in another hospital (most realistic deployment); primary metric AUROC; E7/E7b count as exploratory; E8 tests realistic run-in sizes with a design fixed before running (SPEC.md E8).
 
 - 19 Oct 2026 (Wesley): the project studies the dial only; adaptation without outcomes is future work (docs/FUTURE.md). Use open data without sign-in for more hospital pairs first; eICU later. Project map in docs/MAP.md.
 
