@@ -1,0 +1,114 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[a4paper,margin=2.3cm,top=2.2cm,bottom=2.4cm]{geometry}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{accent}{HTML}{1F4E79}
+\definecolor{muted}{HTML}{555555}
+
+\titleformat{\section}{\large\bfseries\color{accent}}{\thesection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.1em}{0.4em}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.6em}{}
+\titlespacing*{\subsection}{0pt}{0.7em}{0.25em}
+
+\setlist{itemsep=0.15em,topsep=0.3em,leftmargin=1.4em}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.45em}
+\renewcommand{\arraystretch}{1.15}
+
+\begin{document}
+
+{\color{accent}\rule{\linewidth}{0.8pt}}\\[0.3em]
+{\LARGE\bfseries A Trust Dial for Observation Shift}\\[0.35em]
+{\large Setting, per hospital, how much a clinical model trusts the learned testing policy}\\[0.6em]
+{\color{muted}Project proposal idea \quad$\cdot$\quad Deep Learning, ETH Zurich \quad$\cdot$\quad 19 October 2026}\\[-0.2em]
+{\color{accent}\rule{\linewidth}{0.8pt}}
+
+\section{Problem}
+
+Clinical prediction models are usually trained on data from a single hospital. Hospitals differ in when and how often they run tests: their \emph{observation policy}. A model trained at hospital A learns A's policy; for example, that a lactate order means the doctor suspects sepsis. When the model is deployed at hospital B, which tests differently, that signal changes meaning and performance drops. This change in policy between hospitals is called \emph{observation shift}.
+
+\section{Current literature}
+
+\subsection*{(a) The binary case}
+Futoma et al.~\cite{futoma2021} trained models with measurement indicators and dropped the indicators at deployment (``fit with, deploy without''). This transferred best for models trained at Beth Israel and moved to a hospital in Memphis, but not in the other direction. Rockenschaub et al.~\cite{rockenschaub2024} found that ignoring informative missingness costs performance at the training hospital but is more robust elsewhere, especially when missingness is highly informative. Both treat the learned policy as all or nothing, and both end in a general rule rather than a choice per hospital.
+
+\subsection*{(b) The domain adaptation case}
+Domain adaptation, called \emph{model updating} in clinical prediction, re-estimates the model on outcome data from the new hospital. The options range from adjusting the baseline risk, to recalibration, to refitting all parameters~\cite{steyerberg2004,vergouwe2017}.
+
+\section{Gap}
+
+\subsection*{(a) Binary case}
+\begin{itemize}
+  \item \textbf{The learned policy is useful.} The testing pattern alone predicts sepsis at both hospitals (AUROC 0.73 at A, 0.69 at B; our data). Removing it discards real information.
+  \item \textbf{The trade-off is lopsided.} Turning the policy down slightly from what is optimal at A costs almost nothing at A, because the model sits at A's optimum, where the error curve is flat. At B the model is not at its optimum, so the same small step helps directly. Partial trust can therefore beat both ends.
+  \item \textbf{The best setting depends on the target hospital.} From the same source hospital (Beth Israel), dropping the policy was best for Memphis~\cite{futoma2021}, but keeping it is best for Emory (our data). No fixed on/off rule is right for both.
+\end{itemize}
+
+\subsection*{(b) Domain adaptation case}
+Refitting needs many outcome cases. Even validating a model properly requires 100 or more events~\cite{riley2024}, and with few events simple updates outperform full refits~\cite{steyerberg2004,vergouwe2017}. Sepsis is rare: about 2\% of our ICU patients develop it within the next two days. A dial has a single parameter, so it should need far fewer cases.
+
+\section{Solution context: silent run-ins}
+
+Before going live, models are often run silently in the background to see how they would have performed on real patients. Documented run-ins of sepsis models include Duke Sepsis Watch (about 3 months)~\cite{sendak2020}, UCSD's COMPOSER-LLM (about 46 days)~\cite{shashikumar2025} and Epic's sepsis model at Tufts Medicine (77 days)~\cite{tuttle2026}. No guideline prescribes their length. The labelled patients of such a run-in are the data available to adapt a model before it goes live.
+
+\section{Proposed approach}
+
+\begin{enumerate}[label=(\alph*)]
+  \item \textbf{Dial.} Give the model a weight $w$ for how much it trusts the learned observation policy ($w=0$: ignore it; $w=1$: trust it as at A). In a linear model, scale the policy coefficients by $w$. In neural sequence models, use a state-space model with separate components for physiology, testing and outcome, and scale the testing component.
+  \item \textbf{Tuning.} Train on hospital A, then tune $w$ on a run-in subset of hospital B.
+  \item \textbf{Binary comparison.} Compare with the on/off choices of earlier work.
+  \item \textbf{Domain adaptation comparison.} Compare with recalibration and full refitting.
+  \item \textbf{Sample size.} Compare all options as the run-in grows.
+\end{enumerate}
+
+\section{Contribution}
+
+\begin{minipage}[t]{0.46\linewidth}
+\textbf{Not novel}
+\begin{enumerate}
+  \item Tempering one part of a model with a tunable weight.
+  \item Domain adaptation: recalibrating or refitting on the new hospital.
+  \item Removing the policy entirely (Futoma: $w=0$).
+\end{enumerate}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.5\linewidth}
+\textbf{Novel}
+\begin{enumerate}
+  \item Keep or remove depends on the target hospital: from the same source, the best choice flips between hospitals, so it should be set per hospital from run-in data, not fixed as a general rule.
+  \item Whether the best setting lies \emph{between} keep and remove, which a binary choice cannot reach. Theory and simulation predict it; we test it on real hospitals.
+  \item How many run-in cases each option needs (binary choice, dial, full refit), compared with the cases a sepsis run-in actually yields.
+\end{enumerate}
+\end{minipage}
+
+\section{Preliminary results}
+
+\begin{itemize}
+  \item \textbf{Binary case.} In simulation, an intermediate setting beats both on and off. On the one real hospital pair we have (PhysioNet 2019~\cite{reyna2020}, Beth Israel $\to$ Emory), keeping the policy was best, the opposite of Futoma's result for Memphis from the same source hospital. The dial, set on the run-in, landed on par with keeping it and avoided the wrong end, which cost 0.05 AUROC. More hospital pairs are needed to see how often the middle wins.
+  \item \textbf{Domain adaptation case.} A one-parameter update beats a full refit up to about 20 sepsis cases; refitting wins from about 50. A typical ICU admits about 600--1{,}300 patients a year~\cite{checkley2014,icnarc2024}, so a 1--3 month run-in yields only about 2--6 sepsis cases. For ICU sepsis models, a one-parameter update is therefore the better choice, and neural networks need even more data to refit.
+\end{itemize}
+
+\begin{thebibliography}{99}\small
+\setlength{\itemsep}{0.1em}
+\bibitem{futoma2021} Futoma J, Simons M, Doshi-Velez F, Kamaleswaran R. Generalization in clinical prediction models: the blessing and curse of measurement indicator variables. \emph{Critical Care Explorations} 2021;3(7):e0453. doi:10.1097/CCE.0000000000000453
+\bibitem{rockenschaub2024} Rockenschaub P, Xian Z, Zamanian A, et al. Robust prediction under missingness shifts. arXiv:2406.16484, 2024.
+\bibitem{steyerberg2004} Steyerberg EW, Borsboom GJ, van Houwelingen HC, et al. Validation and updating of predictive logistic regression models: a study on sample size and shrinkage. \emph{Statistics in Medicine} 2004;23:2567--2586.
+\bibitem{vergouwe2017} Vergouwe Y, Nieboer D, Oostenbrink R, et al. A closed testing procedure to select an appropriate method for updating prediction models. \emph{Statistics in Medicine} 2017;36:4529--4539.
+\bibitem{riley2024} Riley RD, Snell KIE, Archer L, et al. Evaluation of clinical prediction models (part 3): calculating the sample size required for an external validation study. \emph{BMJ} 2024;384:e074821.
+\bibitem{sendak2020} Sendak MP, Ratliff W, Sarro D, et al. Real-world integration of a sepsis deep learning technology into routine clinical care: implementation study. \emph{JMIR Medical Informatics} 2020;8(7):e15182.
+\bibitem{shashikumar2025} Shashikumar SP, et al. A prospective comparison of large language models for early prediction of sepsis. \emph{Pacific Symposium on Biocomputing} 2025. doi:10.1142/9789819807024\_0009
+\bibitem{tuttle2026} Tuttle M, et al. Patient versus prediction-level evaluation of a dynamic clinical prediction model of sepsis. Research Square preprint, 2026. doi:10.21203/rs.3.rs-9726164/v1
+\bibitem{reyna2020} Reyna MA, Josef CS, Jeter R, et al. Early prediction of sepsis from clinical data: the PhysioNet/Computing in Cardiology Challenge 2019. \emph{Critical Care Medicine} 2020;48:210--217.
+\bibitem{checkley2014} Checkley W, Martin GS, Brown SM, et al. Structure, process, and annual ICU mortality across 69 centers: United States Critical Illness and Injury Trials Group Critical Illness Outcomes Study. \emph{Critical Care Medicine} 2014;42:344--356.
+\bibitem{icnarc2024} ICNARC. \emph{Case Mix Programme Public Report 2022--23: Summary Statistics}. Intensive Care National Audit \& Research Centre, 2024.
+\end{thebibliography}
+
+\end{document}
