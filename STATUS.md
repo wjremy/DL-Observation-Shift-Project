@@ -4,7 +4,7 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-Nothing.
+Two Luna agents started 19 Oct: (1) E6, the real two-hospital dial (SPEC.md last section; brief tasks/e6/; answer out/e6/e6_two_hospitals.md; it writes and runs e6_cohort.py, e6_dial.py, figures/e6_figure.py; outputs analysis/e6_*). (2) silent-trial literature (brief tasks/lit2/; answer out/lit/lit7_silent_trials.md). Next: Claude reviews the E6 code and numbers, runs figures/e6_figure.py, adds results here and the run-in anchors to docs/GAP.md.
 
 ## Open
 
