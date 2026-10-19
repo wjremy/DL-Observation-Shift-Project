@@ -4,7 +4,7 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-Luna open-dataset search (19 Oct): datasets downloadable without any sign-in, from different hospitals or units. Brief tasks/lit5/lit10_open_datasets.md; answer out/lit/lit10_open_datasets.md. Next: Claude reviews, picks pairs (see docs/MAP.md next steps).
+E7 Luna agent (19 Oct): the dial across many open site pairs (PhysioNet 2019 hospital x unit, sepsis; PhysioNet 2012 ICU types, mortality; SPEC.md E7). Brief tasks/e7/; answer out/e7/e7_many_pairs.md; writes e7_sites.py, e7_dial.py, figures/e7_figure.py, analysis/e7_*. Next: Claude reviews code and numbers, renders the figure, records results.
 
 ## Open
 

@@ -115,3 +115,20 @@ Dial: logit_w = b0 + physiology terms + w * (pattern terms), w in 0, 0.1, ..., 1
 Evaluation: AUROC, Brier and log loss on A test and on B (B test set below), with patient-level bootstrap intervals (1000) for the w curve on B.
 Run-in experiment: split B once into a run-in pool and a fixed B test set of 8,000 patients. For n_run in 100, 250, 500, 1000, 2500, 5000 (and the full pool), draw 50 random run-in samples; on each, choose: (a) w by log loss on the run-in, (b) intercept and slope recalibration of the w = 1 model, (c) w plus intercept, (d) a full refit on the run-in only (same penalty grid, CV on the run-in), (e) Futoma's w = 0 and the unadapted w = 1 as fixed references. Report mean and 10-90% range of B-test AUROC and log loss per method and n_run, plus the number of sepsis cases per run-in.
 Descriptive: per variable, the measurement rate in A and in B, and the AUROC of the pattern-only model within each hospital (how informative testing is in each).
+
+## E7: where does the best dial sit across many site pairs? (Claude, 19 Oct 2026)
+
+Question: across real source-target pairs, is the best trust weight w at an end (0 or 1) or in between, and does a dial tuned on target data beat choosing the better end on the same data? Open data only (no sign-in).
+
+Sites:
+- **P19 (sepsis).** PhysioNet 2019, sites = hospital x unit: A-MICU, A-SICU, B-MICU, B-SICU (Unit1 = 1 medical, Unit2 = 1 surgical, taken at the first row with either set; patients with neither unit excluded). Cohort, features and outcome exactly as E6 (24-hour landmark; outcome sepsis in hours 25-72; physiology last values and squares plus Age, Gender, HospAdmTime; pattern: measured in hours 17-24, ever measured, log(1 + total count)). 12 directed pairs.
+- **P12 (mortality).** PhysioNet/CinC 2012 sets a, b, c (12,000 ICU stays, BIDMC, open, ODC-By; outcome In-hospital_death from Outcomes-*.txt), sites = ICUType 1 CCU, 2 cardiac surgery recovery, 3 medical, 4 surgical. Window: first 48 hours. Variables: all time-varying parameters except RecordID, Age, Gender, Height, ICUType, Weight (static); MechVent and Urine count as measurements. Physiology: last value of each variable in hours 0-48 and its square, plus Age, Gender, Height, Weight (static, -1 means missing). Pattern: measured in hours 40-48, ever measured in 0-48, log(1 + total count). 12 directed pairs.
+
+Per source site s: split 80/20 (seed fixed); medians, scaling and the L2 logistic penalty (5-fold CV on the E6 grid) from the 80%. Report held-out 20% AUROC and log loss. Dial as E6: logit_w = b0 + physiology + w * pattern, one fitted model, no refit.
+
+Per target t (all of t's patients, using s's medians and scaling):
+- w curve, w = 0 to 1.5 in steps of 0.05: log loss, Brier, AUROC.
+- Tuned comparison: 100 random 50/50 splits of t into tune and evaluation halves. On the tune half choose (i) w from the grid by log loss and (ii) the better end, w in {0, 1}, by log loss. Evaluate both on the evaluation half. Report the mean and 10-90% range of the difference (dial minus end) in log loss and AUROC, the share of splits where the chosen w is strictly inside (0.05 to 0.95), and the mean chosen w.
+- Also report n and outcome cases per site.
+
+Outputs: `analysis/e7_pairs.csv` (one row per dataset, source, target), `analysis/e7_curves.csv`, `analysis/e7_sites.csv`, `analysis/e7_summary.json`, figure script `figures/e7_figure.py` (small multiples: target log loss relative to w = 1 against w, one panel per pair, best w marked; Claude renders it).

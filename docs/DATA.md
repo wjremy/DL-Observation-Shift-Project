@@ -18,3 +18,9 @@
 - Closest prior work: Singh et al. 2021 (PhysioNet 2019 A to B with missingness indicators); Johnson et al. 2018 (eICU hospital-held-out mortality, no focus on measurement patterns); You et al., arXiv 2609.30781 (25 Sep 2026, missingness-aware conformal calibration across eICU hospitals, mortality; checked). None tunes a per-hospital trust weight.
 - Caveat: documented eICU differences are partly recording and interface differences, not only ordering policy (as with HCO3 at Emory in E6).
 - Plan: everyone applies for PhysioNet credentialing now; prototype on the eICU demo and PhysioNet 2019; then train on one large eICU hospital (or MIMIC) and find the best w at each of the larger eICU hospitals, giving a distribution of optimal dial settings.
+
+## Open data without sign-in (19 Oct 2026; `out/lit/lit10_open_datasets.md`)
+
+- **PhysioNet/CinC 2012** downloaded to `data/raw_physionet2012` (gitignored): 12,000 ICU stays at Beth Israel (2001-08), sets a, b, c with outcomes (Outcomes-a/b/c.txt, In-hospital_death), four ICU types (coronary care, cardiac surgery recovery, medical, surgical); ODC Attribution 1.0. Used as four sites in E7.
+- **PhysioNet 2019 by unit:** Unit1 (medical) and Unit2 (surgical) give four sites with the two hospitals (sampled counts: A about 5,400 medical and 5,400 surgical, rest unit unknown; B about 6,900 and 7,000).
+- Other open options were weak: SepsisExp (Mannheim, 1,275 patients, expert labels, carry-forward preprocessing hides the testing mask), eICU demo (20 hospitals pooled, IDs removed), MIMIC demos (100 patients), a two-hospital New York COVID cohort (labs only). No open source gives three or more independent hospitals with a clean testing mask.
