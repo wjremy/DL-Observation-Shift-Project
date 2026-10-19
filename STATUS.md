@@ -4,7 +4,7 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-Luna literature agent (19 Oct): run-in case counts (ICU volumes, ICU sepsis incidence, case counts of silent deployments, events needed per updating method). Brief tasks/lit3/lit8_runin_case_counts.md; answer out/lit/lit8_runin_case_counts.md. Next: Claude reviews, adds to docs/GAP.md.
+Nothing.
 
 ## Open
 

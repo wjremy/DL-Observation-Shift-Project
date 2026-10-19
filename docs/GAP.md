@@ -51,6 +51,13 @@ Documented silent (shadow) runs of sepsis models: Duke Sepsis Watch about 3 mont
 
 E6 (STATUS.md): on Beth Israel to Emory, choosing w is stable from about 1,000 patients (about 22 cases); a full refit of the linear model overtakes from about 2,500 patients (53 cases). For E6's ICU cohort that is far less than a large hospital's typical run-in, so the dial's case rests on small sites, short run-ins and large models, and on the fact that the best end differs per target (Futoma: drop for Memphis; E6: keep for Emory).
 
+### Cases per run-in (19 Oct 2026; `out/lit/lit8_runin_case_counts.md`, references there)
+
+- ICU volume: median US study ICU 16 beds and 1,299 admissions a year (Checkley et al. 2014, 69 centres); England 580-675 admissions per unit a year (Wilcox et al. 2014; ICNARC 2022-23); Netherlands about 513 per ICU (2011). About 85% of ICU stays last at least 24 h (one Canadian cohort).
+- Derived with E6's outcome rate (2% of eligible patients develop sepsis in the next 48 h): one median US ICU yields about 2-6 cases in a 1-3 month run-in, an English unit 1-3; reaching E6's refit crossover (about 50 cases) would take about 2.3 years in one US ICU. A hospital with about 82 ICU beds yields about 9-28 cases in 1-3 months, a three-hospital system 28-84. Hospital-wide deployments are far larger (Tufts ESMv2: 1,049 cases in about 2.5 months over three hospitals).
+- Updating literature: no universal event minimum; external validation alone needs at least 100 events (200 for calibration curves; Riley et al. 2024), i.e. about 5,000 eligible patients at 2%. Steyerberg et al. 2004 (samples from 14 to 700 events) and Vergouwe et al. 2017 found parsimonious updates (intercept, recalibration) preferable at small samples and full coefficient revision prone to overfitting. Moor et al. 2023 fine-tuned a deep sepsis model on 10% of each target site's data; event counts not reported.
+- Reading: a single ICU's silent run-in sits well below E6's crossover, where one-parameter updates win; this is the setting for the dial. Large hospital-wide deployments can afford a refit of a simple model. Corrections to lit7: Duke's and UCSD's silent-run denominators and case counts are not reported in the papers checked here.
+
 ## Before claiming novelty, check
 
 - Done 19 Oct: CLIO, Rockenschaub and Futoma read in full (above).

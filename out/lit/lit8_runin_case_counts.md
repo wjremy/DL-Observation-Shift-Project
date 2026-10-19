@@ -1,0 +1,56 @@
+## Findings
+
+There is no universal number of cases required to update a model. The literature supports a distinction between **estimating a new local baseline risk**, **recalibrating a slope**, and **refitting all coefficients**; sample-size guidance depends on the goal and assumptions. Published silent-run reports also often omit the outcome-case count. **NR** below means it was not reported in the cited source.
+
+### Table 1. ICU volume, length of stay, and sepsis incidence
+
+| Setting | Reported figure | Source |
+|---|---|---|
+| US, 69-center study sample | Median **16 beds per study ICU** (range 4–44) and **1,299 admissions per ICU/year** (230–4,556). Median **82 adult ICU beds per hospital**. Selected centers, not a national census; total ICU admissions per hospital NR. | [1] |
+| England, adult general ICUs | In a 162-unit survey, median **580 admissions/unit/year** (IQR 430–780). The grouped bed-size median falls in the **8–10-bed** category. | [2] |
+| England, Wales, Northern Ireland, 2022–23 | **193 general ICUs**, 130,340 admissions: **675 admissions/unit/year**, derived. Median ICU length of stay **3.0 days**. | [3] |
+| Netherlands, 2011 | **42,040 admissions across 82 ICUs in 82 hospitals**: about **513 admissions per ICU/hospital**, derived. | [4] |
+| ICU stay ≥24 h | In a five-hospital Canadian cohort, **3,841/24,829 (15.5%)** of ICU admission records had stays under 24 h; the complement, **84.5% ≥24 h**, is derived. This is a cohort estimate, not a national rate. | [5] |
+| PhysioNet Sepsis Challenge 2019, ICU cohorts A/B | Sepsis-3 labels: **1,790/20,336 (8.8%)** in A and **1,142/20,000 (5.7%)** in B. These are full-record ICU patient rates, not ICU-acquired-only rates. Data are described as collected “over the past decade”; exact site-specific years are NR. | [6] |
+| UK multi-ICU Sepsis-3 cohort | Among **28,456 ICU admissions** at 10 ICUs (2014–18), **12,019 sepsis episodes (80.8%)** occurred within 48 h of ICU arrival: 7,940 community-onset and 4,079 hospital-acquired before ICU. **2,850 episodes** were ICU-acquired (>48 h after ICU arrival), at **22.4/1,000 ICU patient-days**; 2,040 admissions had an ICU-acquired episode, or **7.2% of admissions**, derived. Episode timing is not the same as sepsis present at the instant of admission. | [7] |
+
+### Table 2. Reported silent or shadow deployments
+
+| Deployment | Setting and duration | Patients/encounters | Outcome cases |
+|---|---|---:|---:|
+| Epic Sepsis Model v2, Tufts Medicine | Three-hospital system; silent predictions, **Aug 16–Oct 31, 2024** (about 2.5 months) | 31,951 hospitalizations; 25,760 patients | **1,049 Sepsis-3 hospitalizations (3.3%)**. The study is retrospective evaluation of silent predictions, not a prospective intervention. | [8] |
+| Pediatric inpatient sepsis model | Single children’s hospital, non-ICU wards; prospective silent EHR validation during **2019** | 8,608 encounters | **68 episodes** (about 0.8%); intention-to-treat sepsis definition, not Sepsis-3. | [9] |
+| Penn severe-sepsis model | Non-ICU admissions; silent comparison reported for **Jan 2016–Feb 2017** | 22,280 in the silent cohort | Cohort-wide outcome-case count **NR**. | [10] |
+| Duke Sepsis Watch | ED; **3-month** silent period | Total denominator **NR** | Total sepsis cases **NR**; the paper reports review of **50 high-risk cases** to check the alert threshold, not 50 outcome cases. | [11] |
+| UCSD COMPOSER | ED silent-mode trial | Silent-trial denominator, duration, and case count **NR** in the impact report | A separate live-impact analysis included **6,217 septic patients** from Jan 2021–Apr 2023; that is not a silent-run count. | [12] |
+
+### Table 3. What the sample-size literature says about updating
+
+| Update | Evidence and practical interpretation |
+|---|---|
+| Recalibration-in-the-large (intercept) | No universal event minimum. Required size depends on how precisely local baseline risk or observed-to-expected ratio must be estimated. Riley et al. recommend precision-based calculations for the target setting. [13] |
+| Logistic recalibration (intercept and slope) | No universal update minimum. For **external validation**, rules of thumb are ≥100 events and ≥100 non-events for measures such as discrimination and calibration slope, and ≥200 of each for flexible calibration curves. These are validation heuristics, not minimums for fitting an update. At a 2% event rate, 100 events implies about **5,000 eligible patients**; 200 implies about **10,000**, derived. Riley et al.’s example required **949 patients/408 events** for a precise slope under a **43%** prevalence and specified prediction distribution—assumptions that do not transfer to a 2% setting. [14] |
+| Re-estimating all coefficients | Riley’s development method calculates sample size from parameter count, anticipated performance, prevalence, and targets for shrinkage and optimism; it does not endorse a universal events-per-parameter cutoff. [13] In an updating study, Steyerberg et al. compared samples from **200 patients/14 deaths** to **10,000/700** and found parsimonious updates preferable; coefficient revision was for larger samples with shrinkage. [15] Vergouwe et al. likewise found full coefficient revision could overfit (internal calibration slope **0.86**) and their procedure selected intercept-only updating in that example. [16] |
+| Neural-network fine-tuning | Moor et al. reported improved cross-site transfer after fine-tuning on **10% of each target site’s data**, from a pooled ICU cohort of **136,478 stays, 25,694 with Sepsis-3**. Exact event counts in the 10% fine-tuning subsets were **NR**; this is not a minimum-case recommendation. [17] |
+
+Using the **2% eligible-patient outcome rate from your experiment** and the literature’s 84.5% ≥24-hour stay share as an approximation, one median-volume US ICU (1,299 admissions/year) yields about **2–6 cases in 1–3 months**. A US hospital with 82 ICU beds corresponds crudely to **82/16 ≈ 5.1 median ICU-sized units**, or about 6,650 admissions/year; that gives **9–28 cases**. A three-hospital system of that illustrative size gives **28–84 cases**. These are derived estimates using ratios of medians, not observed hospital or system rates. By comparison, the English median of 580 admissions/unit/year implies about **1–3 cases** over 1–3 months under the same assumptions. At this rate, 50 cases would take roughly **2.3 years** at one median US ICU, **5.3 months** at the illustrative hospital, or **1.8 months** across three such hospitals. Actual yields depend on eligibility, site volume, and the target outcome definition; the 7.2% full-stay ICU-acquired figure above is not a next-48-hour risk.
+
+### References
+
+1. Checkley W, et al. (2014). “Structure, process and annual intensive care unit mortality across 69 centers: United States Critical Illness and Injury Trials Group Critical Illness Outcomes Study.” *Critical Care Medicine* 42:344–356. [doi:10.1097/CCM.0b013e3182a275d7](https://doi.org/10.1097/CCM.0b013e3182a275d7).
+2. Wilcox ME, et al. (2014). “Comparing mortality among adult, general intensive care units in England with varying intensivist cover patterns: a retrospective cohort study.” *Critical Care* 18:491. [doi:10.1186/s13054-014-0491-3](https://doi.org/10.1186/s13054-014-0491-3).
+3. ICNARC (2024). *Case Mix Programme Public Report 2022–23: Summary Statistics*. [Official report](https://www.icnarc.org/wp-content/uploads/2024/05/CMP-Public-Report-2022-23-Summary-Statistics.pdf.pdf).
+4. van Sluisveld N, et al. (2017). “Variation in rates of ICU readmissions and post-ICU in-hospital mortality and their association with ICU discharge practices.” *BMC Health Services Research* 17:281. [doi:10.1186/s12913-017-2234-z](https://doi.org/10.1186/s12913-017-2234-z).
+5. de Souza IAO, et al. (2012). “Impact of intensive care unit admission during morning bedside rounds and mortality: a multi-center retrospective cohort study.” *Critical Care* 16:R72. [doi:10.1186/cc11329](https://doi.org/10.1186/cc11329).
+6. Reyna MA, et al. (2020). “Early Prediction of Sepsis From Clinical Data: The PhysioNet/Computing in Cardiology Challenge 2019.” *Critical Care Medicine* 48:210–217. [doi:10.1097/CCM.0000000000004145](https://doi.org/10.1097/CCM.0000000000004145); [dataset](https://physionet.org/content/challenge-2019/1.0.0/).
+7. Shah AD, et al. (2021). “Descriptors of Sepsis Using the Sepsis-3 Criteria: A Cohort Study in Critical Care Units Within the U.K. NIHR Critical Care Health Informatics Collaborative.” *Critical Care Medicine* 49:1883–1894. [doi:10.1097/CCM.0000000000005169](https://doi.org/10.1097/CCM.0000000000005169).
+8. Tuttle M, et al. (2026). “Patient Versus Prediction-Level Evaluation of a Dynamic Clinical Prediction Model of Sepsis.” *Research Square* [preprint]. [doi:10.21203/rs.3.rs-9726164/v1](https://doi.org/10.21203/rs.3.rs-9726164/v1).
+9. Stephen RJ, et al. (2023). “Sepsis Prediction in Hospitalized Children: Model Development and Validation.” *Hospital Pediatrics* 13:760–767. [doi:10.1542/hpeds.2022-006964](https://doi.org/10.1542/hpeds.2022-006964).
+10. Giannini HM, et al. (2019). “A Machine Learning Algorithm to Predict Severe Sepsis and Septic Shock: Development, Implementation, and Impact on Clinical Practice.” *Critical Care Medicine* 47:1485–1492. [doi:10.1097/CCM.0000000000003891](https://doi.org/10.1097/CCM.0000000000003891).
+11. Sendak MP, et al. (2020). “Real-World Integration of a Sepsis Deep Learning Technology Into Routine Clinical Care: Implementation Study.” *JMIR Medical Informatics* 8:e15182. [doi:10.2196/15182](https://doi.org/10.2196/15182).
+12. Boussina A, et al. (2024). “Impact of a deep learning sepsis prediction model on quality of care and survival.” *npj Digital Medicine* 7. [doi:10.1038/s41746-023-00986-6](https://doi.org/10.1038/s41746-023-00986-6).
+13. Riley RD, et al. (2019). “Minimum sample size for developing a multivariable prediction model: Part II—binary and time-to-event outcomes.” *Statistics in Medicine* 38:1276–1296. [doi:10.1002/sim.7992](https://doi.org/10.1002/sim.7992).
+14. Riley RD, et al. (2024). “Evaluation of clinical prediction models (part 3): calculating the sample size required for an external validation study.” *BMJ* 384:e074821. [doi:10.1136/bmj-2023-074821](https://doi.org/10.1136/bmj-2023-074821).
+15. Steyerberg EW, et al. (2004). “Validation and updating of predictive logistic regression models: a study on sample size and shrinkage.” *Statistics in Medicine* 23:2567–2586. [doi:10.1002/sim.1844](https://doi.org/10.1002/sim.1844).
+16. Vergouwe Y, et al. (2017). “A closed testing procedure to select an appropriate method for updating prediction models.” *Statistics in Medicine* 36:4529–4539. [doi:10.1002/sim.7179](https://doi.org/10.1002/sim.7179).
+17. Moor M, et al. (2023). “Predicting sepsis using deep learning across international sites: a retrospective development and validation study.” *eClinicalMedicine* 62:102124. [doi:10.1016/j.eclinm.2023.102124](https://doi.org/10.1016/j.eclinm.2023.102124).
