@@ -23,7 +23,8 @@ Claims (wording as in the group post, docs/proposal_post_2026-10-19.md):
 6. Real data E6 (PhysioNet 2019, Beth Israel to Emory, linear model): best w near 1; removing the pattern costs 0.05 AUROC; one-parameter update beats a full refit up to about 20 cases, refit wins from about 50.
 7. Run-in literature: sepsis silent runs last about 6 weeks to 3 months; one ICU yields about 2-6 sepsis cases in 1-3 months (docs/GAP.md).
 8. E7 (24 open site pairs): the best w is spread over 0 to above 1 (interior in 10 of 24); a tuned dial beats the better end in 13 of 24, small gains, partly calibration (STATUS.md E7).
-9. Need more hospital pairs to test claim 2. eICU (208 hospitals) needs credentialed access; Wesley wants open data without sign-in first (search running or done: out/lit/lit10_open_datasets.md).
+9. E7b: the large gains above w = 1 were mostly calibration. E8 (pre-specified, realistic unit run-ins, AUROC): no tuning method beats keeping the model as trained; the dial with recalibration is the least harmful and beats the binary choice (STATUS.md E8).
+10. Need more hospital pairs to test claim 2. eICU (208 hospitals) needs credentialed access; Wesley wants open data without sign-in first (search running or done: out/lit/lit10_open_datasets.md).
 
 ## 3. Evidence map
 

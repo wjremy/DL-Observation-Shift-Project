@@ -4,7 +4,7 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-E8 Luna agent (19 Oct): the dial with realistic unit-level run-ins (1-12 months of a typical ICU), primary pairs same ICU type across hospitals, AUROC (SPEC.md E8, pre-specified). Brief tasks/e8/; answer out/e8/e8_realistic_runin.md. Next: Claude reviews, renders figures/e8_figure.py, records.
+Nothing.
 
 ## Open
 
@@ -17,6 +17,17 @@ E8 Luna agent (19 Oct): the dial with realistic unit-level run-ins (1-12 months 
 - Earlier optional item: real-data arm (MIMIC-IV). Needs credentialed PhysioNet access, which a team member must apply for; on real data report mask gain on A against cost on B (no Bayes rules available).
 
 ## Results so far
+
+### E8: the dial with a realistic unit-level run-in (19 Oct 2026; pre-specified in SPEC.md E8; `analysis/e8_*`, `figures/e8_runin.png`)
+
+Code by Luna (`e8_runin.py`), reviewed by Claude: same source fits as E7 (penalties match), run-ins drawn without replacement from the target unit, evaluation on all other target patients, 200 draws per size, ties and zero-case run-ins resolved towards w = 1. Runtime 3 min.
+
+**Primary result (pre-specified; 4 same-ICU-type cross-hospital pairs, 3-month run-in of 162 patients, about 3-6 sepsis cases):** no tuning method beats doing nothing. AUROC of `dial_recal` minus `keep` (w = 1, untuned): A-MICU to B-MICU -0.025, B-MICU to A-MICU -0.002, A-SICU to B-SICU -0.007, B-SICU to A-SICU -0.016 (mean -0.012). `dial_recal` does beat `end_recal` (+0.014, +0.014, +0.001, +0.003; mean +0.008), and it is the least harmful tuning method at every size.
+
+- Choosing by run-in log loss hurts ranking, even with large run-ins: `end` and `dial` lose 0.03-0.09 AUROC against `keep` in the MICU pairs and get worse as the run-in grows. Log loss rewards settings that fix calibration (the source model is too confident at the target, and lowering w shrinks the predictions), which costs ranking. Recalibration takes over the calibration job and removes most of this loss.
+- Only one pair gains with a long run-in: B-MICU to A-MICU, `dial_recal` +0.009 (6 months), +0.015 (12), +0.020 (24) against `keep`.
+- Correction of E7b: its AUROC gains of the dial were measured against `end_recal`, which itself loses ranking; against doing nothing they mostly disappear.
+- Reading: at realistic run-in sizes the safest choice is to keep the model as trained; per-unit tuning of the dial does not pay off in these data. Lessons for the design: tune for the metric that matters (or shrink w towards 1), and separate calibration from the dial.
 
 ### E7b: dial above 1 versus recalibration (19 Oct 2026; `analysis/e7b_*`)
 

@@ -1,0 +1,960 @@
+{
+  "spec": "E8",
+  "cache_version": 1,
+  "dataset": "P19",
+  "source_split_seed": 71019,
+  "source_fit_penalties_match_e7": true,
+  "source_fits": [
+    {
+      "dataset": "P19",
+      "source": "A-MICU",
+      "selected_penalty": 0.1,
+      "e7_selected_penalty": 0.1,
+      "penalty_matches_e7": true,
+      "cv_log_loss": {
+        "0.001": 0.17814268373107278,
+        "0.003": 0.16625616918579772,
+        "0.01": 0.15634904113103087,
+        "0.03": 0.15032345470084046,
+        "0.1": 0.14784052951108728,
+        "0.3": 0.1500037987140219
+      },
+      "source_train_n": 2452
+    },
+    {
+      "dataset": "P19",
+      "source": "A-SICU",
+      "selected_penalty": 0.1,
+      "e7_selected_penalty": 0.1,
+      "penalty_matches_e7": true,
+      "cv_log_loss": {
+        "0.001": 0.1327318263751439,
+        "0.003": 0.10066679260080832,
+        "0.01": 0.08235782498531016,
+        "0.03": 0.07525609901731807,
+        "0.1": 0.07352068644879516,
+        "0.3": 0.0742658627372706
+      },
+      "source_train_n": 1176
+    },
+    {
+      "dataset": "P19",
+      "source": "B-MICU",
+      "selected_penalty": 0.1,
+      "e7_selected_penalty": 0.1,
+      "penalty_matches_e7": true,
+      "cv_log_loss": {
+        "0.001": 0.100068005018698,
+        "0.003": 0.09440458521053541,
+        "0.01": 0.09038680348762136,
+        "0.03": 0.08862503858563986,
+        "0.1": 0.08852128373068605,
+        "0.3": 0.0898109590567266
+      },
+      "source_train_n": 4014
+    },
+    {
+      "dataset": "P19",
+      "source": "B-SICU",
+      "selected_penalty": 0.1,
+      "e7_selected_penalty": 0.1,
+      "penalty_matches_e7": true,
+      "cv_log_loss": {
+        "0.001": 0.1395567609626097,
+        "0.003": 0.1335438084949525,
+        "0.01": 0.12837989894366428,
+        "0.03": 0.12460756834473094,
+        "0.1": 0.12276477058512475,
+        "0.3": 0.12305066009007061
+      },
+      "source_train_n": 3875
+    }
+  ],
+  "primary_pairs": [
+    [
+      "A-MICU",
+      "B-MICU"
+    ],
+    [
+      "B-MICU",
+      "A-MICU"
+    ],
+    [
+      "A-SICU",
+      "B-SICU"
+    ],
+    [
+      "B-SICU",
+      "A-SICU"
+    ]
+  ],
+  "secondary_pairs": [
+    [
+      "A-MICU",
+      "A-SICU"
+    ],
+    [
+      "A-MICU",
+      "B-SICU"
+    ],
+    [
+      "A-SICU",
+      "A-MICU"
+    ],
+    [
+      "A-SICU",
+      "B-MICU"
+    ],
+    [
+      "B-MICU",
+      "A-SICU"
+    ],
+    [
+      "B-MICU",
+      "B-SICU"
+    ],
+    [
+      "B-SICU",
+      "A-MICU"
+    ],
+    [
+      "B-SICU",
+      "B-MICU"
+    ]
+  ],
+  "runin_sizes": [
+    {
+      "n_run": 54,
+      "months": 1
+    },
+    {
+      "n_run": 108,
+      "months": 2
+    },
+    {
+      "n_run": 162,
+      "months": 3
+    },
+    {
+      "n_run": 325,
+      "months": 6
+    },
+    {
+      "n_run": 650,
+      "months": 12
+    },
+    {
+      "n_run": 1300,
+      "months": 24
+    }
+  ],
+  "draws_per_pair_size": 200,
+  "runin_rng_seed": 81019,
+  "runin_sampling": "single NumPy default_rng seeded once; target patients sampled without replacement; evaluation is every remaining target patient",
+  "min_evaluation_n": 500,
+  "methods": [
+    "keep",
+    "end",
+    "dial",
+    "end_recal",
+    "dial_recal"
+  ],
+  "dial_grid": [
+    0.0,
+    0.05,
+    0.1,
+    0.15,
+    0.2,
+    0.25,
+    0.3,
+    0.35,
+    0.4,
+    0.45,
+    0.5,
+    0.55,
+    0.6,
+    0.65,
+    0.7,
+    0.75,
+    0.8,
+    0.85,
+    0.9,
+    0.95,
+    1.0,
+    1.05,
+    1.1,
+    1.15,
+    1.2,
+    1.25,
+    1.3,
+    1.35,
+    1.4,
+    1.45,
+    1.5,
+    1.55,
+    1.6,
+    1.65,
+    1.7,
+    1.75,
+    1.8,
+    1.85,
+    1.9,
+    1.95,
+    2.0,
+    2.05,
+    2.1,
+    2.15,
+    2.2,
+    2.25,
+    2.3,
+    2.35,
+    2.4,
+    2.45,
+    2.5,
+    2.55,
+    2.6,
+    2.65,
+    2.7,
+    2.75,
+    2.8,
+    2.85,
+    2.9,
+    2.95,
+    3.0
+  ],
+  "recalibration": "per candidate logit, minimise summed logistic loss + a^2 + (s-1)^2 by Newton from a=0,s=1",
+  "tie_break": "w closest to 1; zero-case run-ins explicitly choose w=1",
+  "zero_case_runins": [
+    {
+      "source": "A-MICU",
+      "target": "A-SICU",
+      "pair_type": "secondary",
+      "n_run": 54,
+      "runin_months": 1,
+      "draws": 200,
+      "zero_case_draws": 82,
+      "zero_case_share": 0.41
+    },
+    {
+      "source": "A-MICU",
+      "target": "A-SICU",
+      "pair_type": "secondary",
+      "n_run": 108,
+      "runin_months": 2,
+      "draws": 200,
+      "zero_case_draws": 26,
+      "zero_case_share": 0.13
+    },
+    {
+      "source": "A-MICU",
+      "target": "A-SICU",
+      "pair_type": "secondary",
+      "n_run": 162,
+      "runin_months": 3,
+      "draws": 200,
+      "zero_case_draws": 12,
+      "zero_case_share": 0.06
+    },
+    {
+      "source": "A-MICU",
+      "target": "A-SICU",
+      "pair_type": "secondary",
+      "n_run": 325,
+      "runin_months": 6,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "A-MICU",
+      "target": "A-SICU",
+      "pair_type": "secondary",
+      "n_run": 650,
+      "runin_months": 12,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "A-MICU",
+      "target": "B-MICU",
+      "pair_type": "primary",
+      "n_run": 54,
+      "runin_months": 1,
+      "draws": 200,
+      "zero_case_draws": 70,
+      "zero_case_share": 0.35
+    },
+    {
+      "source": "A-MICU",
+      "target": "B-MICU",
+      "pair_type": "primary",
+      "n_run": 108,
+      "runin_months": 2,
+      "draws": 200,
+      "zero_case_draws": 27,
+      "zero_case_share": 0.135
+    },
+    {
+      "source": "A-MICU",
+      "target": "B-MICU",
+      "pair_type": "primary",
+      "n_run": 162,
+      "runin_months": 3,
+      "draws": 200,
+      "zero_case_draws": 7,
+      "zero_case_share": 0.035
+    },
+    {
+      "source": "A-MICU",
+      "target": "B-MICU",
+      "pair_type": "primary",
+      "n_run": 325,
+      "runin_months": 6,
+      "draws": 200,
+      "zero_case_draws": 1,
+      "zero_case_share": 0.005
+    },
+    {
+      "source": "A-MICU",
+      "target": "B-MICU",
+      "pair_type": "primary",
+      "n_run": 650,
+      "runin_months": 12,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "A-MICU",
+      "target": "B-MICU",
+      "pair_type": "primary",
+      "n_run": 1300,
+      "runin_months": 24,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "A-MICU",
+      "target": "B-SICU",
+      "pair_type": "secondary",
+      "n_run": 54,
+      "runin_months": 1,
+      "draws": 200,
+      "zero_case_draws": 47,
+      "zero_case_share": 0.235
+    },
+    {
+      "source": "A-MICU",
+      "target": "B-SICU",
+      "pair_type": "secondary",
+      "n_run": 108,
+      "runin_months": 2,
+      "draws": 200,
+      "zero_case_draws": 11,
+      "zero_case_share": 0.055
+    },
+    {
+      "source": "A-MICU",
+      "target": "B-SICU",
+      "pair_type": "secondary",
+      "n_run": 162,
+      "runin_months": 3,
+      "draws": 200,
+      "zero_case_draws": 4,
+      "zero_case_share": 0.02
+    },
+    {
+      "source": "A-MICU",
+      "target": "B-SICU",
+      "pair_type": "secondary",
+      "n_run": 325,
+      "runin_months": 6,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "A-MICU",
+      "target": "B-SICU",
+      "pair_type": "secondary",
+      "n_run": 650,
+      "runin_months": 12,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "A-MICU",
+      "target": "B-SICU",
+      "pair_type": "secondary",
+      "n_run": 1300,
+      "runin_months": 24,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "A-SICU",
+      "target": "A-MICU",
+      "pair_type": "secondary",
+      "n_run": 54,
+      "runin_months": 1,
+      "draws": 200,
+      "zero_case_draws": 37,
+      "zero_case_share": 0.185
+    },
+    {
+      "source": "A-SICU",
+      "target": "A-MICU",
+      "pair_type": "secondary",
+      "n_run": 108,
+      "runin_months": 2,
+      "draws": 200,
+      "zero_case_draws": 3,
+      "zero_case_share": 0.015
+    },
+    {
+      "source": "A-SICU",
+      "target": "A-MICU",
+      "pair_type": "secondary",
+      "n_run": 162,
+      "runin_months": 3,
+      "draws": 200,
+      "zero_case_draws": 1,
+      "zero_case_share": 0.005
+    },
+    {
+      "source": "A-SICU",
+      "target": "A-MICU",
+      "pair_type": "secondary",
+      "n_run": 325,
+      "runin_months": 6,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "A-SICU",
+      "target": "A-MICU",
+      "pair_type": "secondary",
+      "n_run": 650,
+      "runin_months": 12,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "A-SICU",
+      "target": "A-MICU",
+      "pair_type": "secondary",
+      "n_run": 1300,
+      "runin_months": 24,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "A-SICU",
+      "target": "B-MICU",
+      "pair_type": "secondary",
+      "n_run": 54,
+      "runin_months": 1,
+      "draws": 200,
+      "zero_case_draws": 71,
+      "zero_case_share": 0.355
+    },
+    {
+      "source": "A-SICU",
+      "target": "B-MICU",
+      "pair_type": "secondary",
+      "n_run": 108,
+      "runin_months": 2,
+      "draws": 200,
+      "zero_case_draws": 32,
+      "zero_case_share": 0.16
+    },
+    {
+      "source": "A-SICU",
+      "target": "B-MICU",
+      "pair_type": "secondary",
+      "n_run": 162,
+      "runin_months": 3,
+      "draws": 200,
+      "zero_case_draws": 11,
+      "zero_case_share": 0.055
+    },
+    {
+      "source": "A-SICU",
+      "target": "B-MICU",
+      "pair_type": "secondary",
+      "n_run": 325,
+      "runin_months": 6,
+      "draws": 200,
+      "zero_case_draws": 2,
+      "zero_case_share": 0.01
+    },
+    {
+      "source": "A-SICU",
+      "target": "B-MICU",
+      "pair_type": "secondary",
+      "n_run": 650,
+      "runin_months": 12,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "A-SICU",
+      "target": "B-MICU",
+      "pair_type": "secondary",
+      "n_run": 1300,
+      "runin_months": 24,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "A-SICU",
+      "target": "B-SICU",
+      "pair_type": "primary",
+      "n_run": 54,
+      "runin_months": 1,
+      "draws": 200,
+      "zero_case_draws": 50,
+      "zero_case_share": 0.25
+    },
+    {
+      "source": "A-SICU",
+      "target": "B-SICU",
+      "pair_type": "primary",
+      "n_run": 108,
+      "runin_months": 2,
+      "draws": 200,
+      "zero_case_draws": 15,
+      "zero_case_share": 0.075
+    },
+    {
+      "source": "A-SICU",
+      "target": "B-SICU",
+      "pair_type": "primary",
+      "n_run": 162,
+      "runin_months": 3,
+      "draws": 200,
+      "zero_case_draws": 4,
+      "zero_case_share": 0.02
+    },
+    {
+      "source": "A-SICU",
+      "target": "B-SICU",
+      "pair_type": "primary",
+      "n_run": 325,
+      "runin_months": 6,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "A-SICU",
+      "target": "B-SICU",
+      "pair_type": "primary",
+      "n_run": 650,
+      "runin_months": 12,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "A-SICU",
+      "target": "B-SICU",
+      "pair_type": "primary",
+      "n_run": 1300,
+      "runin_months": 24,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "B-MICU",
+      "target": "A-MICU",
+      "pair_type": "primary",
+      "n_run": 54,
+      "runin_months": 1,
+      "draws": 200,
+      "zero_case_draws": 35,
+      "zero_case_share": 0.175
+    },
+    {
+      "source": "B-MICU",
+      "target": "A-MICU",
+      "pair_type": "primary",
+      "n_run": 108,
+      "runin_months": 2,
+      "draws": 200,
+      "zero_case_draws": 2,
+      "zero_case_share": 0.01
+    },
+    {
+      "source": "B-MICU",
+      "target": "A-MICU",
+      "pair_type": "primary",
+      "n_run": 162,
+      "runin_months": 3,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "B-MICU",
+      "target": "A-MICU",
+      "pair_type": "primary",
+      "n_run": 325,
+      "runin_months": 6,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "B-MICU",
+      "target": "A-MICU",
+      "pair_type": "primary",
+      "n_run": 650,
+      "runin_months": 12,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "B-MICU",
+      "target": "A-MICU",
+      "pair_type": "primary",
+      "n_run": 1300,
+      "runin_months": 24,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "B-MICU",
+      "target": "A-SICU",
+      "pair_type": "secondary",
+      "n_run": 54,
+      "runin_months": 1,
+      "draws": 200,
+      "zero_case_draws": 81,
+      "zero_case_share": 0.405
+    },
+    {
+      "source": "B-MICU",
+      "target": "A-SICU",
+      "pair_type": "secondary",
+      "n_run": 108,
+      "runin_months": 2,
+      "draws": 200,
+      "zero_case_draws": 35,
+      "zero_case_share": 0.175
+    },
+    {
+      "source": "B-MICU",
+      "target": "A-SICU",
+      "pair_type": "secondary",
+      "n_run": 162,
+      "runin_months": 3,
+      "draws": 200,
+      "zero_case_draws": 14,
+      "zero_case_share": 0.07
+    },
+    {
+      "source": "B-MICU",
+      "target": "A-SICU",
+      "pair_type": "secondary",
+      "n_run": 325,
+      "runin_months": 6,
+      "draws": 200,
+      "zero_case_draws": 2,
+      "zero_case_share": 0.01
+    },
+    {
+      "source": "B-MICU",
+      "target": "A-SICU",
+      "pair_type": "secondary",
+      "n_run": 650,
+      "runin_months": 12,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "B-MICU",
+      "target": "B-SICU",
+      "pair_type": "secondary",
+      "n_run": 54,
+      "runin_months": 1,
+      "draws": 200,
+      "zero_case_draws": 66,
+      "zero_case_share": 0.33
+    },
+    {
+      "source": "B-MICU",
+      "target": "B-SICU",
+      "pair_type": "secondary",
+      "n_run": 108,
+      "runin_months": 2,
+      "draws": 200,
+      "zero_case_draws": 11,
+      "zero_case_share": 0.055
+    },
+    {
+      "source": "B-MICU",
+      "target": "B-SICU",
+      "pair_type": "secondary",
+      "n_run": 162,
+      "runin_months": 3,
+      "draws": 200,
+      "zero_case_draws": 2,
+      "zero_case_share": 0.01
+    },
+    {
+      "source": "B-MICU",
+      "target": "B-SICU",
+      "pair_type": "secondary",
+      "n_run": 325,
+      "runin_months": 6,
+      "draws": 200,
+      "zero_case_draws": 1,
+      "zero_case_share": 0.005
+    },
+    {
+      "source": "B-MICU",
+      "target": "B-SICU",
+      "pair_type": "secondary",
+      "n_run": 650,
+      "runin_months": 12,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "B-MICU",
+      "target": "B-SICU",
+      "pair_type": "secondary",
+      "n_run": 1300,
+      "runin_months": 24,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "B-SICU",
+      "target": "A-MICU",
+      "pair_type": "secondary",
+      "n_run": 54,
+      "runin_months": 1,
+      "draws": 200,
+      "zero_case_draws": 25,
+      "zero_case_share": 0.125
+    },
+    {
+      "source": "B-SICU",
+      "target": "A-MICU",
+      "pair_type": "secondary",
+      "n_run": 108,
+      "runin_months": 2,
+      "draws": 200,
+      "zero_case_draws": 8,
+      "zero_case_share": 0.04
+    },
+    {
+      "source": "B-SICU",
+      "target": "A-MICU",
+      "pair_type": "secondary",
+      "n_run": 162,
+      "runin_months": 3,
+      "draws": 200,
+      "zero_case_draws": 2,
+      "zero_case_share": 0.01
+    },
+    {
+      "source": "B-SICU",
+      "target": "A-MICU",
+      "pair_type": "secondary",
+      "n_run": 325,
+      "runin_months": 6,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "B-SICU",
+      "target": "A-MICU",
+      "pair_type": "secondary",
+      "n_run": 650,
+      "runin_months": 12,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "B-SICU",
+      "target": "A-MICU",
+      "pair_type": "secondary",
+      "n_run": 1300,
+      "runin_months": 24,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "B-SICU",
+      "target": "A-SICU",
+      "pair_type": "primary",
+      "n_run": 54,
+      "runin_months": 1,
+      "draws": 200,
+      "zero_case_draws": 73,
+      "zero_case_share": 0.365
+    },
+    {
+      "source": "B-SICU",
+      "target": "A-SICU",
+      "pair_type": "primary",
+      "n_run": 108,
+      "runin_months": 2,
+      "draws": 200,
+      "zero_case_draws": 32,
+      "zero_case_share": 0.16
+    },
+    {
+      "source": "B-SICU",
+      "target": "A-SICU",
+      "pair_type": "primary",
+      "n_run": 162,
+      "runin_months": 3,
+      "draws": 200,
+      "zero_case_draws": 12,
+      "zero_case_share": 0.06
+    },
+    {
+      "source": "B-SICU",
+      "target": "A-SICU",
+      "pair_type": "primary",
+      "n_run": 325,
+      "runin_months": 6,
+      "draws": 200,
+      "zero_case_draws": 1,
+      "zero_case_share": 0.005
+    },
+    {
+      "source": "B-SICU",
+      "target": "A-SICU",
+      "pair_type": "primary",
+      "n_run": 650,
+      "runin_months": 12,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "B-SICU",
+      "target": "B-MICU",
+      "pair_type": "secondary",
+      "n_run": 54,
+      "runin_months": 1,
+      "draws": 200,
+      "zero_case_draws": 72,
+      "zero_case_share": 0.36
+    },
+    {
+      "source": "B-SICU",
+      "target": "B-MICU",
+      "pair_type": "secondary",
+      "n_run": 108,
+      "runin_months": 2,
+      "draws": 200,
+      "zero_case_draws": 32,
+      "zero_case_share": 0.16
+    },
+    {
+      "source": "B-SICU",
+      "target": "B-MICU",
+      "pair_type": "secondary",
+      "n_run": 162,
+      "runin_months": 3,
+      "draws": 200,
+      "zero_case_draws": 11,
+      "zero_case_share": 0.055
+    },
+    {
+      "source": "B-SICU",
+      "target": "B-MICU",
+      "pair_type": "secondary",
+      "n_run": 325,
+      "runin_months": 6,
+      "draws": 200,
+      "zero_case_draws": 1,
+      "zero_case_share": 0.005
+    },
+    {
+      "source": "B-SICU",
+      "target": "B-MICU",
+      "pair_type": "secondary",
+      "n_run": 650,
+      "runin_months": 12,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    },
+    {
+      "source": "B-SICU",
+      "target": "B-MICU",
+      "pair_type": "secondary",
+      "n_run": 1300,
+      "runin_months": 24,
+      "draws": 200,
+      "zero_case_draws": 0,
+      "zero_case_share": 0.0
+    }
+  ],
+  "skipped_sizes": [
+    {
+      "source": "A-MICU",
+      "target": "A-SICU",
+      "pair_type": "secondary",
+      "n_run": 1300,
+      "runin_months": 24,
+      "target_n": 1470,
+      "evaluation_n_if_run": 170,
+      "minimum_evaluation_n": 500,
+      "reason": "run-in would leave fewer than 500 evaluation patients"
+    },
+    {
+      "source": "B-MICU",
+      "target": "A-SICU",
+      "pair_type": "secondary",
+      "n_run": 1300,
+      "runin_months": 24,
+      "target_n": 1470,
+      "evaluation_n_if_run": 170,
+      "minimum_evaluation_n": 500,
+      "reason": "run-in would leave fewer than 500 evaluation patients"
+    },
+    {
+      "source": "B-SICU",
+      "target": "A-SICU",
+      "pair_type": "primary",
+      "n_run": 1300,
+      "runin_months": 24,
+      "target_n": 1470,
+      "evaluation_n_if_run": 170,
+      "minimum_evaluation_n": 500,
+      "reason": "run-in would leave fewer than 500 evaluation patients"
+    }
+  ],
+  "outputs": [
+    "analysis\\e8_runin_draws.csv",
+    "analysis\\e8_runin_summary.csv",
+    "analysis\\e8_summary.json"
+  ],
+  "elapsed_analysis_seconds": 178.59263970004395
+}
