@@ -7,3 +7,4 @@ run_full.log
 data/raw_*/
 data/e6_cache.npz
 data/e7_cache.npz
+analysis/e8_runin_draws.csv

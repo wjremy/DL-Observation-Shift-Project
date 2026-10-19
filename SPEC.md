@@ -153,3 +153,16 @@ Methods, each chosen on the run-in only:
 Ties in run-in loss (e.g. a run-in without cases) are broken towards w = 1.
 
 Primary outcome: AUROC on the evaluation patients, `dial_recal` minus `end_recal` and `dial_recal` minus `keep`, at the 3-month run-in (n_run = 162), per primary pair: mean, 10-90% range, share of draws with a gain. Secondary: log loss; all sizes; the other methods; secondary pairs; run-in case counts.
+
+## E9: E8 with corrected tuning (Claude, 20 Oct 2026; exploratory, designed after seeing E8)
+
+E8 chose w by run-in log loss. At the target unit the source model is overconfident, so log loss favours lowering w (shrinking predictions), while the best ranking lies at w of about 2-3 (E7b curves); with 3-6 cases the choice is also mostly noise. E9 repeats E8 (same pairs, sources, run-in sizes, 200 draws, evaluation on the rest of the target unit, new fixed seed) with tuning that separates calibration from the dial, targets ranking, and defaults to the trained model. Because the methods were designed after seeing E8 on the same pairs, E9 is exploratory; confirmation needs simulation or unseen data.
+
+Methods (grid w = 0 to 3, step 0.05; run-in only):
+- `keep`: w = 1 (reference; recalibration does not change AUROC).
+- `dial_recal`: as E8 (reference).
+- `dial_recal_shrink`: minimise, over w, the penalised recalibrated run-in loss of E8 plus tau * (w - 1)^2 with tau = 2 (in summed log-loss units, i.e. a normal prior on w centred at 1 with sd 0.5), so w moves away from 1 only as the run-in evidence grows.
+- `dial_auc`: w with the highest run-in AUROC; ties, and run-ins with no case or no non-case, go to w = 1.
+- `dial_auc_shrink`: w with the highest run-in AUROC minus 0.02 * (w - 1)^2 (prefers w = 1 unless the run-in AUROC gain is clear); same tie rule.
+
+Primary outcome as E8: AUROC difference to `keep` on the 4 primary pairs at the 3-month run-in (mean, 10-90%, share of draws with a gain), for each method; secondary: all sizes, log loss (with each method's recalibration applied; `dial_auc` variants use the E8 penalised recalibration at their chosen w), secondary pairs.

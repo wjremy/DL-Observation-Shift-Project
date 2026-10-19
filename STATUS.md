@@ -4,7 +4,7 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-Nothing.
+E9 Luna agent (20 Oct): E8 with corrected tuning (calibration separated, ranking criterion, shrinkage towards w = 1); exploratory (SPEC.md E9). Brief tasks/e9/; answer out/e9/e9_fixed_tuning.md. Next: Claude reviews, renders figures/e9_figure.py, records.
 
 ## Open
 
