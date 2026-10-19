@@ -1,0 +1,50 @@
+# Dataset scan (19 Oct 2026)
+
+**Access note:** PhysioNet credentialed datasets generally require CITI training, an individual account and a DUA; PhysioNet says approval typically takes **1–2 weeks**, and team members cannot share access. [PhysioNet access FAQ](https://www.physionet.org/about/faqs/)
+
+## Table 1 — Candidate datasets
+
+| Dataset | Sites, volume, years, country | Site split, measurements and labels | Access and fit |
+|---|---|---|---|
+| **eICU-CRD v2.0** | 208 hospitals; 200,859 ICU stays, 139,367 people; 2014–15, US. | Pseudonymous `hospitalid`/`wardid` are available; names are not. Five-minute periodic vitals and lab draw times are recorded as offsets. Sepsis-3 cohorts are available through YAIB/Moor; mortality and AKI are also usable. [Dataset](https://physionet.org/content/eicu-crd/2.0/), [schema](https://eicu.mit.edu/eicutables/patient/) | PhysioNet credentialed; best source for many hospital pairs. |
+| **MIMIC-III** | One hospital (BIDMC); about 61,500 ICU stays; 2001–12, US. | Same-center split by CareVue (2001–08) vs MetaVision (2008–12); ICU types also exist. Time-stamped chart events/labs; Sepsis-3 via YAIB/Moor, mortality/AKI. [Dataset paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC4878278/), [system periods](https://mimic.mit.edu/docs/about/sources/carevue.html) | PhysioNet credentialed; useful documented EHR-era comparison, not hospital pairs. |
+| **MIMIC-IV v3.1** | One hospital (BIDMC); 94,458 ICU stays/65,366 people reported for v3.0; 2008–22, US. | ICU care units can be separated; MetaVision chart events and hospital-wide labs are time-stamped. Sepsis-3 via YAIB; mortality/AKI. [Official dataset page](https://physionet.org/content/mimiciv/3.1/) | PhysioNet credentialed; one hospital. |
+| **HiRID** | One hospital (Bern); about 33,900 ICU admissions; 2008–June 2016, Switzerland. | High-frequency vitals and labs; no multi-hospital split. Sepsis-3 via YAIB/Moor; mortality/AKI. [PhysioNet](https://physionet.org/content/hirid/1.1.1/) | PhysioNet credentialed. |
+| **AmsterdamUMCdb** | One center; 23,106 ICU/HDU admissions, 20,109 people; 2003–16, Netherlands. | ICU vs HDU can be separated; high-resolution observations and labs. Published Sepsis-3 implementation; mortality/AKI. [Dataset paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC8132908/), [Sepsis-3 code paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC9650242/) | Application, research training and signed EULA; up to five business days stated. [Access instructions](https://amsterdammedicaldatascience.nl/?p=631) |
+| **SICdb** | Four ICUs at one Salzburg hospital; 27,386 admissions/21,583 people; 2013–21, Austria. | One-minute data and hourly aggregates, including labs/vitals. Whether released fields support a usable per-ICU split: **not found**. SOFA, KDIGO AKI and mortality; packaged Sepsis-3 label: **not found**. [Dataset](https://physionet.org/content/sicdb/1.0.8/), [documentation](https://sicdb.com/Documentation/SICdb_Documentation) | PhysioNet credentialing plus research question/review; review time **not found**. |
+| **PhysioNet/CinC 2019** | Two released hospital systems (A/B); 40,336 stays; 2014–15, US. | A/B are separated; data are hourly with `SepsisLabel`. The third hospital’s data remain hidden and are not released. [Training data](https://physionet.org/content/challenge-2019/1.0.0/training/), [challenge paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC6964870/) | Open download; the competition’s hidden third site cannot add a pair. |
+| **PIC** | One children’s hospital, five ICU types; 13,941 ICU stays/12,881 children; 2010–18, China. | Unit types are reported, but released-field separation was not verified. Charted observations/labs plus 5-minute **surgical** vitals; not continuous hourly ICU monitors. A published pediatric sepsis cohort uses suspected/confirmed infection plus SIRS; mortality available. [Dataset](https://physionet.org/content/picdb/1.1.0/), [sepsis cohort](https://bmjopen.bmj.com/content/bmjopen/13/4/e067716.full.pdf) | PhysioNet credentialed. |
+| **Zhejiang critical-care database** | One hospital, two ICUs; 8,180 admissions/7,638 people; 2012–May 2022, China. | The paper identifies central and emergency ICUs, but a released unit field: **not found**. Time-stamped vitals/labs/orders; discharge status includes death; Sepsis-3 implementation: **not found**. [PhysioNet](https://physionet.org/content/zhejiang-ehr-critical-care/1.0/), [paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC9870864/) | PhysioNet credentialed. |
+| **INSPIRE** | One hospital (SNUH); about 130,000 surgical cases; 2011–20, South Korea. | Perioperative vitals/labs; ICU admission and death outcomes. EHR-version periods are mentioned, but an exposed era split and sepsis label: **not found**. [Dataset](https://physionet.org/content/inspire/1.4.2/), [paper](https://www.nature.com/articles/s41597-024-03517-4) | Restricted: CITI, DUA and Korea Credentialed Health Data License. |
+| **MIMIC-IV-ED** | One BIDMC ED; about 425,000 ED stays; 2011–19, US. | Time-stamped/triage vitals and other ED data; not an ICU dataset. Packaged sepsis cohort: **not found**. [PhysioNet](https://physionet.org/content/mimic-iv-ed/2.2/) | PhysioNet credentialed; not a hospital-pair source. |
+| **CRITICAL** *(post-2022)* | Four CTSA systems; about 400,000 critical-care patients. Exact ICU-stay count and years: **not found**. | Public codebook does not document a usable hospital/site ID or a published sepsis implementation. OMOP measurements are included. [Codebook](https://critical.fsm.northwestern.edu/data-codebook) | Institutional DUA and US-accredited-university eligibility; ETH access is not available under the published eligibility terms. [Access](https://critical.fsm.northwestern.edu/) |
+
+## Table 2 — Harmonized benchmarks
+
+| Resource | What it provides; eICU hospital-level status |
+|---|---|
+| **YAIB** | Supports MIMIC-III/IV, eICU, HiRID and AmsterdamUMCdb; hourly sepsis/AKI tasks, mortality, and missingness indicators in preprocessing. Raw eICU has `hospitalid`, but hospital-level cohort partitioning needs customization. [Paper](https://arxiv.org/abs/2306.05109), [code](https://github.com/rvandewater/YAIB) |
+| **ricu** | Harmonizes five ICU databases and clinical concepts; it is not a sepsis-label or missingness-mask benchmark. Use custom eICU hospital splits. [Paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC10268223/) |
+| **Moor et al. 2023** | Sepsis-3 labels and hourly harmonized cohorts across eICU, MIMIC-III, HiRID and Amsterdam; cross-database validation. Per-hospital eICU masks/splits: **not found**. The published pipeline assumes Dask and a large CPU server/cluster. [Paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC10425671/), [code](https://github.com/BorgwardtLab/multicenter-sepsis) |
+| **BlendedICU** | 41 harmonized time-series variables and 113 medications from four databases, resampled hourly. Sepsis labels, explicit missingness masks and per-hospital eICU splits: **not found**. [Code/data pipeline](https://github.com/USM-CHU-FGuyon/BlendedICU) |
+| **Tranchellini et al. 2026** | Sepsis-3 across MIMIC-IV, eICU and HiRID; 48 dynamic hourly features with missingness flags. It evaluates dataset-level transfer; eICU hospital-level split: **not found**. [Paper](https://www.nature.com/articles/s41746-026-02364-4), [code](https://gitlab.ethz.ch/BMDSlab/publications/sepsis/transfer-tearning-for-sepsis-detection) |
+
+## eICU: scale and practice differences
+
+A published study’s **top 10 hospitals each had at least 1,631 eligible stays**, so at least 10 exceeded both 500 and 1,000 in that analysis. The exact number of all 208 hospitals above either threshold: **not found**; query `patient.hospitalid` after access. [Hospital-transfer study](https://journals.plos.org/digitalhealth/article?id=10.1371/journal.pdig.0000023)
+
+Differences in hospital/ICU interfaces, workflows and table completeness are documented, and lab values have draw-time offsets. This is evidence of **recording/availability heterogeneity**, not a clean measure of test orders. A 138,734-stay study found lab volume associated with teaching status, but did not publish per-hospital ordering distributions. [eICU data paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC6132188/), [lab-testing study](https://pmc.ncbi.nlm.nih.gov/articles/PMC9747911/)
+
+## Closest prior work
+
+- **Closest sepsis/missingness study:** Singh et al. trained on PhysioNet 2019 site A and tested on B using hourly per-feature missingness indicators; third-site data were not available. [Paper](https://medinform.jmir.org/2021/12/e25022)
+- **eICU cross-hospital transfer:** Johnson et al. evaluated hospital-held-out prediction for mortality/length of stay, without focusing on measurement-pattern features. [Paper](https://arxiv.org/abs/1812.02275)
+- **Closest hospital-level missingness work:** a September 2026 **preprint** studies missingness-aware mortality calibration across eICU hospitals, not sepsis or a trust-weight dial. [Preprint](https://arxiv.org/abs/2609.30781)
+
+I found no prior study testing this exact per-target scalar trust dial.
+
+## Recommendation
+
+Use **eICU-CRD v2.0** as the main experiment: it offers the most separable hospitals and the needed hospital ID. Start PhysioNet applications now; approval typically takes 1–2 weeks, and every student needs individual access. For work this week, use the open 2019 A/B challenge data or the eICU demo; the demo has over 2,500 stays but hospital IDs are removed, so it is only a pipeline prototype. [eICU demo](https://physionet.org/content/eicu-crd-demo/2.0.1/)
+
+For an eight-week, CPU-laptop project, I’d first query site counts, then build a small common hourly feature set for the largest eICU hospitals with YAIB-style masks. Treat Amsterdam or HiRID as optional external-center checks, not sources of many within-dataset pairs.

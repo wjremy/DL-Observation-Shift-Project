@@ -4,9 +4,11 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-Luna dataset search (19 Oct): multi-hospital ICU datasets for testing whether the best dial lies between 0 and 1 (eICU, YAIB, etc.). Brief tasks/lit4/lit9_datasets.md; answer out/lit/lit9_datasets.md. Next: Claude reviews and recommends datasets.
+Nothing.
 
 ## Open
+
+- Team: everyone applies for PhysioNet credentialing (CITI course plus approval, 1-2 weeks) for eICU-CRD; see docs/DATA.md.
 
 - Review `analysis/contrasts.csv` (bootstrap intervals for architecture differences) and the figures.
 - Possible quick follow-ups (minutes, not a grid): stronger informativeness (gamma 3-4) to enlarge the effects; a CDE with longer training to test whether its under-learning of the pattern is a prior or slow convergence.
