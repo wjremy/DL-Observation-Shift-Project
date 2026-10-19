@@ -4,7 +4,7 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-E9 Luna agent (20 Oct): E8 with corrected tuning (calibration separated, ranking criterion, shrinkage towards w = 1); exploratory (SPEC.md E9). Brief tasks/e9/; answer out/e9/e9_fixed_tuning.md. Next: Claude reviews, renders figures/e9_figure.py, records.
+Nothing.
 
 ## Open
 
@@ -17,6 +17,22 @@ E9 Luna agent (20 Oct): E8 with corrected tuning (calibration separated, ranking
 - Earlier optional item: real-data arm (MIMIC-IV). Needs credentialed PhysioNet access, which a team member must apply for; on real data report mask gain on A against cost on B (no Bayes rules available).
 
 ## Results so far
+
+### E9: E8 with corrected tuning (20 Oct 2026; exploratory, SPEC.md E9; `analysis/e9_summary.*`, `figures/e9_runin.png`)
+
+Code by Luna (`e9_fixed_tuning.py`, reuses E8 helpers), reviewed by Claude. AUROC difference to `keep` (w = 1) on the 4 primary pairs:
+
+| Method | 3 months (about 3-6 cases) | 12 months | 24 months |
+|---|---|---|---|
+| `dial_recal` (E8) | -0.026, +0.002, -0.006, -0.015 | -0.011, +0.016, -0.007, -0.015 | +0.008, +0.020, -0.008, n/a |
+| `dial_recal_shrink` | -0.001, +0.001, -0.001, -0.001 | -0.001, +0.004, -0.002, -0.001 | +0.006, +0.007, -0.004, n/a |
+| `dial_auc` | -0.013, -0.001, -0.005, -0.005 | +0.004, +0.008, -0.006, -0.001 | +0.012, +0.013, -0.008, n/a |
+
+(pair order: A-MICU to B-MICU, B-MICU to A-MICU, A-SICU to B-SICU, B-SICU to A-SICU)
+
+- Shrinking w towards 1 makes tuning safe: within 0.002 AUROC of the trained model at every realistic run-in size, with narrow ranges (3 months: 10-90% within about -0.017 to +0.011 in the worst pair). Tuning by run-in AUROC is noisier and only helps from about 12 months.
+- No method gives a meaningful gain at a realistic single-ICU run-in. Gains appear only with 1-2 years of one ICU, in the two medical-ICU pairs (+0.004 to +0.020); the surgical pairs never gain.
+- Reading: with corrected tuning the dial is safe but, in these data, useful only with long run-ins. The limit is the number of cases a single ICU collects, not the tuning method.
 
 ### E8: the dial with a realistic unit-level run-in (19 Oct 2026; pre-specified in SPEC.md E8; `analysis/e8_*`, `figures/e8_runin.png`)
 
