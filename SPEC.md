@@ -132,3 +132,7 @@ Per target t (all of t's patients, using s's medians and scaling):
 - Also report n and outcome cases per site.
 
 Outputs: `analysis/e7_pairs.csv` (one row per dataset, source, target), `analysis/e7_curves.csv`, `analysis/e7_sites.csv`, `analysis/e7_summary.json`, figure script `figures/e7_figure.py` (small multiples: target log loss relative to w = 1 against w, one panel per pair, best w marked; Claude renders it).
+
+## E7b: dial above 1 versus recalibration (Claude, 19 Oct 2026)
+
+E7 found optima above 1 (up to the grid edge 1.5) with the largest log-loss gains, while AUROC fell, which suggests part of the gain is calibration (scaling the pattern term also stretches the predictions). E7b: same pairs and source fits as E7; extended grid w = 0 to 3; tuned comparison on 100 tune/evaluation splits between choosing the end (0 or 1), the dial on 0-1 and the dial on 0-3, each with and without intercept-and-slope recalibration fitted on the tune half (w chosen jointly with its recalibration). The dial counts as a real improvement over the binary choice only if `dial_recal` beats `end_recal`. Brief: tasks/e7b/e7b_recal.md.

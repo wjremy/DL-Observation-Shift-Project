@@ -4,7 +4,7 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-Nothing.
+E7b Luna agent (19 Oct): dial above 1 versus recalibration (SPEC.md E7b; brief tasks/e7b/; answer out/e7b/e7b_recal.md; writes e7b_recal.py, analysis/e7b_*). Next: Claude reviews and records.
 
 ## Open
 
