@@ -4,8 +4,12 @@ Do deep time-series models rely on the observation pattern (who gets measured, a
 
 ## Start here
 
+The project has moved on from the original simulation ranking: it now studies a per-hospital trust dial on the testing pattern. Read [docs/MAP.md](docs/MAP.md) first.
+
 | File | What it holds |
 |---|---|
+| [docs/MAP.md](docs/MAP.md) | Overview: current question and claims, how we got here, evidence map, next steps. |
+| [docs/FUTURE.md](docs/FUTURE.md) | Directions recorded for later (adaptation without outcomes). |
 | [STATUS.md](STATUS.md) | Current state: what is running, done, open, and results so far. Update it with every change. |
 | [docs/ARGUMENT.md](docs/ARGUMENT.md) | Why the study is designed this way (the objection to a naive robustness ranking and how the design answers it). |
 | [SPEC.md](SPEC.md) | Binding specification: data-generating process, Bayes rules, models, experiments, metrics, file formats. |

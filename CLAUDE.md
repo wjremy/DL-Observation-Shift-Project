@@ -4,7 +4,7 @@ This folder is shared with other team members. Sessions lose their context, so e
 
 ## At the start of every session
 
-Read README.md, STATUS.md and docs/ARGUMENT.md. SPEC.md is the binding design; read the parts you need.
+Read docs/MAP.md, STATUS.md and README.md; docs/ARGUMENT.md and docs/GAP.md for the reasoning. SPEC.md is the binding design; read the parts you need.
 
 ## Keeping the record
 

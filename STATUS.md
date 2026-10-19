@@ -4,7 +4,7 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-Nothing.
+Luna open-dataset search (19 Oct): datasets downloadable without any sign-in, from different hospitals or units. Brief tasks/lit5/lit10_open_datasets.md; answer out/lit/lit10_open_datasets.md. Next: Claude reviews, picks pairs (see docs/MAP.md next steps).
 
 ## Open
 
@@ -143,6 +143,8 @@ Reading: the observation pattern adds little beyond the values when values are p
 - 17 Oct 2026: design fixed in SPEC.md, following docs/ARGUMENT.md.
 
 ## Decisions
+
+- 19 Oct 2026 (Wesley): the project studies the dial only; adaptation without outcomes is future work (docs/FUTURE.md). Use open data without sign-in for more hospital pairs first; eICU later. Project map in docs/MAP.md.
 
 - 17 Oct 2026: simulation first, not MIMIC: exact Bayes benchmarks exist only in simulation, and MIMIC needs credentialed access.
 - 17 Oct 2026: models are measured against the exact A_rule and V_rule, not ranked by B score (docs/ARGUMENT.md, step 6).
