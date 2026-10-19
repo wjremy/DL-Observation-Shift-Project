@@ -4,7 +4,7 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-Nothing.
+Luna dataset search (19 Oct): multi-hospital ICU datasets for testing whether the best dial lies between 0 and 1 (eICU, YAIB, etc.). Brief tasks/lit4/lit9_datasets.md; answer out/lit/lit9_datasets.md. Next: Claude reviews and recommends datasets.
 
 ## Open
 
