@@ -1,6 +1,6 @@
 # Literature map (Claude, 18 Oct 2026)
 
-Entries were written from memory and are not yet checked against the sources: verify titles, years and numbers before citing. Each entry states what it contributes to this project.
+Entries were written from memory. The verified literature search of 19 Oct 2026 supersedes this map where they differ: see `docs/GAP.md` (claims, verdicts, gap statement) and `out/lit/` (six agent reports with DOIs or URLs). Each entry states what it contributes to this project.
 
 ## Informative measurement in health records (the problem exists)
 
