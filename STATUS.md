@@ -4,7 +4,7 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-E11 Luna agent (20 Oct): realistic run-in with safe tuning on the 2012 mortality pairs (SPEC.md E11, pre-specified). Brief tasks/e11/; answer out/e11/e11_p12_runin.md. Next: Claude reviews, renders figures/e11_figure.py, records.
+Nothing.
 
 ## Open
 
@@ -17,6 +17,17 @@ E11 Luna agent (20 Oct): realistic run-in with safe tuning on the 2012 mortality
 - Earlier optional item: real-data arm (MIMIC-IV). Needs credentialed PhysioNet access, which a team member must apply for; on real data report mask gain on A against cost on B (no Bayes rules available).
 
 ## Results so far
+
+### E11: safe dial tuning with realistic run-ins on the 2012 mortality pairs (20 Oct 2026; pre-specified, SPEC.md E11; `analysis/e11_summary.*`, `figures/e11_runin.png`; sensitivity `e11_sensitivity_clean_ph.py`, `analysis/e11s_summary.csv`)
+
+Code by Luna (`e11_p12_runin.py`), reviewed by Claude. 3-month run-in = 162 patients, about 8-32 deaths.
+
+- **Pre-specified primary result:** `dial_recal_shrink` minus `keep`, AUROC at 3 months, mean over 12 pairs: **-0.009**. Entirely due to SICU to CCU (-0.129, 10th percentile -0.57).
+- Cause (found by Claude): one CCU record has pH 97 (a recording error; 6 impossible pH values in P12). With the SICU-source model its logit is 455; the run-in recalibration then turns its slope negative and inverts the ranking. A data error, not the dial.
+- **Sensitivity (not pre-specified; impossible pH values, outside 6.5-8, set to missing):** mean over 12 pairs at 3 months: `dial_recal_shrink` +0.0015, `end_recal` +0.0015, `dial_auc_shrink` +0.0047, `dial_recal` -0.0005. SICU to CCU becomes -0.0006; the other pairs barely change.
+- Where E10 found the pattern's meaning shifted, the dial gains, growing with the run-in: CSRU to SICU `dial_recal_shrink` +0.007 (3 months), +0.022 (12), +0.026 (24); `dial_auc_shrink` +0.022 already at 3 months; CCU to SICU +0.006 / +0.009 / +0.011 (`dial_auc_shrink` +0.015 at 3 months). Where it did not shift (MICU as source), the safe dial stays within 0.001 of `keep`.
+- Against the binary choice with recalibration, the safe dial is equal on average; the AUROC-tuned dial is better (+0.0047 vs +0.0015).
+- Lesson: recalibration needs outlier protection (clip logits or clean impossible values) before the slope is estimated.
 
 ### E10: which part shifted per pair (20 Oct 2026; SPEC.md E10; `analysis/e10_*`, `figures/e10_gaps.png`)
 

@@ -26,7 +26,8 @@ Claims (wording as in the group post, docs/proposal_post_2026-10-19.md):
 9. E7b: the large gains above w = 1 were mostly calibration. E8 (pre-specified, realistic unit run-ins, AUROC): no tuning method beats keeping the model as trained; the dial with recalibration is the least harmful and beats the binary choice (STATUS.md E8).
 10. E9 (exploratory, corrected tuning): shrinking w towards 1 makes tuning safe (within 0.002 AUROC of the trained model) but no method gains at realistic single-ICU run-ins; gains only after 1-2 years in the medical-ICU pairs.
 11. E10 diagnostic: in the realistic sepsis pairs physiology shifted more than the testing pattern's meaning; the pattern's meaning shifted clearly in 7 of 26 pairs, mostly the 2012 mortality pairs. Literature: sepsis labels are built from testing (cultures, SOFA labs), which plausibly keeps the pattern's meaning stable (docs/GAP.md).
-12. Need more hospital pairs to test claim 2. eICU (208 hospitals) needs credentialed access; Wesley wants open data without sign-in first (search running or done: out/lit/lit10_open_datasets.md).
+12. E11 (2012 mortality pairs, realistic run-ins): pre-specified mean -0.009, caused by one pH = 97 record; with impossible values removed the safe dial gains +0.0015 on average, up to +0.02-0.03 where the pattern's meaning shifted, and never harms elsewhere.
+13. Need more hospital pairs to test claim 2. eICU (208 hospitals) needs credentialed access; Wesley wants open data without sign-in first (search running or done: out/lit/lit10_open_datasets.md).
 
 ## 3. Evidence map
 
