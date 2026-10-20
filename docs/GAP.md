@@ -58,6 +58,12 @@ E6 (STATUS.md): on Beth Israel to Emory, choosing w is stable from about 1,000 p
 - Updating literature: no universal event minimum; external validation alone needs at least 100 events (200 for calibration curves; Riley et al. 2024), i.e. about 5,000 eligible patients at 2%. Steyerberg et al. 2004 (samples from 14 to 700 events) and Vergouwe et al. 2017 found parsimonious updates (intercept, recalibration) preferable at small samples and full coefficient revision prone to overfitting. Moor et al. 2023 fine-tuned a deep sepsis model on 10% of each target site's data; event counts not reported.
 - Reading: a single ICU's silent run-in sits well below E6's crossover, where one-parameter updates win; this is the setting for the dial. Large hospital-wide deployments can afford a refit of a simple model. Corrections to lit7: Duke's and UCSD's silent-run denominators and case counts are not reported in the papers checked here.
 
+## How large is observation shift in practice? (20 Oct 2026; `out/lit/lit11_obs_shift_size.md`)
+
+- No typical size: few studies isolate testing-pattern features in a held-out hospital. Singh et al. 2021 (PhysioNet 2019, A to B): masks +0.018 AUROC in a whole-record task, -0.009 in the hourly task. Futoma et al. 2021: indicators helped between units of the same Memphis hospital (21 of 24 comparisons) but rarely from Beth Israel to Memphis (2 of 24). Yamamoto et al. 2026 (medRxiv preprint; sepsis-cohort mortality, MIMIC-IV to eICU): adding measurement counts went with a 0.035 larger external AUROC drop.
+- Sepsis labels are tied to testing: PhysioNet 2019's Sepsis-3 label needs blood cultures and antibiotics (suspected infection) plus a SOFA rise computed from labs, so testing patterns partly predict how the label is generated (circularity, Schamoni et al. 2019). This plausibly keeps the pattern's meaning stable across hospitals for sepsis; E7 fits it (sepsis pairs: best w at or above 1; P12 mortality pairs: best AUROC at w 0.05-0.4 when the cardiac or coronary unit is the source).
+- PhysioNet 2019 preprocessing: hourly medians and merged codes align definitions and blur within-hour order, but keep missingness; it does not harmonise testing rates.
+
 ## Before claiming novelty, check
 
 - Done 19 Oct: CLIO, Rockenschaub and Futoma read in full (above).
