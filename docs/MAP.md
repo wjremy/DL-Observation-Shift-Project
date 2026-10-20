@@ -54,14 +54,28 @@ Claims (wording as in the group post, docs/proposal_post_2026-10-19.md):
 | Communication | docs/proposal_post_2026-10-19.md (group post), docs/meeting_2026-10-19/observation_shift_deck.html (deck) |
 | Future work | docs/FUTURE.md |
 
-## 5. Next steps
+## 5. Where it stands (20 Oct 2026) and next steps
 
-1. Review the open-dataset search (out/lit/lit10_open_datasets.md) and pick at least three open hospital or unit pairs.
-2. Quick option already in hand: PhysioNet 2019 has ICU-unit columns (Unit1 medical, Unit2 surgical), giving hospital-by-unit sites within the open data.
-3. Extend E6 to the new pairs: per target, the w curve (where is the optimum, how much does it beat the better end) and the run-in comparison (choose the end, choose w, refit).
-4. Neural version: the latent-state model of E5 on real data (later).
-5. Proposal deadline 25/26 Oct 2026.
+Current story (E6-E11, STATUS.md):
+- Testing rates differ a lot between sites, but for sepsis the testing pattern's meaning largely transfers; physiology shifts more (E10). Likely reason: the Sepsis-3 label is built from testing (cultures, SOFA labs), see docs/GAP.md. For mortality the pattern's meaning does shift in several ICU pairs (E10).
+- Naive tuning of the dial on a realistic run-in (log loss, few cases) makes ranking worse (E8). Safe tuning (separate recalibration, shrink w towards 1) does no harm (E9).
+- On the 2012 mortality pairs the safe dial gains where the pattern shifted, up to +0.02-0.03 AUROC with longer run-ins, and is neutral elsewhere (E11, after removing a pH = 97 data error; the pre-specified result was -0.009 because of that record).
+- Framing for the group: the dial is a very localized refit (one parameter, the trust in the testing pattern), which needs far fewer outcome cases than refitting a model. Answer to "a scalar does nothing in a deep net": the dial sits on the structure (the separate testing term of a deep state-space model), not on the neurons; E5 showed a learned model built this way follows the optimal trade-off.
 
-## 6. Working rules
+Next steps:
+1. Recalibration with outlier protection (clip logits or remove impossible values) as part of the method.
+2. Simulation: map when the dial pays off by shift size and run-in size, and reproduce the E8 tuning failure.
+3. Neural version (E5 latent-state model) on real data.
+4. eICU (credentialed; 208 hospitals) for a clean multi-hospital confirmation, mortality outcome.
+5. Proposal deadline 25/26 Oct 2026 (docs/proposal/, docs/proposal_post_2026-10-19.md; update with E8-E11).
+
+## 6. Resuming on another machine or account
+
+- Clone the repository (GitHub `wjremy/DL-Observation-Shift-Project`); everything except raw data and caches is in git.
+- Data: `python data/fetch_physionet2019.py` and `python data/fetch_physionet2012.py` (both open, no account). Caches rebuild with `python e6_cohort.py` and `python e7_sites.py`; each later script (e8_runin.py ... e11_p12_runin.py, e10_diagnostic.py) reruns in minutes.
+- Python 3.12 with numpy, pandas, matplotlib (torch only for the simulation models). LaTeX (MiKTeX) for docs/proposal.
+- Code-writing agents: GPT-6 Luna through the user-level skill `codex-agents` (in `~/.claude/skills/codex-agents`, not in this repository); on another machine either install that skill or write code directly. Claude's own memory is per account; this file, STATUS.md, SPEC.md and CLAUDE.md hold everything needed.
+
+## 7. Working rules
 
 See CLAUDE.md: Claude specifies and reviews; GPT-6 Luna agents (Codex, xhigh) write code; quick runs by default; record every change in STATUS.md and push after each step.
