@@ -180,3 +180,15 @@ For each site, one fixed 50/50 split into a fit half and an evaluation half (see
 A large pattern gap with a small physiology gap means the testing pattern's meaning shifted; the reverse means physiology shifted. Also report each site's own `local` AUROC per feature set (how informative each part is at that site).
 
 Coverage and rates per site: share of each physiology variable that is imputed (never measured in the window), and measurement rates; per pair, the mean absolute difference in measurement rates across variables and in imputed shares.
+
+## E11: realistic run-in with safe tuning on the 2012 mortality pairs (Claude and Wesley, 20 Oct 2026; pre-specified before running)
+
+Motivation: E10 found that the testing pattern's meaning shifts mainly in the PhysioNet 2012 mortality pairs, and death is far more frequent than sepsis (about 14%), so a run-in holds many more cases. E11 applies E9's corrected tuning there.
+
+Pairs: all 12 ordered P12 pairs (E7 source fits, same preprocessing). Primary: all 12 pairs pooled (mean over pairs). Key subgroup, named in advance from E10: the four pairs whose pattern gap was clearly above zero (CCU to SICU, CSRU to CCU, CSRU to SICU, SICU to CSRU). Caveat: E10 used the same target patients, so the subgroup is not independent.
+
+Run-in sizes as E8: n_run = 54, 108, 162, 325, 650 (1, 2, 3, 6, 12 months of a typical ICU), plus 1,300 where the unit allows; 200 draws per size; evaluation on all other patients of the target unit; skip a size if fewer than 500 evaluation patients would remain.
+
+Methods (as E9, grid w = 0 to 3 step 0.05, run-in only): `keep` (w = 1), `end_recal` (w in {0, 1} with E8's penalised recalibration), `dial_recal` (E8), `dial_recal_shrink` (tau = 2), `dial_auc_shrink` (penalty 0.02). Ties and run-ins without a case or a non-case go to w = 1.
+
+Primary outcome: AUROC difference to `keep` at the 3-month run-in (n_run = 162), for `dial_recal_shrink`: mean over the 12 pairs, and per pair mean, 10-90% range and share of draws with a gain. Secondary: the other methods (including `dial_recal_shrink` minus `end_recal`), all sizes, log loss, the subgroup.

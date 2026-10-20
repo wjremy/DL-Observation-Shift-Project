@@ -4,7 +4,7 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-Nothing.
+E11 Luna agent (20 Oct): realistic run-in with safe tuning on the 2012 mortality pairs (SPEC.md E11, pre-specified). Brief tasks/e11/; answer out/e11/e11_p12_runin.md. Next: Claude reviews, renders figures/e11_figure.py, records.
 
 ## Open
 
