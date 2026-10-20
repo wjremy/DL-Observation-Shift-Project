@@ -166,3 +166,17 @@ Methods (grid w = 0 to 3, step 0.05; run-in only):
 - `dial_auc_shrink`: w with the highest run-in AUROC minus 0.02 * (w - 1)^2 (prefers w = 1 unless the run-in AUROC gain is clear); same tie rule.
 
 Primary outcome as E8: AUROC difference to `keep` on the 4 primary pairs at the 3-month run-in (mean, 10-90%, share of draws with a gain), for each method; secondary: all sizes, log loss (with each method's recalibration applied; `dial_auc` variants use the E8 penalised recalibration at their chosen w), secondary pairs.
+
+## E10: which part shifted? A direct diagnostic per pair (Claude, 20 Oct 2026)
+
+Question: between two sites, does the meaning of the testing pattern change (observation shift in the sense the dial targets), does the physiology part change, or neither? E7-E9 inferred this indirectly from where the best w lay.
+
+Sites: P19 unit sites (A-MICU, A-SICU, B-MICU, B-SICU) and the two whole hospitals (A-all, B-all, E6 cohort); P12 ICU types (CCU, CSRU, MICU, SICU). Pairs: all ordered pairs within P19 units (12), A-all to B-all and back (2), all ordered P12 pairs (12).
+
+For each site, one fixed 50/50 split into a fit half and an evaluation half (seed stated). For each pair s to t and each feature set F in {pattern only, physiology only, combined}:
+- `transferred`: L2 logistic (5-fold CV over the E6 grid) fitted on s's fit half with s's medians and scaling, evaluated on t's evaluation half;
+- `local`: the same model class fitted on t's fit half with t's own medians and scaling, evaluated on t's evaluation half.
+- Transfer gap = AUROC(local) minus AUROC(transferred), and the same for log loss (transferred minus local), with a paired bootstrap 95% interval over t's evaluation patients (500 resamples).
+A large pattern gap with a small physiology gap means the testing pattern's meaning shifted; the reverse means physiology shifted. Also report each site's own `local` AUROC per feature set (how informative each part is at that site).
+
+Coverage and rates per site: share of each physiology variable that is imputed (never measured in the window), and measurement rates; per pair, the mean absolute difference in measurement rates across variables and in imputed shares.

@@ -4,7 +4,7 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-Nothing.
+Two Luna agents (20 Oct): (1) E10 diagnostic, which part shifted per pair (SPEC.md E10; brief tasks/e10/; answer out/e10/); (2) literature on how large observation shift is between hospitals, sepsis labels defined by testing, PhysioNet 2019 preprocessing (brief tasks/lit6/; answer out/lit/lit11_obs_shift_size.md). Next: Claude reviews both, renders figures/e10_figure.py, records.
 
 ## Open
 
