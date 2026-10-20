@@ -4,7 +4,7 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-Two Luna agents (20 Oct): (1) E10 diagnostic, which part shifted per pair (SPEC.md E10; brief tasks/e10/; answer out/e10/); (2) literature on how large observation shift is between hospitals, sepsis labels defined by testing, PhysioNet 2019 preprocessing (brief tasks/lit6/; answer out/lit/lit11_obs_shift_size.md). Next: Claude reviews both, renders figures/e10_figure.py, records.
+Nothing.
 
 ## Open
 
@@ -17,6 +17,15 @@ Two Luna agents (20 Oct): (1) E10 diagnostic, which part shifted per pair (SPEC.
 - Earlier optional item: real-data arm (MIMIC-IV). Needs credentialed PhysioNet access, which a team member must apply for; on real data report mask gain on A against cost on B (no Bayes rules available).
 
 ## Results so far
+
+### E10: which part shifted per pair (20 Oct 2026; SPEC.md E10; `analysis/e10_*`, `figures/e10_gaps.png`)
+
+Code by Luna (`e10_diagnostic.py`), reviewed by Claude. Transfer gap = AUROC of a model fitted on half of the target minus AUROC of the source model, on the target's other half (95% paired bootstrap). The local models are fitted on few cases at the small sites, so gaps are noisy and, if anything, underestimated.
+
+- Realistic sepsis pairs (same unit, other hospital): physiology gaps are larger than pattern gaps (means +0.069 vs +0.027); the only clear gap is physiology in A-MICU to B-MICU (+0.096). Pattern gaps are small and never clearly above zero. Confirms the reading of E7-E9: here the testing pattern's meaning largely transferred, physiology did not.
+- The pattern's meaning clearly shifted (interval above zero) in 7 of 26 pairs: four P12 pairs involving the cardiac surgery and surgical ICUs (largest SICU to CSRU +0.183), two P19 pairs within or towards A-MICU, and whole hospital B to A (+0.060). Physiology clearly shifted in 7 pairs, mostly P12.
+- Coverage (difference in imputed share) is only weakly related to the physiology gap (r = 0.22).
+- A pattern gap does not imply that a single dial can close it: the dial scales all pattern terms together, while a shift in which tests matter needs the pattern part re-learned per variable (docs/FUTURE.md).
 
 ### E9: E8 with corrected tuning (20 Oct 2026; exploratory, SPEC.md E9; `analysis/e9_summary.*`, `figures/e9_runin.png`)
 
