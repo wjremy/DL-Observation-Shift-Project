@@ -210,6 +210,8 @@ Reading: the observation pattern adds little beyond the values when values are p
 
 ## Decisions
 
+- 22 Oct 2026 (Wesley): proposal (docs/proposal/proposal_trust_dial.tex), preliminary binary case now states that keeping the policy won for Beth Israel to Emory because there was barely any observation shift there (E10 A-all to B-all pattern gap +0.031, 95% CI -0.006 to +0.068). PDF rebuilt.
+
 - 19 Oct 2026 (Wesley): primary transfer = same ICU type in another hospital (most realistic deployment); primary metric AUROC; E7/E7b count as exploratory; E8 tests realistic run-in sizes with a design fixed before running (SPEC.md E8).
 
 - 19 Oct 2026 (Wesley): the project studies the dial only; adaptation without outcomes is future work (docs/FUTURE.md). Use open data without sign-in for more hospital pairs first; eICU later. Project map in docs/MAP.md.
