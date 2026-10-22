@@ -51,11 +51,11 @@ Before a model goes live, hospitals often run it silently for 1--3 months~\cite{
 
 \begin{enumerate}[label=\textbf{E\arabic*},leftmargin=2em]
   \item \textbf{Simulation with known optimum.} Our latent-state simulator, whose exact Bayes predictor is known, with two shift types: global (B tests less selectively) and test-specific (one test group becomes routine). Regret of each rung against the Bayes predictor at B, for run-ins of 5--200 outcome events. Expected: rung 1 wins under global shift and small run-ins, rungs 2--3 under test-specific shift once enough events exist.
-  \item \textbf{Real hospitals.} PhysioNet 2019 (sepsis; two hospitals, four ICU units, 40{,}000 patients~\cite{reyna2020}) and PhysioNet 2012 (mortality; four ICU types, 12{,}000 patients), both open: 26 ordered source $\to$ target pairs. Run-ins of 1, 3, 6, 12 and 24 months are drawn from the target unit (20--200 draws), evaluation on all remaining target patients. Primary metric AUROC (pre-specified), secondary calibration. Optional, if credentialing arrives in time: eICU (208 hospitals) for many cross-hospital pairs.
+  \item \textbf{Real hospitals.} The dataset is still open. Candidates: eICU-CRD (208 US hospitals, 200{,}000 ICU stays~\cite{pollard2018}; requires credentialed PhysioNet access), which gives many cross-hospital pairs; or the open PhysioNet 2019 (sepsis; two hospitals, four ICU units~\cite{reyna2020}) and 2012 (mortality; four ICU types) data of our pilots, which give 26 unit pairs. The design is fixed either way: ordered source $\to$ target pairs, run-ins of 1, 3, 6, 12 and 24 months drawn from the target site (20--200 draws), evaluation on all remaining target patients, primary metric AUROC (pre-specified), secondary calibration.
   \item \textbf{Architecture.} Whether the separated model adapts from fewer cases than GRU-D fine-tuned at the last layer or in full, on the pairs of E2.
 \end{enumerate}
 
-\textbf{Computational cost and feasibility.} All models are small (GRU hidden size 32--64, at most 24--48 hourly steps per patient, under 50{,}000 patients), so a CPU is enough; we have a 4-core laptop and can request ETH's Euler cluster if needed. Measured on the laptop: our simulation grid of 108 deep fits (GRU, GRU-D, Neural CDE, Transformer) took 3.6 hours; each real-data linear experiment took 3--11 minutes.
+\textbf{Computational cost and feasibility.} All models are small (GRU hidden size 32--64, at most 24--48 hourly steps per patient, a few thousand patients per site), so a CPU is enough; we have a 4-core laptop and can request ETH's Euler cluster if needed. Measured on the laptop: our simulation grid of 108 deep fits (GRU, GRU-D, Neural CDE, Transformer) took 3.6 hours; each real-data linear experiment took 3--11 minutes.
 
 \begin{tabularx}{\linewidth}{@{}Xlr@{}}
 \toprule
@@ -63,14 +63,14 @@ Component & Units & CPU-hours (estimate) \\
 \midrule
 E1 simulation: source fits and all rungs & 2 shifts $\times$ 6 run-in sizes $\times$ 20 draws & 4 \\
 E2/E3 source models & 8 sites $\times$ 2 models $\times$ 3 seeds & 8 \\
-Rungs 1--2 (1--8 parameters each) & 26 pairs $\times$ 5 sizes $\times$ 200 draws & $<$1 \\
-Rungs 3--4, last-layer tuning ($\sim$15\,s) & 26 pairs $\times$ 5 sizes $\times$ 20 draws $\times$ 3 & 33 \\
+Rungs 1--2 (1--8 parameters each) & 25 pairs $\times$ 5 sizes $\times$ 200 draws & $<$1 \\
+Rungs 3--4, last-layer tuning ($\sim$15\,s) & 25 pairs $\times$ 5 sizes $\times$ 20 draws $\times$ 3 & 32 \\
 \midrule
 Total & & $\approx$45 \\
 \bottomrule
 \end{tabularx}
 
-About 45 CPU-hours run in about 12 hours on the laptop with four workers. Both datasets are already downloaded and processed, and the pilot pipeline exists. Timeline: weeks 1--2 the separated model and E1; weeks 3--4 E2 and E3; weeks 5--6 analysis and report.
+The table assumes about 8 sites and 25 pairs, as in either candidate dataset; cost grows linearly with the number of pairs. About 45 CPU-hours run in about 12 hours on the laptop with four workers. The open PhysioNet data are already downloaded and processed, and the pilot pipeline exists. Timeline: weeks 1--2 the separated model and E1; weeks 3--4 E2 and E3; weeks 5--6 analysis and report.
 
 \bibliographystyle{plain}
 \begin{thebibliography}{99}\small
@@ -97,6 +97,7 @@ About 45 CPU-hours run in about 12 hours on the laptop with four workers. Both d
 \bibitem{riley2024} Riley RD, Snell KIE, Archer L, et al. Evaluation of clinical prediction models (part 3): calculating the sample size required for an external validation study. \emph{BMJ} 2024;384:e074821.
 \bibitem{lee2023} Lee Y, Chen AS, Tajwar F, et al. Surgical fine-tuning improves adaptation to distribution shifts. \emph{ICLR} 2023.
 \bibitem{kirichenko2023} Kirichenko P, Izmailov P, Wilson AG. Last layer re-training is sufficient for robustness to spurious correlations. \emph{ICLR} 2023.
+\bibitem{pollard2018} Pollard TJ, Johnson AEW, Raffa JD, et al. The eICU Collaborative Research Database, a freely available multi-center database for critical care research. \emph{Scientific Data} 2018;5:180178.
 \end{thebibliography}
 
 \end{document}

@@ -10,6 +10,7 @@ Nothing.
 
 - Course-format proposal drafted around the ladder: `docs/proposal/proposal.tex` / `.pdf` (2 pages plus references). Sections follow the course requirements: authors, advisor and topic; idea and research question; literature overview (with preliminary results); experiment plan with a compute table (about 45 CPU-hours, CPU only). The older `proposal_trust_dial.tex` stays as the 19 Oct version.
 - Placeholders to fill: team members' full names and ETH usernames; the course LaTeX template (layout is a stand-in; swap the preamble, keep the body). TA assumed Sarah Martinson, topic her "Deep Time-Series Models under Observation Shift"; confirm.
+- E2 dataset left open (Wesley, 22 Oct): eICU-CRD (credentialed) or the open PhysioNet 2019/2012 pilot data; design and compute table hold for either (about 8 sites, 25 pairs).
 - Compute figures are estimates: rungs 3-4 at about 15 s per fine-tune have not been measured yet.
 - Literature batch lit12-14 done (Luna xhigh with web search, 507 s, Codex 17% of 5-hour window, 10% of 7-day; briefs `tasks/lit7/`, answers `out/lit/lit12-14_*.md`); reviewed, key references checked, summary in docs/GAP.md.
 
