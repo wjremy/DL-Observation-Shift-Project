@@ -6,6 +6,8 @@ How the project got here, what it now claims, where each piece of evidence lives
 
 **A trust dial for observation shift.** A model trained at hospital A learns A's testing policy (which tests are ordered, and when). At hospital B the policy differs. We give the model one weight w on the evidence from the testing pattern (w = 0 ignore it, w = 1 trust it as at A) and set w per hospital on the small labelled sample of a silent run-in.
 
+Update (Wesley, 22 Oct): the dial becomes the bottom rung of a ladder of adaptations of the testing part (global dial, dial per test group, re-learn the testing part, full refit), and the question is which rung a run-in of a given size supports (docs/ARGUMENT.md section 10).
+
 Scope decision (Wesley, 19 Oct): the project studies the dial only. Adaptation without outcomes and the full adaptation ladder are future work (docs/FUTURE.md).
 
 Claims (wording as in the group post, docs/proposal_post_2026-10-19.md):

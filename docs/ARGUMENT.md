@@ -76,6 +76,12 @@ Proposed project question: can a model separate patient physiology from hospital
 
 Literature: anchor regression (a dial between best fit and invariance, chosen by expected shift strength), invariant prediction, distributionally robust optimisation, and the EHR literature on informative measurement processes. See `docs/LITERATURE.md`.
 
+## 10. From one dial to a ladder (22 Oct 2026)
+
+A teammate's objection: can one number capture observation shift? Not in general. A single dial scales all testing terms together, so it repairs a shift in how much the testing pattern should count overall (B tests everyone more, so every order means a bit less), but not a shift in which tests carry meaning. E10 found the second kind in several 2012 mortality pairs, and E6 shows a real example: troponin is ordered for 3% of Beth Israel patients but 32% at Emory, so "troponin ordered" loses meaning there while "lactate ordered" may keep it.
+
+Resolution (Wesley, 22 Oct): a ladder of adaptations of the testing part only, from cheap to flexible: (1) one global dial; (2) one dial per test group; (3) re-learn the testing part; (4) full refit. Each rung repairs more kinds of shift but needs more outcome cases, and a silent run-in yields few (about 2-6 sepsis cases in 1-3 months for one ICU). The question becomes which rung a run-in of a given size supports, for which kind of shift. The dial stays as the low-data default, now justified by the comparison rather than assumed.
+
 ## Earlier Codex runs (17 Oct 2026)
 
 Two studies were run earlier the same day in the Codex app; their reports are in `docs/prior_codex_runs/`. The policy-learning study fixed the physiology predictor for every model and learned only the observation correction. It showed that even the exact source rule loses under B (Brier 0.082 on A to 0.246 on B, against 0.163 without the cue) and that GRU, GRU-D and CDE recovered 97-98% of the source cue benefit. Because physiology was fixed, it could not test step 6 (using the pattern instead of the values); this study does.

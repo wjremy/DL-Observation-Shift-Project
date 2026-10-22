@@ -6,6 +6,13 @@ Update this file with every change: what started, what finished, what was decide
 
 Nothing.
 
+## Proposal (22 Oct 2026)
+
+- Course-format proposal drafted around the ladder: `docs/proposal/proposal.tex` / `.pdf` (2 pages plus references). Sections follow the course requirements: authors, advisor and topic; idea and research question; literature overview (with preliminary results); experiment plan with a compute table (about 45 CPU-hours, CPU only). The older `proposal_trust_dial.tex` stays as the 19 Oct version.
+- Placeholders to fill: team members' full names and ETH usernames; the course LaTeX template (layout is a stand-in; swap the preamble, keep the body). TA assumed Sarah Martinson, topic her "Deep Time-Series Models under Observation Shift"; confirm.
+- Compute figures are estimates: rungs 3-4 at about 15 s per fine-tune have not been measured yet.
+- Literature batch lit12-14 done (Luna xhigh with web search, 507 s, Codex 17% of 5-hour window, 10% of 7-day; briefs `tasks/lit7/`, answers `out/lit/lit12-14_*.md`); reviewed, key references checked, summary in docs/GAP.md.
+
 ## Open
 
 - Team: everyone applies for PhysioNet credentialing (CITI course plus approval, 1-2 weeks) for eICU-CRD; see docs/DATA.md.
@@ -209,6 +216,8 @@ Reading: the observation pattern adds little beyond the values when values are p
 - 17 Oct 2026: design fixed in SPEC.md, following docs/ARGUMENT.md.
 
 ## Decisions
+
+- 22 Oct 2026 (Wesley): the method becomes a ladder of adaptations of the testing part (global dial, dial per test group, re-learn testing part, full refit), chosen by run-in size and kind of shift; answers the objection that one dial cannot capture all observation shift (docs/ARGUMENT.md section 10). Proposal to be rewritten in the course format around it.
 
 - 22 Oct 2026 (Wesley): proposal (docs/proposal/proposal_trust_dial.tex), preliminary binary case now states that keeping the policy won for Beth Israel to Emory because there was barely any observation shift there (E10 A-all to B-all pattern gap +0.031, 95% CI -0.006 to +0.068). PDF rebuilt.
 

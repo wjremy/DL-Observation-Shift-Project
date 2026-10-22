@@ -1,0 +1,102 @@
+\documentclass[11pt,a4paper]{article}
+% Placeholder layout until the course template is in the folder; swap the preamble, keep the body.
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[a4paper,margin=2.0cm,top=1.8cm,bottom=2.0cm]{geometry}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+
+\titleformat{\section}{\large\bfseries}{\thesection}{0.6em}{}
+\titlespacing*{\section}{0pt}{0.8em}{0.3em}
+\setlist{itemsep=0.1em,topsep=0.2em,leftmargin=1.3em}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.35em}
+
+\begin{document}
+
+\begin{center}
+{\Large\bfseries How Much of the Learned Testing Policy Should a Model Keep?}\\[0.25em]
+{\large Adapting deep clinical time-series models to observation shift from a small run-in}\\[0.6em]
+FULL NAME 1 (\texttt{username1}) \quad FULL NAME 2 (\texttt{username2}) \quad FULL NAME 3 (\texttt{username3})\\[0.25em]
+Advisor: Sarah Martinson \quad$\cdot$\quad Topic: Deep Time-Series Models under Observation Shift
+\end{center}
+
+\section{Project idea and research question}
+
+Deep models for clinical time series learn from \emph{what} is measured and also from \emph{when} and \emph{whether} it is measured: a lactate order signals that a doctor suspects sepsis. This testing pattern is predictive~\cite{sisk2021}, but it reflects the hospital's observation policy, and it changes when a model trained at hospital A is deployed at hospital B (\emph{observation shift}). The change comes in two kinds. Hospital B may test everyone more, so every order means a bit less; or individual tests may change meaning, for example troponin is ordered for 3\% of patients at Beth Israel but 32\% at Emory (PhysioNet 2019~\cite{reyna2020}), while a lactate order may keep its meaning. A model adapted to B must fix the first kind globally and the second per test.
+
+Before a model goes live, hospitals often run it silently for 1--3 months~\cite{sendak2020}. That run-in yields the only labelled data from B, and very little of it: a typical ICU admits 600--1{,}300 patients a year~\cite{checkley2014}, so a 1--3 month run-in contains about 2--6 sepsis cases. We therefore propose a \textbf{ladder of adaptations} that changes only the testing part of a model whose physiology and testing evidence are kept separate: (1) one global weight $w$ on the testing evidence ($w{=}0$ ignore, $w{=}1$ trust as at A); (2) one weight per group of tests; (3) re-learning the testing part with physiology frozen; (4) fine-tuning the whole model. Higher rungs repair more kinds of shift but need more outcome cases.
+
+\textbf{Research question.} \emph{For a run-in of a given size at a new hospital, which rung of adaptation of the testing part predicts best, and how does the answer depend on the kind of observation shift?} Concretely: (i) does adapting only the testing part beat the fixed rules of prior work (always keep or always remove the pattern) and full fine-tuning at realistic run-in sizes; (ii) at how many outcome events does each higher rung start to pay off; (iii) does a model with a separate testing part adapt better from few cases than a standard architecture (GRU-D) fine-tuned at its last layer or in full.
+
+\section{Literature overview}
+
+\textbf{Deep models use the observation pattern but do not separate it.} Architectures for irregular series consume masks and time gaps (GRU-D~\cite{che2018}), continuous-time paths (Neural CDE~\cite{kidger2020}, Latent ODE~\cite{rubanova2019}) or time-value sets and attention (mTAN~\cite{shukla2021}, Raindrop~\cite{zhang2022}), and fuse the pattern with physiology in one representation. Models with a separate observation component exist, a Hawkes process for clinicians' measurement events~\cite{alaa2017} and DeepJoint's observation heads~\cite{jeanselme2022}, but none adapts that component alone at a new site.
+
+\textbf{Observation shift between hospitals.} Multi-site deep sepsis and ICU benchmarks lose 0.08--0.09 AUROC across sites~\cite{moor2023,yaib2024} and include missingness indicators without attributing the loss to them. Studies that do isolate the pattern choose all or nothing: Futoma et al.~\cite{futoma2021} fitted with measurement indicators and dropped them at deployment, which transferred best from Beth Israel to a Memphis hospital but not in reverse; Rockenschaub et al.~\cite{rockenschaub2024} found that ignoring informative missingness costs at the source but is more robust elsewhere, especially when missingness is highly informative. Lasko et al.~\cite{lasko2024} argue conceptually for a site-specific process model next to a stable disease model; Zhou et al.~\cite{zhou2023} adapt to missingness shift without labels in linear models. None tunes \emph{how much} of the learned policy to keep from labelled target data.
+
+\textbf{Adapting with few labels.} Clinical model updating is a ladder from recalibration to full refitting, and parsimonious updates win at small samples~\cite{steyerberg2004,vergouwe2017}; a full refit is already risky well below the 100 events needed just to validate a model~\cite{riley2024}. In deep learning, which part to fine-tune depends on the kind of shift~\cite{lee2023}, and retraining only the last layer can suffice~\cite{kirichenko2023}, but clinical fine-tuning studies use hundreds to thousands of target patients~\cite{moor2023,yaib2024}. \textbf{Gap:} no work adapts only the observation part of a clinical sequence model, and none compares such adaptations against run-in size.
+
+\textbf{Preliminary results} (linear models, open PhysioNet data). On Beth Israel $\to$ Emory, keeping the pattern was best, because there was barely any observation shift between the two (pattern-model transfer gap 0.03 AUROC, 95\% CI $-0.01$ to $0.07$); dropping it cost 0.05 AUROC. Across 26 unit pairs the pattern's meaning shifted clearly in 7, mostly for mortality; there, a single weight tuned on a 3--24 month run-in gained up to 0.02--0.03 AUROC and stayed within 0.001 elsewhere (after removing impossible lab values). A one-parameter update beat a full refit up to about 20 cases; the refit won from about 50.
+
+\section{Plan of experiments}
+
+\textbf{Model.} A sequence model whose outcome logit is the sum of a physiology part (GRU-D encoder over values) and a testing part (encoder over masks, counts and time gaps); the rungs act on the testing part only. Baselines: keep ($w{=}1$), remove ($w{=}0$, Futoma), recalibration, and a standard GRU-D with last-layer or full fine-tuning. Lessons from our pilots are built in: tuned weights are shrunk towards 1, calibration is fitted separately from the weights, and impossible values are removed before recalibration.
+
+\begin{enumerate}[label=\textbf{E\arabic*},leftmargin=2em]
+  \item \textbf{Simulation with known optimum.} Our latent-state simulator, whose exact Bayes predictor is known, with two shift types: global (B tests less selectively) and test-specific (one test group becomes routine). Regret of each rung against the Bayes predictor at B, for run-ins of 5--200 outcome events. Expected: rung 1 wins under global shift and small run-ins, rungs 2--3 under test-specific shift once enough events exist.
+  \item \textbf{Real hospitals.} PhysioNet 2019 (sepsis; two hospitals, four ICU units, 40{,}000 patients~\cite{reyna2020}) and PhysioNet 2012 (mortality; four ICU types, 12{,}000 patients), both open: 26 ordered source $\to$ target pairs. Run-ins of 1, 3, 6, 12 and 24 months are drawn from the target unit (20--200 draws), evaluation on all remaining target patients. Primary metric AUROC (pre-specified), secondary calibration. Optional, if credentialing arrives in time: eICU (208 hospitals) for many cross-hospital pairs.
+  \item \textbf{Architecture.} Whether the separated model adapts from fewer cases than GRU-D fine-tuned at the last layer or in full, on the pairs of E2.
+\end{enumerate}
+
+\textbf{Computational cost and feasibility.} All models are small (GRU hidden size 32--64, at most 24--48 hourly steps per patient, under 50{,}000 patients), so a CPU is enough; we have a 4-core laptop and can request ETH's Euler cluster if needed. Measured on the laptop: our simulation grid of 108 deep fits (GRU, GRU-D, Neural CDE, Transformer) took 3.6 hours; each real-data linear experiment took 3--11 minutes.
+
+\begin{tabularx}{\linewidth}{@{}Xlr@{}}
+\toprule
+Component & Units & CPU-hours (estimate) \\
+\midrule
+E1 simulation: source fits and all rungs & 2 shifts $\times$ 6 run-in sizes $\times$ 20 draws & 4 \\
+E2/E3 source models & 8 sites $\times$ 2 models $\times$ 3 seeds & 8 \\
+Rungs 1--2 (1--8 parameters each) & 26 pairs $\times$ 5 sizes $\times$ 200 draws & $<$1 \\
+Rungs 3--4, last-layer tuning ($\sim$15\,s) & 26 pairs $\times$ 5 sizes $\times$ 20 draws $\times$ 3 & 33 \\
+\midrule
+Total & & $\approx$45 \\
+\bottomrule
+\end{tabularx}
+
+About 45 CPU-hours run in about 12 hours on the laptop with four workers. Both datasets are already downloaded and processed, and the pilot pipeline exists. Timeline: weeks 1--2 the separated model and E1; weeks 3--4 E2 and E3; weeks 5--6 analysis and report.
+
+\bibliographystyle{plain}
+\begin{thebibliography}{99}\small
+\setlength{\itemsep}{0pt}
+\bibitem{sisk2021} Sisk R, Lin L, Sperrin M, et al. Informative presence and observation in routine health data: a review of methodology for clinical risk prediction. \emph{JAMIA} 2021;28(1):155--166.
+\bibitem{reyna2020} Reyna MA, Josef CS, Jeter R, et al. Early prediction of sepsis from clinical data: the PhysioNet/Computing in Cardiology Challenge 2019. \emph{Critical Care Medicine} 2020;48:210--217.
+\bibitem{sendak2020} Sendak MP, Ratliff W, Sarro D, et al. Real-world integration of a sepsis deep learning technology into routine clinical care: implementation study. \emph{JMIR Medical Informatics} 2020;8(7):e15182.
+\bibitem{checkley2014} Checkley W, Martin GS, Brown SM, et al. Structure, process, and annual ICU mortality across 69 centers. \emph{Critical Care Medicine} 2014;42:344--356.
+\bibitem{che2018} Che Z, Purushotham S, Cho K, Sontag D, Liu Y. Recurrent neural networks for multivariate time series with missing values. \emph{Scientific Reports} 2018;8:6085.
+\bibitem{kidger2020} Kidger P, Morrill J, Foster J, Lyons T. Neural controlled differential equations for irregular time series. \emph{NeurIPS} 2020.
+\bibitem{rubanova2019} Rubanova Y, Chen RTQ, Duvenaud D. Latent ordinary differential equations for irregularly-sampled time series. \emph{NeurIPS} 2019.
+\bibitem{shukla2021} Shukla SN, Marlin B. Multi-time attention networks for irregularly sampled time series. \emph{ICLR} 2021.
+\bibitem{zhang2022} Zhang X, Zeman M, Tsiligkaridis T, Zitnik M. Graph-guided network for irregularly sampled multivariate time series. \emph{ICLR} 2022.
+\bibitem{alaa2017} Alaa AM, Hu S, van der Schaar M. Learning from clinical judgments: semi-Markov-modulated marked Hawkes processes for risk prognosis. \emph{ICML} 2017, PMLR 70:60--69.
+\bibitem{jeanselme2022} Jeanselme V, Martin G, Peek N, et al. DeepJoint: robust survival modelling under clinical presence shift. NeurIPS Workshop on Learning from Time Series for Health, 2022. arXiv:2205.13481.
+\bibitem{moor2023} Moor M, Bennett N, Ple\v{c}ko D, et al. Predicting sepsis using deep learning across international sites: a retrospective development and validation study. \emph{eClinicalMedicine} 2023;62:102124.
+\bibitem{yaib2024} van de Water R, Schmidt H, Elbers P, et al. Yet another ICU benchmark: a flexible multi-center framework for clinical ML. \emph{ICLR} 2024.
+\bibitem{futoma2021} Futoma J, Simons M, Doshi-Velez F, Kamaleswaran R. Generalization in clinical prediction models: the blessing and curse of measurement indicator variables. \emph{Critical Care Explorations} 2021;3(7):e0453.
+\bibitem{rockenschaub2024} Rockenschaub P, Xian Z, Zamanian A, et al. Robust prediction under missingness shifts. arXiv:2406.16484, 2024.
+\bibitem{lasko2024} Lasko TA, Strobl EV, Stead WW. Why do probabilistic clinical models fail to transport between sites. \emph{npj Digital Medicine} 2024;7:53.
+\bibitem{zhou2023} Zhou H, Balakrishnan S, Lipton Z. Domain adaptation under missingness shift. \emph{AISTATS} 2023, PMLR 206:9577--9606.
+\bibitem{steyerberg2004} Steyerberg EW, Borsboom GJ, van Houwelingen HC, et al. Validation and updating of predictive logistic regression models: a study on sample size and shrinkage. \emph{Statistics in Medicine} 2004;23:2567--2586.
+\bibitem{vergouwe2017} Vergouwe Y, Nieboer D, Oostenbrink R, et al. A closed testing procedure to select an appropriate method for updating prediction models. \emph{Statistics in Medicine} 2017;36:4529--4539.
+\bibitem{riley2024} Riley RD, Snell KIE, Archer L, et al. Evaluation of clinical prediction models (part 3): calculating the sample size required for an external validation study. \emph{BMJ} 2024;384:e074821.
+\bibitem{lee2023} Lee Y, Chen AS, Tajwar F, et al. Surgical fine-tuning improves adaptation to distribution shifts. \emph{ICLR} 2023.
+\bibitem{kirichenko2023} Kirichenko P, Izmailov P, Wilson AG. Last layer re-training is sufficient for robustness to spurious correlations. \emph{ICLR} 2023.
+\end{thebibliography}
+
+\end{document}
