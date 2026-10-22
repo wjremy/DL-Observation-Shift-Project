@@ -31,9 +31,9 @@ Advisor: Sarah Martinson \quad$\cdot$\quad Topic: Deep Time-Series Models under 
 
 Deep models for clinical time series learn from \emph{what} is measured and also from \emph{when} and \emph{whether} it is measured: a lactate order signals that a doctor suspects sepsis. This testing pattern is predictive~\cite{sisk2021}, but it reflects the hospital's observation policy, and it changes when a model trained at hospital A is deployed at hospital B (\emph{observation shift}). The change comes in two kinds. Hospital B may test everyone more, so every order means a bit less; or individual tests may change meaning, for example troponin is ordered for 3\% of patients at Beth Israel but 32\% at Emory (PhysioNet 2019~\cite{reyna2020}), while a lactate order may keep its meaning. A model adapted to B must fix the first kind globally and the second per test.
 
-Before a model goes live, hospitals often run it silently for 1--3 months~\cite{sendak2020}. That run-in yields the only labelled data from B, and very little of it: a typical ICU admits 600--1{,}300 patients a year~\cite{checkley2014}, so a 1--3 month run-in contains about 2--6 sepsis cases. We therefore propose a \textbf{ladder of adaptations} that changes only the testing part of a model whose physiology and testing evidence are kept separate: (1) one global weight $w$ on the testing evidence ($w{=}0$ ignore, $w{=}1$ trust as at A); (2) one weight per group of tests; (3) re-learning the testing part with physiology frozen; (4) fine-tuning the whole model. Higher rungs repair more kinds of shift but need more outcome cases.
+Before a model goes live, hospitals often run it silently for 1--3 months~\cite{sendak2020}. That run-in yields the only labelled data from B, and very little of it: a typical ICU admits 600--1{,}300 patients a year~\cite{checkley2014}, so a 1--3 month run-in contains about 2--6 sepsis cases. We therefore propose a \textbf{ladder of adaptations} that changes only the testing part of a latent state-space model in which the testing evidence enters through its own head: (1) one global weight $w$ on the testing evidence ($w{=}0$ ignore, $w{=}1$ trust as at A); (2) one weight per group of tests; (3) re-learning the testing head with the rest frozen; (4) fine-tuning the whole model. Higher rungs repair more kinds of shift but need more outcome cases.
 
-\textbf{Research question.} \emph{For a run-in of a given size at a new hospital, which rung of adaptation of the testing part predicts best, and how does the answer depend on the kind of observation shift?} Concretely: (i) does adapting only the testing part beat the fixed rules of prior work (always keep or always remove the pattern) and full fine-tuning at realistic run-in sizes; (ii) at how many outcome events does each higher rung start to pay off; (iii) does a model with a separate testing part adapt better from few cases than a standard architecture (GRU-D) fine-tuned at its last layer or in full.
+\textbf{Research question.} \emph{For a run-in of a given size at a new hospital, which rung of adaptation of the testing part predicts best, and how does the answer depend on the kind of observation shift?} Concretely: (i) does adapting only the testing part beat the fixed rules of prior work (always keep or always remove the pattern) and full fine-tuning at realistic run-in sizes; (ii) at how many outcome events does each higher rung start to pay off; (iii) does the state-space model adapt better from few cases than a standard architecture (GRU-D) fine-tuned at its last layer or in full.
 
 \section{Literature overview}
 
@@ -47,30 +47,29 @@ Before a model goes live, hospitals often run it silently for 1--3 months~\cite{
 
 \section{Plan of experiments}
 
-\textbf{Model.} A sequence model whose outcome logit is the sum of a physiology part (GRU-D encoder over values) and a testing part (encoder over masks, counts and time gaps); the rungs act on the testing part only. Baselines: keep ($w{=}1$), remove ($w{=}0$, Futoma), recalibration, and a standard GRU-D with last-layer or full fine-tuning. Lessons from our pilots are built in: tuned weights are shrunk towards 1, calibration is fitted separately from the weights, and impossible values are removed before recalibration.
+\textbf{Model.} A neural latent state-space model, extending our pilot: a discrete latent patient state ($K{\approx}32$ states) evolves by a learned transition, and three heads read it: a value head (likelihood of each measured value), a testing head (probability that each test is ordered, given the state) and an outcome head. Predictions come from filtering the state over time, trained end to end on the outcome loss plus the likelihood of values and tests. The testing pattern enters only through the testing head's log-likelihood, which is multiplied by the weight(s) of rungs 1--2; rung 3 re-learns the testing head with transition, value and outcome heads frozen; rung 4 fine-tunes everything. In simulation, this model trained at A and tempered by $w$ followed the exact optimal trade-off between A and B to within 0.001 Brier. Baselines: keep ($w{=}1$), remove ($w{=}0$, Futoma), recalibration, and a standard GRU-D (fine-tuned at the last layer or in full). Lessons from our pilots are built in: tuned weights are shrunk towards 1, calibration is fitted separately from the weights, and impossible values are removed before recalibration.
 
 \begin{enumerate}[label=\textbf{E\arabic*},leftmargin=2em]
   \item \textbf{Simulation with known optimum.} Our latent-state simulator, whose exact Bayes predictor is known, with two shift types: global (B tests less selectively) and test-specific (one test group becomes routine). Regret of each rung against the Bayes predictor at B, for run-ins of 5--200 outcome events. Expected: rung 1 wins under global shift and small run-ins, rungs 2--3 under test-specific shift once enough events exist.
-  \item \textbf{Real hospitals.} The dataset is still open. Candidates: eICU-CRD (208 US hospitals, 200{,}000 ICU stays~\cite{pollard2018}; requires credentialed PhysioNet access), which gives many cross-hospital pairs; or the open PhysioNet 2019 (sepsis; two hospitals, four ICU units~\cite{reyna2020}) and 2012 (mortality; four ICU types) data of our pilots, which give 26 unit pairs. The design is fixed either way: ordered source $\to$ target pairs, run-ins of 1, 3, 6, 12 and 24 months drawn from the target site (20--200 draws), evaluation on all remaining target patients, primary metric AUROC (pre-specified), secondary calibration.
-  \item \textbf{Architecture.} Whether the separated model adapts from fewer cases than GRU-D fine-tuned at the last layer or in full, on the pairs of E2.
+  \item \textbf{Real hospitals (dataset to be determined).} Requirements: several hospitals with hospital identifiers, time-stamped labs and vitals with the testing pattern preserved, and enough outcome events per site; the main candidate is eICU-CRD (208 US hospitals~\cite{pollard2018}; credentialed access). Design: ordered source $\to$ target pairs, run-ins of 1, 3, 6, 12 and 24 months drawn from the target site (20 draws each), evaluation on all remaining target patients, primary metric AUROC (pre-specified), secondary calibration.
+  \item \textbf{Architecture.} Whether the state-space model adapts from fewer cases than GRU-D fine-tuned at the last layer or in full, on the pairs of E2.
 \end{enumerate}
 
-\textbf{Computational cost and feasibility.} All models are small (GRU hidden size 32--64, at most 24--48 hourly steps per patient, a few thousand patients per site), so a CPU is enough; we have a 4-core laptop and can request ETH's Euler cluster if needed. Measured on the laptop: our simulation grid of 108 deep fits (GRU, GRU-D, Neural CDE, Transformer) took 3.6 hours; each real-data linear experiment took 3--11 minutes.
+\textbf{Computational cost and feasibility.} All models are small (about 32 latent states or GRU hidden size 32--64, at most 24--48 hourly steps per patient, a few thousand patients per site), so a CPU is enough; we have a 4-core laptop and can request ETH's Euler cluster if needed. Measured on the laptop: the pilot state-space model trained in 15 minutes; our simulation grid of 108 deep fits (GRU, GRU-D, Neural CDE, Transformer) took 3.6 hours.
 
 \begin{tabularx}{\linewidth}{@{}Xlr@{}}
 \toprule
 Component & Units & CPU-hours (estimate) \\
 \midrule
-E1 simulation: source fits and all rungs & 2 shifts $\times$ 6 run-in sizes $\times$ 20 draws & 4 \\
-E2/E3 source models & 8 sites $\times$ 2 models $\times$ 3 seeds & 8 \\
-Rungs 1--2 (1--8 parameters each) & 25 pairs $\times$ 5 sizes $\times$ 200 draws & $<$1 \\
-Rungs 3--4, last-layer tuning ($\sim$15\,s) & 25 pairs $\times$ 5 sizes $\times$ 20 draws $\times$ 3 & 32 \\
+E1 simulation: source fits and all rungs & 2 shifts $\times$ 6 run-in sizes $\times$ 20 draws & 6 \\
+E2/E3 source models ($\sim$15\,min) & 8 sites $\times$ 2 models $\times$ 3 seeds & 12 \\
+Rungs 1--4, 2 GRU-D tunings ($\sim$20\,s) & 25 pairs $\times$ 5 sizes $\times$ 20 draws $\times$ 6 & 83 \\
 \midrule
-Total & & $\approx$45 \\
+Total & & $\approx$100 \\
 \bottomrule
 \end{tabularx}
 
-The table assumes about 8 sites and 25 pairs, as in either candidate dataset; cost grows linearly with the number of pairs. About 45 CPU-hours run in about 12 hours on the laptop with four workers. The open PhysioNet data are already downloaded and processed, and the pilot pipeline exists. Timeline: weeks 1--2 the separated model and E1; weeks 3--4 E2 and E3; weeks 5--6 analysis and report.
+The table assumes about 8 sites and 25 pairs; cost grows linearly with the number of pairs. About 100 CPU-hours take about one day on the laptop with four workers, or a few hours on Euler. The simulator, pilot model and run-in pipeline already exist. Timeline: weeks 1--2 the multivariate state-space model and E1; weeks 3--4 E2 and E3; weeks 5--6 analysis and report.
 
 \bibliographystyle{plain}
 \begin{thebibliography}{99}\small
