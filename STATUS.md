@@ -8,6 +8,8 @@ Nothing.
 
 ## Proposal (22 Oct 2026)
 
+- Course template received (ICML 2026 style, "Project 14"): the proposal now lives in `docs/proposal/icml/main.tex` + `bibliography.bib` (all DOIs checked on Crossref), and supersedes `docs/proposal/proposal.tex`. Length checked with a stand-in style using ICML's page geometry (the real icml2026.sty is not on this laptop): main text ends on page 2 with some room; confirm in Overleaf. Advisor and topic go in the first-column footnote via \printAffiliationsAndNotice. Still to fill: surnames and ETH usernames (Daniele, Rafael, Meds, Wesley Remy), corresponding author (optional).
+
 - Course-format proposal drafted around the ladder: `docs/proposal/proposal.tex` / `.pdf` (2 pages plus references). Sections follow the course requirements: authors, advisor and topic; idea and research question; literature overview (with preliminary results); experiment plan with a compute table (about 45 CPU-hours, CPU only). The older `proposal_trust_dial.tex` stays as the 19 Oct version.
 - Placeholders to fill: team members' full names and ETH usernames; the course LaTeX template (layout is a stand-in; swap the preamble, keep the body). TA assumed Sarah Martinson, topic her "Deep Time-Series Models under Observation Shift"; confirm.
 - E2 dataset to be determined (Wesley, 22 Oct): needs several hospitals with hospital IDs and a preserved testing pattern; the eICU demo is useless (hospital IDs removed); main candidate eICU-CRD (credentialed). Compute table assumes about 8 sites, 25 pairs.
