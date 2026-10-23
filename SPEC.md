@@ -192,3 +192,27 @@ Run-in sizes as E8: n_run = 54, 108, 162, 325, 650 (1, 2, 3, 6, 12 months of a t
 Methods (as E9, grid w = 0 to 3 step 0.05, run-in only): `keep` (w = 1), `end_recal` (w in {0, 1} with E8's penalised recalibration), `dial_recal` (E8), `dial_recal_shrink` (tau = 2), `dial_auc_shrink` (penalty 0.02). Ties and run-ins without a case or a non-case go to w = 1.
 
 Primary outcome: AUROC difference to `keep` at the 3-month run-in (n_run = 162), for `dial_recal_shrink`: mean over the 12 pairs, and per pair mean, 10-90% range and share of draws with a gain. Secondary: the other methods (including `dial_recal_shrink` minus `end_recal`), all sizes, log loss, the subgroup.
+
+## E12: re-learning the testing head at B without outcomes (Claude and Wesley, 23 Oct 2026; exploratory, quick version)
+
+Question (from a teammate, 22 Oct): rung 3 re-learns only the testing head. The testing head is a likelihood of test orders given the latent state, so it can be fitted on B's records without outcome labels, which exist for every patient. How does that compare with the labelled rungs, as a function of how much data each uses?
+
+Model: the E5 filter already trained at A (`results/E5/sigma1_gamma2/seed0/filter/params.npz`, sigma 1, A = informative gamma 2, rate 0.3). No retraining at A.
+
+Target policies at B (sigma 1, rate 0.3 unless stated): `B_less` informative gamma 1 (less selective); `B_more` informative gamma 3.5 (more selective; the dial in [0, 1] cannot help here, see docs/GAP.md "The dial above 1"); `B_match` uniform 0.3; `B_dense` uniform 0.6.
+
+Data at B: test cohort n = 8,000 (E5 test latent seed, new observation seed per policy); labelled run-in pools and unlabelled pools from new latent seeds, disjoint from the test cohort. Outcome prevalence is about 16%.
+
+Methods (all start from the A parameters; only the testing-head logits c, 32 numbers, or w change):
+- `keep`: w = 1. `drop`: w = 0.
+- `dial_L` (rung 1): w on the grid 0, 0.05, ..., 1 minimising log loss on the labelled run-in (ties to 1).
+- `head_L` (rung 3, labelled): refit c on the labelled run-in with the E5 training loss (BCE + per-step NLL of values and masks), all other parameters frozen.
+- `head_U` (rung 3, no outcomes): refit c on an unlabelled pool by the per-step NLL of values and masks only, all other parameters frozen.
+- `oracle`: exact Bayes predictor under the B policy (`bayes.bayes_predict`).
+Refits: Adam lr 1e-2, minibatch 256, 80 steps, initialised at A's c; no early stopping.
+
+Sizes: labelled run-in n_L = 30, 125, 500 patients (about 5, 20, 80 outcome cases); unlabelled pool n_U = 200, 2,000 patients. 3 draws per size and policy. Quick version; more draws only if the answer is unclear.
+
+Outputs: per policy, method, size and draw: Brier, log loss, AUROC on the B test cohort, and regret = Brier minus oracle Brier; the refitted c curves for `head_U` at n_U = 2,000 against the true B testing curve on the latent grid (sanity check; states need not align, see E5). Files `analysis/e12_runs.csv`, `analysis/e12_summary.csv`, `analysis/e12_c_curves.csv`.
+
+Expectation, stated in advance: in this simulator testing depends only on the latent state, so B's change of policy is the case `head_U` is built for; it should approach the oracle without labels, and handle `B_more`, where the dial cannot. A shift in what a test means for the outcome beyond the state cannot be simulated here, and `head_U` would not detect it.

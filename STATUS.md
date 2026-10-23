@@ -4,7 +4,7 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-Nothing.
+- E12b (23 Oct 2026): E12 rerun with longer refits, `python e12_unlabelled_head.py --workers 4 --lr 0.05 --steps 160 --tag b`, log `out/e12/e12b_run.log`, outputs `analysis/e12_b_*.csv`, expected about 25 min. Reason: in E12 (lr 0.01, 80 steps) the refits stopped halfway when B tests uniformly (each logit can move at most about 0.8; several states needed about 2). Claude added the `--steps/--lr/--tag` options (defaults unchanged). Next: compare with E12, record.
 
 ## Proposal (22 Oct 2026)
 
@@ -28,6 +28,24 @@ Nothing.
 - Earlier optional item: real-data arm (MIMIC-IV). Needs credentialed PhysioNet access, which a team member must apply for; on real data report mask gain on A against cost on B (no Bayes rules available).
 
 ## Results so far
+
+### E12: re-learning the testing head at B without outcomes (23 Oct 2026; exploratory; SPEC.md E12; `analysis/e12_*.csv`)
+
+Code by Luna (`e12_unlabelled_head.py`), reviewed by Claude. E5 filter trained at A (informative gamma 2); 4 B policies; test cohort 8,000; 3 draws. Regret = Brier minus exact-optimum Brier at B (mean over draws):
+
+| Method (data) | B_less (gamma 1) | B_more (gamma 3.5) | B_match (uniform 0.3) | B_dense (uniform 0.6) |
+|---|---|---|---|---|
+| keep (w = 1) | 0.0019 | 0.0006 | 0.0146 | 0.0125 |
+| drop (w = 0) | 0.0053 | 0.0161 | 0.0003 | 0.0003 |
+| dial_L, 30 labelled (about 5 cases) | 0.0016 | 0.0058 (max 0.016) | 0.0029 | 0.0004 |
+| dial_L, 500 labelled | 0.0009 | 0.0007 | 0.0006 | 0.0004 |
+| head_L, 30 labelled | 0.0010 | 0.0008 | 0.0096 | 0.0052 |
+| head_U, 200 unlabelled | 0.0005 | 0.0004 | 0.0092 | 0.0048 |
+| head_U, 2,000 unlabelled | 0.0006 | 0.0003 | 0.0092 | 0.0048 |
+
+- When B's testing still depends on the state (B_less, B_more), re-learning the testing head without outcomes is the best method: within 0.0003-0.0006 of the optimum from only 200 unlabelled patients, better than the dial at every run-in size, and it handles the more selective policy, where the dial with a small run-in can do harm.
+- When B tests uniformly, head_U and head_L remove only about two thirds of keep's loss and stay far behind drop and the dial (0.005-0.009 against 0.0003). The refitted testing curves show why: with lr 0.01 and 80 steps each logit moves at most about 0.8, and the A head is very steep (probabilities 0.05-0.93), so the refit stopped halfway. Checked in E12b with longer refits.
+- Size barely matters for head_U (200 vs 2,000 patients alike): the testing pattern of 200 patients x 48 hours carries far more information about 32 testing probabilities than a handful of outcome cases.
 
 ### E11: safe dial tuning with realistic run-ins on the 2012 mortality pairs (20 Oct 2026; pre-specified, SPEC.md E11; `analysis/e11_summary.*`, `figures/e11_runin.png`; sensitivity `e11_sensitivity_clean_ph.py`, `analysis/e11s_summary.csv`)
 
