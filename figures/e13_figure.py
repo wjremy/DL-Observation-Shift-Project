@@ -66,32 +66,8 @@ def make_figure(summary_path: Path = SUMMARY_PATH) -> Tuple[Path, Path]:
             case_counts.append(float(row["n_cases_mean"]) if row else float("nan"))
 
         x = list(WEEKS)
-        log_midpoints = [
-            (WEEKS[index] * WEEKS[index + 1]) ** 0.5
-            for index in range(len(WEEKS) - 1)
-        ]
-        left_edge = WEEKS[0] / (WEEKS[1] / WEEKS[0]) ** 0.5
-        right_edge = WEEKS[-1] * (WEEKS[-1] / WEEKS[-2]) ** 0.5
-        bounds = [left_edge, *log_midpoints, right_edge]
-        for index, week in enumerate(WEEKS):
-            available = [
-                method for method in METHODS
-                if (method, week) in policy_rows
-                and policy_rows[(method, week)]["regret_mean"] not in ("", "nan")
-            ]
-            if available:
-                best = min(
-                    available,
-                    key=lambda method: float(policy_rows[(method, week)]["regret_mean"]),
-                )
-                ax.axvspan(
-                    bounds[index],
-                    bounds[index + 1],
-                    color=COLORS[best],
-                    alpha=0.085,
-                    linewidth=0,
-                    zorder=0,
-                )
+        # No best-method shading: head_U and head_U + dial are tied to 1e-5,
+        # so the shading flipped between them on noise (23 Oct 2026).
 
         for method in METHODS:
             method_rows = [policy_rows.get((method, week)) for week in WEEKS]
@@ -128,8 +104,12 @@ def make_figure(summary_path: Path = SUMMARY_PATH) -> Tuple[Path, Path]:
             for week, count in zip(WEEKS, case_counts)
         ]
         ax.set_xscale("log")
+        # Log scale: fine-tuning regret is 10-50x the others at small run-ins.
+        ax.set_yscale("log")
         ax.set_xticks(WEEKS)
         ax.set_xticklabels(tick_labels)
+        ax.xaxis.set_minor_locator(plt.NullLocator())
+        ax.tick_params(axis="x", labelbottom=True)
         ax.set_title(POLICY_TITLES[policy_name], fontsize=10, pad=8)
         ax.grid(axis="y", color="#d9d9d9", linewidth=0.7, zorder=1)
         ax.set_axisbelow(True)

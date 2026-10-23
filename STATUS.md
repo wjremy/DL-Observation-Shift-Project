@@ -4,7 +4,7 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-- E13 (23 Oct 2026; SPEC.md E13, "which rung when"): code by Luna (`e13_rungs_over_time.py`, `figures/e13_figure.py`), reviewed by Claude, smoke test passed. Running: `python e13_rungs_over_time.py --train-only` (A model with 2% outcome, about 30 min) then `python e13_rungs_over_time.py --workers 4 --lr 0.05 --steps 160` (160 jobs, about 2-3 h); log `out/e13/e13_run.log`. Next: `python figures/e13_figure.py`, review the figure, record.
+- Nothing.
 
 
 ## Proposal (22 Oct 2026)
@@ -32,6 +32,24 @@ Update this file with every change: what started, what finished, what was decide
 - Earlier optional item: real-data arm (MIMIC-IV). Needs credentialed PhysioNet access, which a team member must apply for; on real data report mask gain on A against cost on B (no Bayes rules available).
 
 ## Results so far
+
+### E13: which rung when, over weeks of deployment (23 Oct 2026; exploratory; SPEC.md E13; `analysis/e13_runs.csv`, `analysis/e13_summary.csv`, `figures/e13_rungs_over_time.png`; log `out/e13/e13_run.log`)
+
+Run: `python e13_rungs_over_time.py --train-only`, then `--workers 4 --lr 0.05 --steps 160` (160 jobs, 5 draws, 25 patients a week, outcome about 2%, so about 0.5 cases a week). Mean regret (Brier minus B optimum, x1e-4) at weeks 1 / 13 / 104 (0.6 / 7 / 52 outcome cases):
+
+| B policy | keep | dial only | head_U | head_U + dial | fine-tune |
+|---|---|---|---|---|---|
+| less selective | 2.5 / 2.5 / 2.5 | 2.3 / 1.9 / 1.5 | 1.7 / 1.3 / 1.3 | 1.7 / 1.4 / 1.3 | 52 / 23 / 3.7 |
+| more selective | 3.4 / 3.4 / 3.4 | 3.4 / 3.4 / 3.4 | 2.1 / 2.2 / 2.1 | 2.1 / 2.1 / 2.1 | 51 / 7.4 / 4.1 |
+| random, same rate | 11.6 / 11.6 / 11.6 | 7.7 / 1.4 / 1.0 | 1.5 / 1.0 / 0.9 | 1.5 / 1.0 / 0.9 | 47 / 14 / 2.5 |
+| random, twice as often | 9.3 / 9.3 / 9.3 | 8.8 / 4.2 / 2.5 | 2.8 / 2.3 / 2.4 | 2.8 / 2.3 / 2.4 | 56 / 14 / 8.8 |
+
+- The expected staircase (each rung with its own peak) did not appear. head_U is best or tied from week 1 under all four policies, because it needs no outcomes: 25 unlabelled patients already bring it close to its floor, and it improves only slightly after week 4.
+- The dial on top of head_U adds nothing (w about 0.95; differences at or below 1e-5). The dial alone catches up with head_U only under random testing at the same rate, after about 13 weeks (7 cases).
+- Full fine-tuning is the worst method at every week up to 2 years (52 cases), 10-50x the regret of head_U in the first 2 months; it approaches keep only at 26-104 weeks. Caveat: it uses the same lr 0.05 / 160 steps on all parameters, without early stopping, so this baseline may be handicapped; a smaller learning rate is the obvious check.
+- head_U's remaining regret (1-2.5e-4) is about what keep has under the mildest shift, i.e. probably the A model's own error rather than leftover shift.
+- Limit: this simulator shifts only the testing policy, never what a test means for the outcome, so there is nothing for outcome-based rungs to fix. The ladder's upper rungs can only show their value in a simulator where B also changes the link between state and outcome, or between tests, or on real data.
+- Figure fix (Claude, 23 Oct): log y-axis (fine-tuning hid all other curves), no best-method shading (head_U and head_U + dial are tied, so the shading flipped on noise), week labels on all panels.
 
 ### E12: re-learning the testing head at B without outcomes (23 Oct 2026; exploratory; SPEC.md E12; `analysis/e12_*.csv`)
 
@@ -233,6 +251,8 @@ Exact Bayes reference (`bayes_reference.csv`, 20,000 patients, Brier; base Brier
 Reading: the observation pattern adds little beyond the values when values are precise (near-redundant), more as they get noisy. With noisy values, dense uniform testing in B hurts the transferred A rule most: it reads "tested often" as "sick", and in B everyone is tested often.
 
 ## Done
+
+- E13 (which rung when) implemented by Luna (`tasks/e13/`, `out/e13/`), reviewed, run (about 3 h on the laptop) and analysed (23 Oct).
 
 - E5 (learned latent filter with tempered testing head) implemented by Luna (`tasks/e5_filter.md`, `out/e5_filter.md`), reviewed (numpy filter reproduces Bayes to 4e-9; torch matches numpy), run and analysed (18 Oct).
 - E4 (product-of-experts discounting) implemented by Luna (`tasks/e4_poe.md`, `out/e4_poe.md`), reviewed, run and analysed (18 Oct).
