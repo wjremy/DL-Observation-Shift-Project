@@ -216,3 +216,28 @@ Sizes: labelled run-in n_L = 30, 125, 500 patients (about 5, 20, 80 outcome case
 Outputs: per policy, method, size and draw: Brier, log loss, AUROC on the B test cohort, and regret = Brier minus oracle Brier; the refitted c curves for `head_U` at n_U = 2,000 against the true B testing curve on the latent grid (sanity check; states need not align, see E5). Files `analysis/e12_runs.csv`, `analysis/e12_summary.csv`, `analysis/e12_c_curves.csv`.
 
 Expectation, stated in advance: in this simulator testing depends only on the latent state, so B's change of policy is the case `head_U` is built for; it should approach the oracle without labels, and handle `B_more`, where the dial cannot. A shift in what a test means for the outcome beyond the state cannot be simulated here, and `head_U` would not detect it.
+
+## E13: which rung when? Performance over weeks of deployment (Claude and Wesley, 23 Oct 2026; simulation)
+
+Question: as data from hospital B accrue week by week after deployment, which rung of the ladder is best at each time, and where do the curves cross? Main figure: x = weeks since deployment (log scale), y = regret against the exact optimum at B, one curve per rung, the best rung per week shaded.
+
+Ladder (ordered by outcome labels needed; Wesley, 23 Oct; docs/ARGUMENT.md section 10):
+- R0 `keep`: A's model.
+- R1 `head_U`: re-learn the testing-head logits c on all of B's records so far, without outcomes (value-and-mask likelihood only), other parameters frozen.
+- R2 `head_U_dial`: R1, then one weight w in [0, 1] on the re-learned testing evidence, chosen on the labelled patients so far by penalised log loss: sum of log losses + 2 * (w - 1)^2 (E9's prior, sd 0.5 around 1); no outcome case yet -> w = 1.
+- R4 `finetune`: all parameters from A's values, on the labelled patients so far, loss BCE + per-step NLL (E5 loss); no outcome case yet -> A's model.
+- Baseline `dial_only`: the original dial on A's model (no re-learning), same penalised rule as R2.
+- R3 (dial per test group) needs several tests; the simulator has one. Left for the multi-test simulator.
+- `oracle`: exact Bayes predictor under B's policy.
+
+Realistic rates: outcome threshold raised from 1.0 to 2.05 so that about 2% of patients have the outcome (as sepsis in E6). This changes the A model: retrain the E5 filter at A (informative gamma 2, rate 0.3, sigma 1) with this outcome, n_train 16,000, n_val 4,000 (about 320 and 80 cases), otherwise as E5 (`latent_filter.train_filter`). Implementation: set `sim.THRESHOLD` and `bayes.THRESHOLD` (bayes imports it by value) to 2.05 at import time of the E13 script, so spawned workers see it too.
+
+Time axis: weeks t = 1, 2, 4, 8, 13, 26, 52, 104; 25 admissions per week (1,300 a year, a median US ICU), so n(t) = 25 t patients (about 0.5 outcome cases a week). All n(t) patients' testing records are available for R1; their outcomes are available for R2, R4 and `dial_only` (outcome delay ignored: the 6-hour horizon is short against a week).
+
+B policies: as E12 (`B_less`, `B_more`, `B_match`, `B_dense`). Test cohort 10,000 patients (about 200 cases), fixed. 5 draws of the deployment stream per week and policy; the stream is nested (week t's patients are the first 25 t of one stream of 2,600 per draw), so curves over weeks are paired.
+
+Refits (R1 and R4): Adam, minibatch 256 with replacement, settings from E12b if it converges (lr 0.05, 160 steps), else stated with the result.
+
+Outputs: `analysis/e13_runs.csv` (policy, method, week, n patients, n cases, draw, Brier, log loss, AUROC, regret, w), `analysis/e13_summary.csv`, `figures/e13_rungs_over_time.png` (one panel per policy, mean regret with min-max band over draws, shading of the best rung per week).
+
+Expectation, stated in advance: R1 is best from the first week when B's testing still depends on the state; R2 adds little here, because the simulator shifts only testing (its job is a shift in a test's meaning for the outcome, which cannot be simulated with this simulator); R4 overtakes only after many months, if at all within two years. A rule that chooses the rung from run-in data alone is the next step, not part of E13.

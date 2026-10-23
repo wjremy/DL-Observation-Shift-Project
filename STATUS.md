@@ -4,7 +4,8 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-- E12b (23 Oct 2026): E12 rerun with longer refits, `python e12_unlabelled_head.py --workers 4 --lr 0.05 --steps 160 --tag b`, log `out/e12/e12b_run.log`, outputs `analysis/e12_b_*.csv`, expected about 25 min. Reason: in E12 (lr 0.01, 80 steps) the refits stopped halfway when B tests uniformly (each logit can move at most about 0.8; several states needed about 2). Claude added the `--steps/--lr/--tag` options (defaults unchanged). Next: compare with E12, record.
+- E13 (23 Oct 2026; SPEC.md E13, "which rung when"): Luna writes `e13_rungs_over_time.py` and `figures/e13_figure.py` (brief `tasks/e13/`, report `out/e13/`). Then Claude reviews, smoke-tests, trains the A model with the 2% outcome (`--train-only`, about 30 min), and runs the full job (160 jobs, about 1.5-2 h) after E12b finishes.
+
 
 ## Proposal (22 Oct 2026)
 
@@ -46,6 +47,8 @@ Code by Luna (`e12_unlabelled_head.py`), reviewed by Claude. E5 filter trained a
 - When B's testing still depends on the state (B_less, B_more), re-learning the testing head without outcomes is the best method: within 0.0003-0.0006 of the optimum from only 200 unlabelled patients, better than the dial at every run-in size, and it handles the more selective policy, where the dial with a small run-in can do harm.
 - When B tests uniformly, head_U and head_L remove only about two thirds of keep's loss and stay far behind drop and the dial (0.005-0.009 against 0.0003). The refitted testing curves show why: with lr 0.01 and 80 steps each logit moves at most about 0.8, and the A head is very steep (probabilities 0.05-0.93), so the refit stopped halfway. Checked in E12b with longer refits.
 - Size barely matters for head_U (200 vs 2,000 patients alike): the testing pattern of 200 patients x 48 hours carries far more information about 32 testing probabilities than a handful of outcome cases.
+
+**E12b (longer refits: lr 0.05, 160 steps; `analysis/e12_b_*.csv`):** the halfway refits were the cause. head_U now reaches regret 0.0002-0.0004 at all four B policies from 200 unlabelled patients (B_less 0.0002, B_more 0.0004, B_match 0.0003, B_dense 0.0003-0.0004): as good as the best alternative everywhere (drop on uniform testing, 0.0003) and better than every labelled method on informative testing. head_L with small run-ins now overfits (30 patients: B_match 0.0040, B_more 0.0022) and only matches head_U at 500 labelled patients. The refitted testing curves need not be flat under uniform testing (range 0.16-0.63 for B_match) while predictions are near-optimal: the learned states are not the simulator's states (as in E5). Reading: in this simulator, re-learning the testing head from B's records without outcomes is the best single rung from 200 patients on; outcomes add nothing here because the shift is only in testing. Settings lr 0.05 / 160 steps carried into E13.
 
 ### E11: safe dial tuning with realistic run-ins on the 2012 mortality pairs (20 Oct 2026; pre-specified, SPEC.md E11; `analysis/e11_summary.*`, `figures/e11_runin.png`; sensitivity `e11_sensitivity_clean_ph.py`, `analysis/e11s_summary.csv`)
 
