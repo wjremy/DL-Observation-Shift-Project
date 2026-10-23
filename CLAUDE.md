@@ -21,6 +21,7 @@ Read docs/MAP.md, STATUS.md and README.md; docs/ARGUMENT.md and docs/GAP.md for 
 ## Compute
 
 - Wesley's laptop: Intel i5-8365U, 4 physical cores (8 threads), 16 GB RAM, no CUDA GPU. PyTorch CPU build.
+- Team GPU (teammate, 23 Oct 2026): one NVIDIA GTX 1080 Ti on "snowflake". No access to ETH's Euler cluster; do not claim it.
 - Quick runs by default (Wesley, 17 Oct 2026): a test of an idea should run in minutes (one or two settings, one seed, small n). Run a large grid only when that is clearly what is wanted. State the expected runtime before launching; above about 15 minutes, start with the quick version and offer the larger one.
 - No usable GPU: the Intel UHD 620 has no CUDA, and DirectML on it would be slower than the CPU for these small sequential models.
 - One compute job at a time; `--workers 4` with one thread per fit. Run long jobs in the background and record them under "Running now".

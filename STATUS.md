@@ -4,10 +4,13 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-- E13 (23 Oct 2026; SPEC.md E13, "which rung when"): Luna writes `e13_rungs_over_time.py` and `figures/e13_figure.py` (brief `tasks/e13/`, report `out/e13/`). Then Claude reviews, smoke-tests, trains the A model with the 2% outcome (`--train-only`, about 30 min), and runs the full job (160 jobs, about 1.5-2 h) after E12b finishes.
+- E13 (23 Oct 2026; SPEC.md E13, "which rung when"): code by Luna (`e13_rungs_over_time.py`, `figures/e13_figure.py`), reviewed by Claude, smoke test passed. Running: `python e13_rungs_over_time.py --train-only` (A model with 2% outcome, about 30 min) then `python e13_rungs_over_time.py --workers 4 --lr 0.05 --steps 160` (160 jobs, about 2-3 h); log `out/e13/e13_run.log`. Next: `python figures/e13_figure.py`, review the figure, record.
 
 
 ## Proposal (22 Oct 2026)
+
+- 23 Oct: compute section rewritten (one GTX 1080 Ti on snowflake plus the laptop; no Euler; cost table removed; measured CPU times kept; time one site first, reduce draws or pairs if needed). Page limit confirmed by Wesley on Moodle: 2 pages excluding references. The official course template is `ethdl2026` (zip from Moodle; same layout as icml2026, requires `\icmlcorrespondingauthor` with the `accepted` option); compiled with it, the main text ends on page 2. Overleaf still uses icml2026; switching is two lines plus the style files.
+- Teammate review (23 Oct): (1) the proposal drifted from the topic (compare architectures) to one model; proposed fix: E3 compares how GRU, GRU-D, Neural CDE, Transformer and the state-space model adapt. (2) Compute section wrong: no Euler access; the team has one GTX 1080 Ti on snowflake (now in CLAUDE.md). (3) Page limit claimed 1 page; the course text Wesley pasted says at most 2 pages excluding references; to be clarified. (4) Rung order to update after E12/E13 (unlabelled testing-head refit first).
 
 - Course template received (ICML 2026 style, "Project 14"): the proposal now lives in `docs/proposal/icml/main.tex` + `bibliography.bib` (all DOIs checked on Crossref), and supersedes `docs/proposal/proposal.tex`. Length checked with a stand-in style using ICML's page geometry (the real icml2026.sty is not on this laptop): main text ends on page 2 with some room; confirm in Overleaf. Advisor and topic go in the first-column footnote via \printAffiliationsAndNotice. Still to fill: surnames and ETH usernames (Daniele, Rafael, Meds, Wesley Remy), corresponding author (optional).
 
