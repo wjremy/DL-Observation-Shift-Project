@@ -1,0 +1,1003 @@
+{
+  "P12": {
+    "D": 36,
+    "T": 48,
+    "log_variables": [
+      "ALP",
+      "ALT",
+      "AST",
+      "Creatinine",
+      "Glucose",
+      "K",
+      "TroponinT"
+    ],
+    "removed_values_by_variable": {
+      "ALP": 0,
+      "ALT": 0,
+      "AST": 0,
+      "Albumin": 0,
+      "BUN": 0,
+      "Bilirubin": 0,
+      "Cholesterol": 0,
+      "Creatinine": 0,
+      "DiasABP": 57,
+      "FiO2": 0,
+      "GCS": 0,
+      "Glucose": 0,
+      "HCO3": 0,
+      "HCT": 0,
+      "HR": 0,
+      "K": 0,
+      "Lactate": 0,
+      "MAP": 0,
+      "MechVent": 0,
+      "Mg": 0,
+      "NIDiasABP": 167,
+      "NIMAP": 0,
+      "NISysABP": 0,
+      "Na": 0,
+      "PaCO2": 0,
+      "PaO2": 0,
+      "Platelets": 0,
+      "RespRate": 0,
+      "SaO2": 0,
+      "SysABP": 0,
+      "Temp": 59,
+      "TroponinI": 0,
+      "TroponinT": 0,
+      "Urine": 0,
+      "WBC": 0,
+      "pH": 21
+    },
+    "sites": {
+      "CCU": {
+        "least_measured_variables": [
+          {
+            "measurement_rate": 0.0030266628980591672,
+            "variable": "TroponinI"
+          },
+          {
+            "measurement_rate": 0.006335971358583004,
+            "variable": "Cholesterol"
+          },
+          {
+            "measurement_rate": 0.011294045600150744,
+            "variable": "Albumin"
+          },
+          {
+            "measurement_rate": 0.01482711513095911,
+            "variable": "ALP"
+          },
+          {
+            "measurement_rate": 0.015427736951196532,
+            "variable": "Bilirubin"
+          },
+          {
+            "measurement_rate": 0.015686828716789145,
+            "variable": "AST"
+          },
+          {
+            "measurement_rate": 0.015710382513661202,
+            "variable": "ALT"
+          },
+          {
+            "measurement_rate": 0.021681270020727342,
+            "variable": "TroponinT"
+          },
+          {
+            "measurement_rate": 0.02256453740342943,
+            "variable": "Lactate"
+          },
+          {
+            "measurement_rate": 0.0492392123610326,
+            "variable": "SaO2"
+          }
+        ],
+        "mean_measurement_rate": 0.1771831098339719,
+        "most_measured_variables": [
+          {
+            "measurement_rate": 0.8704776710005653,
+            "variable": "HR"
+          },
+          {
+            "measurement_rate": 0.5672460900697193,
+            "variable": "Urine"
+          },
+          {
+            "measurement_rate": 0.479743734690032,
+            "variable": "NISysABP"
+          },
+          {
+            "measurement_rate": 0.47911955907292253,
+            "variable": "NIDiasABP"
+          },
+          {
+            "measurement_rate": 0.47689372526851326,
+            "variable": "NIMAP"
+          },
+          {
+            "measurement_rate": 0.41222677595628415,
+            "variable": "SysABP"
+          },
+          {
+            "measurement_rate": 0.41219144526097606,
+            "variable": "DiasABP"
+          },
+          {
+            "measurement_rate": 0.41058978707367627,
+            "variable": "MAP"
+          },
+          {
+            "measurement_rate": 0.35181128697946107,
+            "variable": "RespRate"
+          },
+          {
+            "measurement_rate": 0.2995807424156774,
+            "variable": "Temp"
+          }
+        ],
+        "n": 1769,
+        "outcome_rate": 0.12662521198417184
+      },
+      "CSRU": {
+        "least_measured_variables": [
+          {
+            "measurement_rate": 0.0002717391304347826,
+            "variable": "Cholesterol"
+          },
+          {
+            "measurement_rate": 0.0013092885375494071,
+            "variable": "TroponinI"
+          },
+          {
+            "measurement_rate": 0.0025279973649538867,
+            "variable": "TroponinT"
+          },
+          {
+            "measurement_rate": 0.004652503293807642,
+            "variable": "Albumin"
+          },
+          {
+            "measurement_rate": 0.007056982872200263,
+            "variable": "ALP"
+          },
+          {
+            "measurement_rate": 0.007131093544137023,
+            "variable": "Bilirubin"
+          },
+          {
+            "measurement_rate": 0.007246376811594203,
+            "variable": "AST"
+          },
+          {
+            "measurement_rate": 0.0072546113306982875,
+            "variable": "ALT"
+          },
+          {
+            "measurement_rate": 0.03510375494071146,
+            "variable": "Lactate"
+          },
+          {
+            "measurement_rate": 0.04236660079051383,
+            "variable": "RespRate"
+          }
+        ],
+        "mean_measurement_rate": 0.20699705387205386,
+        "most_measured_variables": [
+          {
+            "measurement_rate": 0.9165596179183135,
+            "variable": "HR"
+          },
+          {
+            "measurement_rate": 0.840620882740448,
+            "variable": "Urine"
+          },
+          {
+            "measurement_rate": 0.785260210803689,
+            "variable": "MAP"
+          },
+          {
+            "measurement_rate": 0.7839591567852437,
+            "variable": "SysABP"
+          },
+          {
+            "measurement_rate": 0.7839344532279315,
+            "variable": "DiasABP"
+          },
+          {
+            "measurement_rate": 0.581637022397892,
+            "variable": "Temp"
+          },
+          {
+            "measurement_rate": 0.264649209486166,
+            "variable": "GCS"
+          },
+          {
+            "measurement_rate": 0.2219038208168643,
+            "variable": "pH"
+          },
+          {
+            "measurement_rate": 0.2176383399209486,
+            "variable": "NISysABP"
+          },
+          {
+            "measurement_rate": 0.21703722002635045,
+            "variable": "NIDiasABP"
+          }
+        ],
+        "n": 2530,
+        "outcome_rate": 0.04861660079051383
+      },
+      "MICU": {
+        "least_measured_variables": [
+          {
+            "measurement_rate": 0.0009802779718922276,
+            "variable": "Cholesterol"
+          },
+          {
+            "measurement_rate": 0.002426430623495613,
+            "variable": "TroponinI"
+          },
+          {
+            "measurement_rate": 0.012005978725056293,
+            "variable": "SaO2"
+          },
+          {
+            "measurement_rate": 0.013709333022750214,
+            "variable": "TroponinT"
+          },
+          {
+            "measurement_rate": 0.01666957838341486,
+            "variable": "Albumin"
+          },
+          {
+            "measurement_rate": 0.02160979113285193,
+            "variable": "ALP"
+          },
+          {
+            "measurement_rate": 0.022226104511219816,
+            "variable": "ALT"
+          },
+          {
+            "measurement_rate": 0.022235810233713797,
+            "variable": "AST"
+          },
+          {
+            "measurement_rate": 0.023128736703160183,
+            "variable": "Bilirubin"
+          },
+          {
+            "measurement_rate": 0.038847154282164766,
+            "variable": "Lactate"
+          }
+        ],
+        "mean_measurement_rate": 0.18176418760945898,
+        "most_measured_variables": [
+          {
+            "measurement_rate": 0.8916550197996739,
+            "variable": "HR"
+          },
+          {
+            "measurement_rate": 0.605103268887336,
+            "variable": "Urine"
+          },
+          {
+            "measurement_rate": 0.5675227113906359,
+            "variable": "NISysABP"
+          },
+          {
+            "measurement_rate": 0.5670180138209489,
+            "variable": "NIDiasABP"
+          },
+          {
+            "measurement_rate": 0.5569143567047131,
+            "variable": "NIMAP"
+          },
+          {
+            "measurement_rate": 0.3535066775370759,
+            "variable": "SysABP"
+          },
+          {
+            "measurement_rate": 0.35344844320211194,
+            "variable": "DiasABP"
+          },
+          {
+            "measurement_rate": 0.34869749204130757,
+            "variable": "MAP"
+          },
+          {
+            "measurement_rate": 0.3077975774516655,
+            "variable": "RespRate"
+          },
+          {
+            "measurement_rate": 0.28609558195512075,
+            "variable": "Temp"
+          }
+        ],
+        "n": 4293,
+        "outcome_rate": 0.1984626135569532
+      },
+      "SICU": {
+        "least_measured_variables": [
+          {
+            "measurement_rate": 0.0013509878716744914,
+            "variable": "Cholesterol"
+          },
+          {
+            "measurement_rate": 0.0015771713615023474,
+            "variable": "TroponinI"
+          },
+          {
+            "measurement_rate": 0.0077941607981220655,
+            "variable": "TroponinT"
+          },
+          {
+            "measurement_rate": 0.01394390649452269,
+            "variable": "Albumin"
+          },
+          {
+            "measurement_rate": 0.017428354851330204,
+            "variable": "Bilirubin"
+          },
+          {
+            "measurement_rate": 0.017458920187793426,
+            "variable": "ALP"
+          },
+          {
+            "measurement_rate": 0.017727895148669796,
+            "variable": "ALT"
+          },
+          {
+            "measurement_rate": 0.017740121283255087,
+            "variable": "AST"
+          },
+          {
+            "measurement_rate": 0.020270931142410017,
+            "variable": "SaO2"
+          },
+          {
+            "measurement_rate": 0.05815360915492958,
+            "variable": "Lactate"
+          }
+        ],
+        "mean_measurement_rate": 0.2073540539145366,
+        "most_measured_variables": [
+          {
+            "measurement_rate": 0.9173513302034428,
+            "variable": "HR"
+          },
+          {
+            "measurement_rate": 0.7560091451486698,
+            "variable": "Urine"
+          },
+          {
+            "measurement_rate": 0.6649244424882629,
+            "variable": "SysABP"
+          },
+          {
+            "measurement_rate": 0.6648633118153364,
+            "variable": "DiasABP"
+          },
+          {
+            "measurement_rate": 0.6598505966353677,
+            "variable": "MAP"
+          },
+          {
+            "measurement_rate": 0.4624657668231612,
+            "variable": "GCS"
+          },
+          {
+            "measurement_rate": 0.35830521322378717,
+            "variable": "Temp"
+          },
+          {
+            "measurement_rate": 0.35569493348982784,
+            "variable": "NISysABP"
+          },
+          {
+            "measurement_rate": 0.35498581768388104,
+            "variable": "NIDiasABP"
+          },
+          {
+            "measurement_rate": 0.3505660700312989,
+            "variable": "NIMAP"
+          }
+        ],
+        "n": 3408,
+        "outcome_rate": 0.14906103286384975
+      }
+    }
+  },
+  "P19": {
+    "D": 34,
+    "T": 24,
+    "log_variables": [
+      "AST",
+      "BUN",
+      "Alkalinephos",
+      "Creatinine",
+      "Bilirubin_direct",
+      "Glucose",
+      "Lactate",
+      "Magnesium",
+      "Potassium",
+      "Bilirubin_total",
+      "TroponinI",
+      "PTT",
+      "WBC"
+    ],
+    "removed_values_by_variable": {
+      "AST": 0,
+      "Alkalinephos": 0,
+      "BUN": 0,
+      "BaseExcess": 0,
+      "Bilirubin_direct": 0,
+      "Bilirubin_total": 0,
+      "Calcium": 0,
+      "Chloride": 0,
+      "Creatinine": 0,
+      "DBP": 0,
+      "EtCO2": 0,
+      "FiO2": 0,
+      "Fibrinogen": 0,
+      "Glucose": 0,
+      "HCO3": 0,
+      "HR": 0,
+      "Hct": 0,
+      "Hgb": 0,
+      "Lactate": 0,
+      "MAP": 0,
+      "Magnesium": 0,
+      "O2Sat": 0,
+      "PTT": 0,
+      "PaCO2": 0,
+      "Phosphate": 0,
+      "Platelets": 0,
+      "Potassium": 0,
+      "Resp": 0,
+      "SBP": 0,
+      "SaO2": 0,
+      "Temp": 0,
+      "TroponinI": 0,
+      "WBC": 0,
+      "pH": 0
+    },
+    "sites": {
+      "A-MICU": {
+        "least_measured_variables": [
+          {
+            "measurement_rate": 0.0,
+            "variable": "EtCO2"
+          },
+          {
+            "measurement_rate": 0.0012642740619902121,
+            "variable": "Bilirubin_direct"
+          },
+          {
+            "measurement_rate": 0.0033578031538879826,
+            "variable": "TroponinI"
+          },
+          {
+            "measurement_rate": 0.006647634584013051,
+            "variable": "Fibrinogen"
+          },
+          {
+            "measurement_rate": 0.011269711799891245,
+            "variable": "SaO2"
+          },
+          {
+            "measurement_rate": 0.01835236541598695,
+            "variable": "Bilirubin_total"
+          },
+          {
+            "measurement_rate": 0.019426318651441,
+            "variable": "Alkalinephos"
+          },
+          {
+            "measurement_rate": 0.019671016856987494,
+            "variable": "AST"
+          },
+          {
+            "measurement_rate": 0.027147906470908104,
+            "variable": "Lactate"
+          },
+          {
+            "measurement_rate": 0.04853181076672104,
+            "variable": "PTT"
+          }
+        ],
+        "mean_measurement_rate": 0.18268840162492403,
+        "most_measured_variables": [
+          {
+            "measurement_rate": 0.899021207177814,
+            "variable": "HR"
+          },
+          {
+            "measurement_rate": 0.8628194671016857,
+            "variable": "O2Sat"
+          },
+          {
+            "measurement_rate": 0.8573137574768896,
+            "variable": "MAP"
+          },
+          {
+            "measurement_rate": 0.8531538879825993,
+            "variable": "Resp"
+          },
+          {
+            "measurement_rate": 0.8394779771615009,
+            "variable": "SBP"
+          },
+          {
+            "measurement_rate": 0.26394779771615007,
+            "variable": "Temp"
+          },
+          {
+            "measurement_rate": 0.23601141924959218,
+            "variable": "DBP"
+          },
+          {
+            "measurement_rate": 0.1164763458401305,
+            "variable": "FiO2"
+          },
+          {
+            "measurement_rate": 0.09926590538336053,
+            "variable": "Hct"
+          },
+          {
+            "measurement_rate": 0.08563077759651985,
+            "variable": "Potassium"
+          }
+        ],
+        "n": 3065,
+        "outcome_rate": 0.03425774877650897
+      },
+      "A-SICU": {
+        "least_measured_variables": [
+          {
+            "measurement_rate": 0.0,
+            "variable": "EtCO2"
+          },
+          {
+            "measurement_rate": 0.00025510204081632655,
+            "variable": "Bilirubin_direct"
+          },
+          {
+            "measurement_rate": 0.0015589569160997733,
+            "variable": "TroponinI"
+          },
+          {
+            "measurement_rate": 0.007568027210884354,
+            "variable": "Fibrinogen"
+          },
+          {
+            "measurement_rate": 0.0076247165532879815,
+            "variable": "Bilirubin_total"
+          },
+          {
+            "measurement_rate": 0.009608843537414966,
+            "variable": "Alkalinephos"
+          },
+          {
+            "measurement_rate": 0.009892290249433106,
+            "variable": "AST"
+          },
+          {
+            "measurement_rate": 0.027125850340136055,
+            "variable": "Calcium"
+          },
+          {
+            "measurement_rate": 0.027267573696145124,
+            "variable": "Phosphate"
+          },
+          {
+            "measurement_rate": 0.04169501133786848,
+            "variable": "Lactate"
+          }
+        ],
+        "mean_measurement_rate": 0.23049719887955183,
+        "most_measured_variables": [
+          {
+            "measurement_rate": 0.9194160997732427,
+            "variable": "HR"
+          },
+          {
+            "measurement_rate": 0.909155328798186,
+            "variable": "MAP"
+          },
+          {
+            "measurement_rate": 0.9079648526077098,
+            "variable": "Resp"
+          },
+          {
+            "measurement_rate": 0.8923469387755102,
+            "variable": "O2Sat"
+          },
+          {
+            "measurement_rate": 0.8822845804988663,
+            "variable": "SBP"
+          },
+          {
+            "measurement_rate": 0.7074829931972789,
+            "variable": "DBP"
+          },
+          {
+            "measurement_rate": 0.48035714285714287,
+            "variable": "Temp"
+          },
+          {
+            "measurement_rate": 0.21969954648526077,
+            "variable": "Glucose"
+          },
+          {
+            "measurement_rate": 0.20955215419501133,
+            "variable": "pH"
+          },
+          {
+            "measurement_rate": 0.18463718820861677,
+            "variable": "BaseExcess"
+          }
+        ],
+        "n": 1470,
+        "outcome_rate": 0.017006802721088437
+      },
+      "A-all": {
+        "least_measured_variables": [
+          {
+            "measurement_rate": 0.0,
+            "variable": "EtCO2"
+          },
+          {
+            "measurement_rate": 0.0009371554575523704,
+            "variable": "Bilirubin_direct"
+          },
+          {
+            "measurement_rate": 0.002774715178243293,
+            "variable": "TroponinI"
+          },
+          {
+            "measurement_rate": 0.006945975744211687,
+            "variable": "Fibrinogen"
+          },
+          {
+            "measurement_rate": 0.014875045938993017,
+            "variable": "Bilirubin_total"
+          },
+          {
+            "measurement_rate": 0.016244027930907755,
+            "variable": "Alkalinephos"
+          },
+          {
+            "measurement_rate": 0.016501286291804484,
+            "variable": "AST"
+          },
+          {
+            "measurement_rate": 0.03186328555678059,
+            "variable": "Lactate"
+          },
+          {
+            "measurement_rate": 0.04822675486953326,
+            "variable": "SaO2"
+          },
+          {
+            "measurement_rate": 0.049678427048879086,
+            "variable": "Phosphate"
+          }
+        ],
+        "mean_measurement_rate": 0.19818540977581772,
+        "most_measured_variables": [
+          {
+            "measurement_rate": 0.9056321205439177,
+            "variable": "HR"
+          },
+          {
+            "measurement_rate": 0.8741179713340683,
+            "variable": "MAP"
+          },
+          {
+            "measurement_rate": 0.8723906651966189,
+            "variable": "O2Sat"
+          },
+          {
+            "measurement_rate": 0.8709206174200661,
+            "variable": "Resp"
+          },
+          {
+            "measurement_rate": 0.853353546490261,
+            "variable": "SBP"
+          },
+          {
+            "measurement_rate": 0.38883682469680264,
+            "variable": "DBP"
+          },
+          {
+            "measurement_rate": 0.33409592061742005,
+            "variable": "Temp"
+          },
+          {
+            "measurement_rate": 0.13382028665931642,
+            "variable": "FiO2"
+          },
+          {
+            "measurement_rate": 0.12428335170893054,
+            "variable": "Glucose"
+          },
+          {
+            "measurement_rate": 0.11414002205071665,
+            "variable": "Hct"
+          }
+        ],
+        "n": 4535,
+        "outcome_rate": 0.02866593164277839
+      },
+      "B-MICU": {
+        "least_measured_variables": [
+          {
+            "measurement_rate": 0.0009050750631061511,
+            "variable": "HCO3"
+          },
+          {
+            "measurement_rate": 0.0009133785040520792,
+            "variable": "BaseExcess"
+          },
+          {
+            "measurement_rate": 0.0025906735751295338,
+            "variable": "Bilirubin_direct"
+          },
+          {
+            "measurement_rate": 0.0030888800318852132,
+            "variable": "Chloride"
+          },
+          {
+            "measurement_rate": 0.0035455692839112527,
+            "variable": "Fibrinogen"
+          },
+          {
+            "measurement_rate": 0.008178889331739072,
+            "variable": "Lactate"
+          },
+          {
+            "measurement_rate": 0.009382888268898631,
+            "variable": "PTT"
+          },
+          {
+            "measurement_rate": 0.011516872592002125,
+            "variable": "SaO2"
+          },
+          {
+            "measurement_rate": 0.011741065497542181,
+            "variable": "PaCO2"
+          },
+          {
+            "measurement_rate": 0.011873920552677029,
+            "variable": "pH"
+          }
+        ],
+        "mean_measurement_rate": 0.18779916809290476,
+        "most_measured_variables": [
+          {
+            "measurement_rate": 0.899902019396838,
+            "variable": "HR"
+          },
+          {
+            "measurement_rate": 0.8732064567556795,
+            "variable": "SBP"
+          },
+          {
+            "measurement_rate": 0.8730154776139232,
+            "variable": "DBP"
+          },
+          {
+            "measurement_rate": 0.8675601169124485,
+            "variable": "MAP"
+          },
+          {
+            "measurement_rate": 0.8663478145343431,
+            "variable": "O2Sat"
+          },
+          {
+            "measurement_rate": 0.8044705726052876,
+            "variable": "Resp"
+          },
+          {
+            "measurement_rate": 0.25404377574066694,
+            "variable": "Temp"
+          },
+          {
+            "measurement_rate": 0.16668327354855852,
+            "variable": "Glucose"
+          },
+          {
+            "measurement_rate": 0.0724973428988973,
+            "variable": "Potassium"
+          },
+          {
+            "measurement_rate": 0.06462568088215756,
+            "variable": "Calcium"
+          }
+        ],
+        "n": 5018,
+        "outcome_rate": 0.01753686727779992
+      },
+      "B-SICU": {
+        "least_measured_variables": [
+          {
+            "measurement_rate": 0.002984792182769061,
+            "variable": "Bilirubin_direct"
+          },
+          {
+            "measurement_rate": 0.00402559867877787,
+            "variable": "HCO3"
+          },
+          {
+            "measurement_rate": 0.005040600055050922,
+            "variable": "BaseExcess"
+          },
+          {
+            "measurement_rate": 0.013607899807321773,
+            "variable": "Fibrinogen"
+          },
+          {
+            "measurement_rate": 0.014554087530966143,
+            "variable": "TroponinI"
+          },
+          {
+            "measurement_rate": 0.014975571153316818,
+            "variable": "Chloride"
+          },
+          {
+            "measurement_rate": 0.019009771538673274,
+            "variable": "PTT"
+          },
+          {
+            "measurement_rate": 0.021753715937241947,
+            "variable": "AST"
+          },
+          {
+            "measurement_rate": 0.021899944949077897,
+            "variable": "Alkalinephos"
+          },
+          {
+            "measurement_rate": 0.021934351775392238,
+            "variable": "Bilirubin_total"
+          }
+        ],
+        "mean_measurement_rate": 0.21393456226421204,
+        "most_measured_variables": [
+          {
+            "measurement_rate": 0.8982504128819158,
+            "variable": "HR"
+          },
+          {
+            "measurement_rate": 0.8935710845031655,
+            "variable": "O2Sat"
+          },
+          {
+            "measurement_rate": 0.888022983759978,
+            "variable": "SBP"
+          },
+          {
+            "measurement_rate": 0.887567093311313,
+            "variable": "DBP"
+          },
+          {
+            "measurement_rate": 0.885494082025874,
+            "variable": "MAP"
+          },
+          {
+            "measurement_rate": 0.804870286264795,
+            "variable": "Resp"
+          },
+          {
+            "measurement_rate": 0.4915789292595651,
+            "variable": "Temp"
+          },
+          {
+            "measurement_rate": 0.3279400633085604,
+            "variable": "Glucose"
+          },
+          {
+            "measurement_rate": 0.11291460225708781,
+            "variable": "EtCO2"
+          },
+          {
+            "measurement_rate": 0.1112372694742637,
+            "variable": "Potassium"
+          }
+        ],
+        "n": 4844,
+        "outcome_rate": 0.026837324525185797
+      },
+      "B-all": {
+        "least_measured_variables": [
+          {
+            "measurement_rate": 0.002437808422902724,
+            "variable": "HCO3"
+          },
+          {
+            "measurement_rate": 0.002784256067058744,
+            "variable": "Bilirubin_direct"
+          },
+          {
+            "measurement_rate": 0.0029405800040559725,
+            "variable": "BaseExcess"
+          },
+          {
+            "measurement_rate": 0.008487967281822483,
+            "variable": "Fibrinogen"
+          },
+          {
+            "measurement_rate": 0.008927364293922801,
+            "variable": "Chloride"
+          },
+          {
+            "measurement_rate": 0.014111404042452511,
+            "variable": "PTT"
+          },
+          {
+            "measurement_rate": 0.023528865003717973,
+            "variable": "TroponinI"
+          },
+          {
+            "measurement_rate": 0.023803488136280672,
+            "variable": "AST"
+          },
+          {
+            "measurement_rate": 0.0238710876766038,
+            "variable": "Alkalinephos"
+          },
+          {
+            "measurement_rate": 0.023938687216926925,
+            "variable": "Bilirubin_total"
+          }
+        ],
+        "mean_measurement_rate": 0.2006363055260636,
+        "most_measured_variables": [
+          {
+            "measurement_rate": 0.8990907861826539,
+            "variable": "HR"
+          },
+          {
+            "measurement_rate": 0.8804840127087136,
+            "variable": "SBP"
+          },
+          {
+            "measurement_rate": 0.8801629148921787,
+            "variable": "DBP"
+          },
+          {
+            "measurement_rate": 0.8797192929088082,
+            "variable": "O2Sat"
+          },
+          {
+            "measurement_rate": 0.8763688906915433,
+            "variable": "MAP"
+          },
+          {
+            "measurement_rate": 0.8046669032650577,
+            "variable": "Resp"
+          },
+          {
+            "measurement_rate": 0.3707158791320219,
+            "variable": "Temp"
+          },
+          {
+            "measurement_rate": 0.2458891029540999,
+            "variable": "Glucose"
+          },
+          {
+            "measurement_rate": 0.09152555262624214,
+            "variable": "Potassium"
+          },
+          {
+            "measurement_rate": 0.08133914689380112,
+            "variable": "Calcium"
+          }
+        ],
+        "n": 9862,
+        "outcome_rate": 0.022105049685662136
+      }
+    }
+  },
+  "runtime_seconds": 294.86362110008486
+}

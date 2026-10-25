@@ -4,7 +4,7 @@ Update this file with every change: what started, what finished, what was decide
 
 ## Running now
 
-- Nothing.
+- E15 code (25 Oct 2026): written by Luna (`e15_sequences.py`, `latent_filter_mv.py`, `e15_real_pairs.py`, `figures/e15_figure.py`; briefs `tasks/e15/`, answers `out/e15/`). Cache built by the agent (`data/e15_cache.npz`, 4.9 min; ids and outcomes equal E7's; P19 D 34, T 24; P12 D 36, T 48). Torch-NumPy parity check passed (Claude). Linear comparison AUROC from `analysis/e7_sites.csv` `source_holdout_auroc_w1` (P19 whole hospitals: `analysis/e10_sites.csv` `local_auroc`). Next, after E14: smoke test, then `python e15_real_pairs.py --train-only`, check the source AUROC gate, then the full quick run. Next: review, smoke tests, then run E14 quick (2 A models, about 1-1.5 h), then E15 (cache, 6 A models, 8 pairs), one job at a time.
 
 
 ## Proposal (22 Oct 2026)
@@ -32,6 +32,19 @@ Update this file with every change: what started, what finished, what was decide
 - Earlier optional item: real-data arm (MIMIC-IV). Needs credentialed PhysioNet access, which a team member must apply for; on real data report mask gain on A against cost on B (no Bayes rules available).
 
 ## Results so far
+
+### E14: a shift only outcomes can reveal (25 Oct 2026; exploratory, quick; SPEC.md E14; `analysis/e14_runs.csv`, `analysis/e14_summary.csv`, `analysis/e14_shift_size.csv`, `figures/e14_meaning_shift.png`; log `out/e14/e14_run.log`)
+
+Run: `python e14_meaning_shift.py --train-only` (A models: gain 31 min, lose 21 min; training outcome rate 1.9%), then `--workers 4 --draws 2`. Code by Luna, reviewed by Claude. Mean regret x1e-4 at weeks 4 / 13 / 52 / 104:
+
+| Direction (keep AUROC -> oracle AUROC) | keep | head_U | dial only | head_L | fine-tune lr 0.05 | fine-tune lr 0.005 |
+|---|---|---|---|---|---|---|
+| gain: B also tests on the hidden risk factor (0.896 -> 0.920; 0.5 / 7 / 27 / 54 cases) | 10.5 | 10.8 / 10.5 / 10.4 / 10.4 | 10.6 / 10.5 / 10.5 / 10.5 | 10.6 / 10.7 / 10.4 / 10.3 | 15 / 31 / 17 / 9.9 | 13 / 12 / 11 / 10.4 |
+| lose: A tested on it, B does not (0.845 -> 0.845; 1 / 4 / 17 / 42 cases) | 2.4 | 3.5 / 3.5 / 3.2 / 3.3 | 2.4 / 2.4 / 2.4 / 2.3 | 2.5 / 2.5 / 2.8 / 3.2 | 117 / 29 / 6.2 / 1.6 | 4.5 / 3.1 / 1.7 / 0.9 |
+
+- `gain` (as predicted): the shift is real (keep 4x the regret of the testing-only shifts of E13, AUROC 0.024 below the optimum), and no rung without outcomes touches it: head_U neither helps nor harms. The labelled light rungs (dial, head_L) do not help either; only full fine-tuning at lr 0.05 recovers part of it after 2 years (AUROC 0.908 at 54 cases, half the gap), and it harms before. Reading: when B's doctors test on something the model cannot see, B's records cannot reveal it and one ICU's run-in cannot fix it within 2 years; it can at most be detected.
+- `lose` (prediction wrong): there is almost nothing to fix. The oracle at B cannot infer the trait (P(u=1|h) = 0.3 for everyone), and the A model does not misfire: check by Claude on 5,000 new patients, the lose A model at B gives the same mean prediction to u = 1 and u = 0 patients (0.0197 each) and its regret (3.5e-4) equals the gain A model's at A (3.2e-4), i.e. the model's own baseline error. At A the same model does use the trait (mean prediction 0.031 vs 0.014; AUROC 0.914 vs oracle 0.936). Losing meaning is harmless here because tests at B simply look like an average patient's. head_U is slightly worse than keep (+1e-4). Fine-tuning at lr 0.005 reduces the model's own baseline error after 1-2 years (0.9e-4 at 104 weeks).
+- Together with E13: the shift that hurts and that the light rungs cannot fix is testing that carries information the model cannot see. The reframing "which kind of shift" holds for the simulator: testing-only shifts -> head_U from week 1; shifts only outcomes reveal -> nothing works within a realistic run-in, fine-tuning after years.
 
 ### E13: which rung when, over weeks of deployment (23 Oct 2026; exploratory; SPEC.md E13; `analysis/e13_runs.csv`, `analysis/e13_summary.csv`, `figures/e13_rungs_over_time.png`; log `out/e13/e13_run.log`)
 
@@ -270,6 +283,8 @@ Reading: the observation pattern adds little beyond the values when values are p
 - 17 Oct 2026: design fixed in SPEC.md, following docs/ARGUMENT.md.
 
 ## Decisions
+
+- 25 Oct 2026 (Wesley): after E12-E13 (head_U best at every run-in length), test the reframing "which kind of shift, not which rung": E14 simulates a shift only outcomes reveal (B's doctors test on a hidden risk factor) and its reverse; E15 runs head_U on real pairs with and without a pattern shift (E10), first run of the state-space model on real data.
 
 - 22 Oct 2026 (Wesley): the method becomes a ladder of adaptations of the testing part (global dial, dial per test group, re-learn testing part, full refit), chosen by run-in size and kind of shift; answers the objection that one dial cannot capture all observation shift (docs/ARGUMENT.md section 10). Proposal to be rewritten in the course format around it.
 

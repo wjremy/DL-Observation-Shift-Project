@@ -241,3 +241,44 @@ Refits (R1 and R4): Adam, minibatch 256 with replacement, settings from E12b if 
 Outputs: `analysis/e13_runs.csv` (policy, method, week, n patients, n cases, draw, Brier, log loss, AUROC, regret, w), `analysis/e13_summary.csv`, `figures/e13_rungs_over_time.png` (one panel per policy, mean regret with min-max band over draws, shading of the best rung per week).
 
 Expectation, stated in advance: R1 is best from the first week when B's testing still depends on the state; R2 adds little here, because the simulator shifts only testing (its job is a shift in a test's meaning for the outcome, which cannot be simulated with this simulator); R4 overtakes only after many months, if at all within two years. A rule that chooses the rung from run-in data alone is the next step, not part of E13.
+
+## E14: a shift only outcomes can reveal (Claude and Wesley, 25 Oct 2026; simulation, quick version)
+
+Question: E12-E13 shifted only how testing depends on the patient's state, which B's unlabelled records reveal, and head_U won at every run-in length. Is there a shift that head_U cannot fix, where the outcome-based rungs earn their place, and does head_U at least do no harm there? This turns "which rung" into "which kind of shift", and E14 checks that reading.
+
+Simulator extension (new module `sim_u.py`, `sim.py` and `bayes.py` unchanged): each patient has a hidden binary trait u ~ Bernoulli(0.3), independent of the AR(1) path z (think: a risk factor the doctor sees at the bedside but the model does not, e.g. frailty or a worrying history). The outcome uses it at both hospitals: y = 1[z_future + 1.0 * u > threshold], threshold chosen so that about 2% of patients have the outcome (solve by quadrature, assert 1-3% on 20,000 patients). Testing: P(test at t) = sigmoid(alpha + gamma * z_t + beta * u), alpha set so the marginal testing rate is 0.3 (z ~ N(0, 1) stationary, u mixture); values as before, sigma 1. Policy "u-informative" with parameters (gamma, beta).
+
+Two directions:
+- `gain`: A tests on the state only (gamma 2, beta 0); B's doctors also test on the trait (gamma 2, beta 2). At B a test means more for the outcome than at A. B's records alone show that testing varies between patients more than the state explains, but not that this extra testing predicts the outcome. Expected: head_U cannot exploit it (A's states do not represent u, and the outcome head is frozen); rungs with outcomes can, given enough cases.
+- `lose`: A tests on both (gamma 2, beta 2); B on the state only (gamma 2, beta 0). At B a test means less. Expected: the A model learns states that carry u (persistent, from the testing pattern); head_U re-learns that testing at B no longer differs between these states and so stops reading u into tests, without outcomes.
+
+A models: one per direction, as E13 (E5 filter, K = 32, n_train 16,000, n_val 4,000, `latent_filter.train_filter`), trained on A's policy with the new outcome; cached under `results/E14/a_model_<direction>/`.
+
+Oracle: exact Bayes predictor under B's policy, a mixture over u: for each u run the 241-point grid filter with alpha + beta * u, keeping the log evidence of the history; P(y | h) = sum over u of P(u | h) * P(z_future > threshold - u | h, u). Checks: with beta = 0, P(u = 1 | h) is 0.3 for every patient; with beta = 0 and the outcome shift set to 0, the predictor equals `bayes.bayes_predict` at the same threshold to 1e-10.
+
+Methods per (direction, draw, week), as E13 plus a labelled testing-head refit:
+- `keep`, `head_U` (E12's `_refit_testing_head` without labels), `dial_only` (penalised w in [0, 1], E13 rule), `head_L` (E12's `_refit_testing_head` with the stream's outcomes: BCE + NLL, c only), `finetune_lr05` and `finetune_lr005` (E13's `_finetune` at lr 0.05 and 0.005), `oracle`. Refits: 160 steps, minibatch 256 with replacement, lr 0.05 unless named. Zero outcome cases: labelled methods return A's model.
+
+Quick design: weeks 4, 13, 52, 104 at 25 patients a week (nested streams of 2,600, as E13), 2 draws, test cohort 10,000. Outputs `analysis/e14_runs.csv`, `analysis/e14_summary.csv`, `figures/e14_meaning_shift.png` (one panel per direction, same style as the fixed E13 figure: log axes, no shading). Also report per direction the regret of `keep` and the oracle's AUROC gain over `keep`, so we know how large the shift is.
+
+Expectation, stated in advance: `lose`: head_U recovers most of keep's regret from week 4. `gain`: head_U close to keep (neither helps nor harms); head_L or fine-tuning gain only with many cases, if at all within 2 years. If `gain` shows no method gaining within 2 years, the reading is that a shift in what tests mean for the outcome cannot be fixed from one ICU's run-in, only detected.
+
+## E15: re-learning the testing head on real hospital pairs (Claude and Wesley, 25 Oct 2026; exploratory pilot, quick version)
+
+Question: does head_U (re-learn the testing part from the target's records without outcomes) help on real pairs where E10 found the testing pattern's meaning shifted, and does it do no harm where it did not? This is the first run of the state-space model on real data.
+
+Model (`latent_filter_mv.py`, new; `latent_filter.py` unchanged): the E5 filter for D variables. K = 32 discrete states, learned transition and initial distribution (initialised as E5), per variable d a Gaussian value head (mean mu[k, d], log sd per variable), a testing head c[k, d] (P(variable d measured in hour t | state k) = sigmoid(c[k, d])), outcome head u[k] read from the final filtered belief. Values and tests of different variables are independent given the state. The weight w multiplies the summed testing log-likelihood (w in [0, 1]). Loss: BCE + lambda * (negative log marginal) / (T * D), lambda = 1 by default (flag). Sanity requirement: on the source's validation split the model's AUROC should be within about 0.05 of E7's linear model with pattern features (from `analysis/e7_*`); report both. If it is far below, stop and report rather than continue.
+
+Data (`e15_sequences.py`, new): hourly sequences for the E7 cohorts (same inclusion rules and patient ids, read `e7_sites.py`). PhysioNet 2019: hours 1-24, outcome sepsis in hours 25-72, sites `A-all` and `B-all` (whole hospitals, A = Beth Israel, B = Emory, union of E7's unit cohorts). PhysioNet 2012: hours 0-47 binned hourly (last value in the hour; measured = any value in the hour), outcome in-hospital death, sites CCU, CSRU, MICU, SICU. Variables: all time-varying vitals and labs of the dataset (no static variables). Values: impossible values set to missing (pH outside 6.5-8.0 and any negative value of a nonnegative variable); log1p for variables positive and right-skewed in the pooled data (skewness above 2, list recorded in the cache); standardisation with the source's training split (done in the experiment, not the cache); standardised values clipped to [-5, 5]. Cache `data/e15_cache.npz`: per site x [n, T, D] float32 with NaN, m [n, T, D] int8, y, patient ids, variable names, log list.
+
+Pairs (from E10's pattern gaps): shift pairs P12 SICU to CSRU, CSRU to CCU, CSRU to SICU, CCU to SICU, P19 B-all to A-all; control pairs (no pattern shift) P12 MICU to SICU, SICU to MICU, P19 A-all to B-all (the E6 pair). Sources: 6 A models (P12 CCU, CSRU, MICU, SICU; P19 A-all, B-all), each trained once on an 80/20 train/validation split (fixed seed), cached under `results/E15/a_model_<dataset>_<site>/`.
+
+Target split: fixed 50/50 into a pool and an evaluation half (fixed seed). Run-ins drawn without replacement from the pool: n_run = 162 and 650 (3 and 12 months of a typical ICU, as E8/E11), 3 draws each (quick).
+
+Methods (same definitions as E14 where they exist; refits 160 steps, minibatch 256 with replacement, lr 0.05 for head refits, lr 0.005 for fine-tuning):
+- `keep` (w = 1), `drop` (w = 0, Futoma), `dial_only` (penalised w in [0, 1] on the run-in, E13 rule);
+- `head_U` (testing heads c re-learned on the run-in records, no outcomes), `head_U_pool` (the same on the whole pool without outcomes: B's historical records, available before deployment);
+- `head_L` (c re-learned on the run-in with outcomes, BCE + NLL), `finetune` (all parameters on the run-in, lr 0.005).
+Primary metric AUROC on the evaluation half (difference to `keep`), secondary log loss. Exploratory: no pre-specified primary test; the quick version is a pilot to decide whether to run 20 draws and more pairs.
+
+Expectation, stated in advance: on the shift pairs head_U and head_U_pool beat keep where the shift is in how testing depends on the patient's measured state; on the control pairs they stay within about 0.005 of keep. If the shift pairs show no gain, the E10 shift is of the kind only outcomes reveal (E14's `gain`).

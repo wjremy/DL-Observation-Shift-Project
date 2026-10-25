@@ -1,0 +1,23 @@
+DONE A model gain at C:\Users\wesre\Documents\Claude\DL - Observation Shift Project\results\E14\a_model_gain rate=1.906% best_epoch=146 wall=1875.1s
+DONE A model lose at C:\Users\wesre\Documents\Claude\DL - Observation Shift Project\results\E14\a_model_lose rate=1.906% best_epoch=127 wall=1249.2s
+SKIP A model training (cached at C:\Users\wesre\Documents\Claude\DL - Observation Shift Project\results\E14\a_model_gain)
+SKIP A model training (cached at C:\Users\wesre\Documents\Claude\DL - Observation Shift Project\results\E14\a_model_lose)
+DONE gain draw=0 week=4 wall=267.4s
+DONE gain draw=0 week=13 wall=276.6s
+DONE gain draw=0 week=52 wall=314.0s
+DONE gain draw=0 week=104 wall=361.7s
+DONE gain draw=1 week=4 wall=131.8s
+DONE gain draw=1 week=13 wall=267.6s
+DONE gain draw=1 week=52 wall=304.2s
+DONE lose draw=0 week=4 wall=256.8s
+DONE gain draw=1 week=104 wall=354.3s
+DONE lose draw=0 week=13 wall=268.0s
+DONE lose draw=0 week=52 wall=304.8s
+DONE lose draw=1 week=4 wall=258.1s
+DONE lose draw=0 week=104 wall=355.1s
+DONE lose draw=1 week=13 wall=259.6s
+DONE lose draw=1 week=52 wall=261.8s
+DONE lose draw=1 week=104 wall=276.7s
+WROTE C:\Users\wesre\Documents\Claude\DL - Observation Shift Project\analysis\e14_runs.csv
+WROTE C:\Users\wesre\Documents\Claude\DL - Observation Shift Project\analysis\e14_summary.csv
+WROTE C:\Users\wesre\Documents\Claude\DL - Observation Shift Project\analysis\e14_shift_size.csv

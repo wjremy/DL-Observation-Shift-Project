@@ -1,0 +1,4 @@
+2026-10-25T11:01:09.968086Z ERROR codex_core::tools::router: error=apply_patch verification failed: Failed to find expected lines in C:\Users\wesre\Documents\Claude\DL - Observation Shift Project\e15_real_pairs.py:
+    records = []
+    warnings = []
+    for dataset, site in SOURCES:
