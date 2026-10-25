@@ -1,0 +1,16 @@
+E15 source P12/CCU: n=1769, cases=224, best epoch=47, validation AUROC=0.6974, E7 linear AUROC=0.8007, fit=185.9s
+E15 SANITY WARNING P12/CCU: validation AUROC 0.6974 is 0.1033 below linear reference AUROC 0.8007 (analysis/e7_sites.csv:source_holdout_auroc_w1).
+E15 source P12/CSRU: n=2530, cases=123, best epoch=43, validation AUROC=0.8060, E7 linear AUROC=0.9276, fit=242.5s
+E15 SANITY WARNING P12/CSRU: validation AUROC 0.8060 is 0.1216 below linear reference AUROC 0.9276 (analysis/e7_sites.csv:source_holdout_auroc_w1).
+E15 source P12/MICU: n=4293, cases=852, best epoch=34, validation AUROC=0.7116, E7 linear AUROC=0.8296, fit=22756.8s
+E15 SANITY WARNING P12/MICU: validation AUROC 0.7116 is 0.1180 below linear reference AUROC 0.8296 (analysis/e7_sites.csv:source_holdout_auroc_w1).
+E15 source P12/SICU: n=3408, cases=508, best epoch=38, validation AUROC=0.6875, E7 linear AUROC=0.8515, fit=380.9s
+E15 SANITY WARNING P12/SICU: validation AUROC 0.6875 is 0.1640 below linear reference AUROC 0.8515 (analysis/e7_sites.csv:source_holdout_auroc_w1).
+C:\Users\wesre\Documents\Claude\DL - Observation Shift Project\e15_real_pairs.py:194: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(np.where(m.astype(bool), x, np.nan), axis=(0, 1))
+C:\Users\wesre\AppData\Local\Programs\Python\Python312\Lib\site-packages\numpy\lib\_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+E15 source P19/A-all: n=4535, cases=130, best epoch=36, validation AUROC=0.7170, E7 linear AUROC=0.7212, fit=178.3s
+E15 source P19/B-all: n=9862, cases=218, best epoch=31, validation AUROC=0.6011, E7 linear AUROC=0.6890, fit=381.3s
+E15 SANITY WARNING P19/B-all: validation AUROC 0.6011 is 0.0879 below linear reference AUROC 0.6890 (analysis/e10_sites.csv:local_auroc (combined; E7 whole-hospital rows absent)).
+E15 train-only complete: wrote C:\Users\wesre\Documents\Claude\DL - Observation Shift Project\analysis\e15_sources.csv

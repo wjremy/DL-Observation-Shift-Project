@@ -1,0 +1,7 @@
+dataset,site,n,cases,n_train,n_validation,validation_cases,best_epoch,validation_auroc,e7_linear_auroc,linear_comparison_source,training_time_seconds
+P12,CCU,1769,224,1415,354,44,47,0.6974340175953079,0.8007481648785997,analysis/e7_sites.csv:source_holdout_auroc_w1,185.8924564999761
+P12,CSRU,2530,123,2024,506,21,43,0.8059891998036328,0.9276001195457262,analysis/e7_sites.csv:source_holdout_auroc_w1,242.51257839996833
+P12,MICU,4293,852,3434,859,155,34,0.7115973240469208,0.8295822890559733,analysis/e7_sites.csv:source_holdout_auroc_w1,22756.784594100085
+P12,SICU,3408,508,2726,682,96,38,0.6874822241183163,0.8515178003814368,analysis/e7_sites.csv:source_holdout_auroc_w1,380.93094250001013
+P19,A-all,4535,130,3628,907,25,36,0.7169614512471655,0.7211608640909104,analysis/e10_sites.csv:local_auroc (combined; E7 whole-hospital rows absent),178.26776320009958
+P19,B-all,9862,218,7889,1973,51,31,0.6011354593866683,0.6890358209704546,analysis/e10_sites.csv:local_auroc (combined; E7 whole-hospital rows absent),381.27627850009594

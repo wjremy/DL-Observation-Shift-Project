@@ -1,0 +1,6 @@
+CSRU lambda=0.1: val AUROC 0.7823 best epoch 29 201s
+CSRU lambda=0.01: val AUROC 0.8207 best epoch 22 156s
+CSRU lambda=0.0: val AUROC 0.8369 best epoch 23 200s
+CCU lambda=0.1: val AUROC 0.7256 best epoch 15 105s
+CCU lambda=0.01: val AUROC 0.7185 best epoch 14 94s
+CCU lambda=0.0: val AUROC 0.7435 best epoch 21 153s
