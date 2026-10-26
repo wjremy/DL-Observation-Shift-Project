@@ -74,8 +74,9 @@ def _check_inputs(x: np.ndarray, m: np.ndarray, parameters: Mapping[str, np.ndar
     if np.any(m & ~np.isfinite(x)):
         raise ValueError("observed x values must be finite")
     w = float(w)
-    if not 0.0 <= w <= 1.0:
-        raise ValueError("w must be in [0, 1]")
+    # w > 1 (trust the testing evidence more than at A) allowed since E14b.
+    if not w >= 0.0:
+        raise ValueError("w must be nonnegative")
 
     transition_logits = np.asarray(parameters["transition_logits"], dtype=np.float64)
     initial_logits = np.asarray(parameters["initial_logits"], dtype=np.float64)

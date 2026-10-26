@@ -282,3 +282,7 @@ Methods (same definitions as E14 where they exist; refits 160 steps, minibatch 2
 Primary metric AUROC on the evaluation half (difference to `keep`), secondary log loss. Exploratory: no pre-specified primary test; the quick version is a pilot to decide whether to run 20 draws and more pairs.
 
 Expectation, stated in advance: on the shift pairs head_U and head_U_pool beat keep where the shift is in how testing depends on the patient's measured state; on the control pairs they stay within about 0.005 of keep. If the shift pairs show no gain, the E10 shift is of the kind only outcomes reveal (E14's `gain`).
+
+## E14b: a dial above 1, alone and on top of head_U (Claude and Wesley, 26 Oct 2026; quick check)
+
+Question: can a dial chosen with outcomes help where head_U cannot (E14 `gain`: B's tests carry information the model does not see), once it may trust the testing evidence more than at A (w > 1)? E13/E14 capped w at 1. Same A models, streams, seeds and test cohort as E14 (`e14b_dial_above1.py`, by Claude, calls E14's functions; `latent_filter._check_inputs` now allows any w >= 0). Methods: `head_U` (must equal E14's rows), `head_U_dial2` (w on 0..2 step 0.05 on top of head_U, E13 penalised rule on the stream's labelled patients, ties to the w closest to 1), `dial2_only` (same on A's model), `head_U_dial_best` and `dial_best` (w chosen on the test cohort: the most any single dial could gain). Weeks 4, 13, 52, 104; 2 draws; output `analysis/e14b_runs.csv`.

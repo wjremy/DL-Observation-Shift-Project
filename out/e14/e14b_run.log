@@ -1,0 +1,19 @@
+SKIP A model training (cached at C:\Users\wesre\Documents\Claude\DL - Observation Shift Project\results\E14\a_model_gain)
+SKIP A model training (cached at C:\Users\wesre\Documents\Claude\DL - Observation Shift Project\results\E14\a_model_lose)
+DONE gain draw=0 week=4
+DONE gain draw=0 week=13
+DONE gain draw=0 week=52
+DONE gain draw=0 week=104
+DONE gain draw=1 week=4
+DONE gain draw=1 week=13
+DONE gain draw=1 week=52
+DONE gain draw=1 week=104
+DONE lose draw=0 week=4
+DONE lose draw=0 week=13
+DONE lose draw=0 week=52
+DONE lose draw=1 week=4
+DONE lose draw=1 week=13
+DONE lose draw=0 week=104
+DONE lose draw=1 week=52
+DONE lose draw=1 week=104
+WROTE C:\Users\wesre\Documents\Claude\DL - Observation Shift Project\analysis\e14b_runs.csv
