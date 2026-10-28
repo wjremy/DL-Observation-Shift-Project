@@ -82,6 +82,17 @@ A teammate's objection: can one number capture observation shift? Not in general
 
 Resolution (Wesley, 22 Oct): a ladder of adaptations of the testing part only, from cheap to flexible: (1) one global dial; (2) one dial per test group; (3) re-learn the testing part; (4) full refit. Each rung repairs more kinds of shift but needs more outcome cases, and a silent run-in yields few (about 2-6 sepsis cases in 1-3 months for one ICU). The question becomes which rung a run-in of a given size supports, for which kind of shift. The dial stays as the low-data default, now justified by the comparison rather than assumed.
 
+## 11. Re-learning the testing head needs no labels; the kind of shift decides the rest (23-26 Oct 2026)
+
+Every adaptation answers two questions: which part of the model it changes, and what data chooses the change. The testing head predicts which tests are ordered in each patient state, and B's records contain exactly that, so it can be re-learned from B's records alone (E12). The answer to "how does B test?" comes from records; the answer to "how much should B's test orders count for predicting risk?" needs outcomes. A dial (global or per group) changes the testing part but answers the second question, so it needs outcomes; the outcome head and full fine-tuning need them too.
+
+Consequences seen in simulation (E12-E14b):
+- When B's testing depends differently on what the model can see (more, less, more or less selective, or at random), the label-free refit fixes it from about one week of patients. Nothing is left for outcomes to correct: a dial on top stays at w about 1, and fine-tuning only adds noise for up to 2 years. This is why the ladder's "more cases, higher rung" logic broke for these shifts.
+- When B's clinicians test on information the model never sees (a hidden risk factor), B's records cannot reveal it. No light rung helps, not even a dial above 1 (a global weight can only make testing move the inferred state more, not attach extra risk); only full fine-tuning, which can reorganise the states, recovers part of the loss after about 2 years.
+- When A's clinicians tested on such information and B's do not, the model does not misfire: tests at B look like an average patient's, so the cost is near zero.
+
+So the method splits in two (Wesley, 26 Oct): the label-free step is always done first and is the main contribution; the outcome ladder (dial, per-group dial, outcome head, full model) sits on top for shifts only outcomes reveal, ordered by the cases each needs. More outcome cases still unlock higher rungs, but a higher rung pays off only if the shift is one the lower steps cannot fix. Open: whether the per-group dial or the outcome-head rung have a regime where they win (a risk shift, several tests), and whether all this holds on real data with an imperfect model.
+
 ## Earlier Codex runs (17 Oct 2026)
 
 Two studies were run earlier the same day in the Codex app; their reports are in `docs/prior_codex_runs/`. The policy-learning study fixed the physiology predictor for every model and learned only the observation correction. It showed that even the exact source rule loses under B (Brier 0.082 on A to 0.246 on B, against 0.163 without the cue) and that GRU, GRU-D and CDE recovered 97-98% of the source cue benefit. Because physiology was fixed, it could not test step 6 (using the pattern instead of the values); this study does.

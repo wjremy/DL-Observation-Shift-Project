@@ -290,6 +290,7 @@ Reading: the observation pattern adds little beyond the values when values are p
 
 ## Decisions
 
+- 28 Oct 2026: docs/MAP.md updated to the current state (question, steps 14-20, evidence, files, next steps) and docs/ARGUMENT.md section 11 added (label-free step vs outcome ladder), for handover to another account.
 - 25 Oct 2026 (Wesley): after E12-E13 (head_U best at every run-in length), test the reframing "which kind of shift, not which rung": E14 simulates a shift only outcomes reveal (B's doctors test on a hidden risk factor) and its reverse; E15 runs head_U on real pairs with and without a pattern shift (E10), first run of the state-space model on real data.
 
 - 22 Oct 2026 (Wesley): the method becomes a ladder of adaptations of the testing part (global dial, dial per test group, re-learn testing part, full refit), chosen by run-in size and kind of shift; answers the objection that one dial cannot capture all observation shift (docs/ARGUMENT.md section 10). Proposal to be rewritten in the course format around it.
